@@ -1,7 +1,7 @@
-В этом посте я хотел сделать демо Nginx VTS + Prometheus + Grafana. Для демо необходимо было чтобы upstream могли выдавать разные http коды. Это могли сделать следующие проекты: Mockify, написанный на Golang, и WireMock, написанный на Java.
- - установка и настройка Nginx VTS + Prometheus + Grafana
- - сборка golang программ в Fedora Copr
- - Mockify - легкое, конфигурируемое эмулирование API, написанное на Golang
+В этом посте я хотел сделать демо [Nginx VTS](https://github.com/vozlt/nginx-module-vts) + Prometheus + Grafana. Для демо необходимо было чтобы upstream могли выдавать разные http коды. Это могли сделать следующие проекты: [Mockify](https://github.com/brianmoran/mockify), написанный на Golang, и [WireMock](https://github.com/tomakehurst/wiremock), написанный на Java. 
+ - установка и настройка Nginx VTS + Prometheus + Grafana;
+ - сборка golang программ в [Fedora Copr](http://copr.fedorainfracloud.org/);
+ - Mockify - легкое, конфигурируемое эмулирование API, написанное на Golang;
  - Сравнение использования CPU для Mockify, написанный на Golang, и WireMock, написанный на Java.
 
 Тестовый стенд виртуальная машина:
@@ -205,4 +205,113 @@ server {
 127.0.0.1 vhost4
 127.0.0.1 vhost5
 ```
+
+Оптизируем ядро для тестирования (может оно и не нужно). Создаем файл /etc/sysctl.d/90-nginx.conf с содержимым:
+
+```
+fs.file-max=100000
+net.netfilter.nf_conntrack_max=1548576
+net.ipv4.ip_local_port_range=10000 65000
+net.ipv4.tcp_tw_reuse=1
+net.core.somaxconn=15600
+net.ipv4.tcp_fin_timeout=15
+net.ipv4.tcp_tw_recycle=1
+net.core.rmem_default=31457280
+net.core.rmem_max=12582912
+net.core.wmem_default=31457280
+net.core.wmem_max=12582912
+net.core.netdev_max_backlog=65536
+net.core.optmem_max=25165824
+net.ipv4.tcp_rmem=8192 87380 16777216
+net.ipv4.udp_rmem_min=16384
+net.ipv4.tcp_wmem=8192 65536 16777216
+```
+
+Применяем настройки
+
+```
+sysctl -p /etc/sysctl.d/90-nginx.conf 
+```
+
+Устанавливаем mockify-rpm
+
+```
+yum -y install yum-plugin-copr
+yum copr enable antonpatsev/mockify-rpm
+yum -y install mockify
+systemctl start mockify
+```
+
+Устанавливаем Apache Benchmark:
+
+```
+yum install -y httpd-tools
+```
+
+Запускаем небольшое тестирование nginx:
+
+```
+while true; do ab -c 1 -n 1 -t 1 http://vhost1/; sleep 2; done
+while true; do ab -c 1 -n 1 -t 1 http://vhost2/; sleep 2; done
+while true; do ab -c 1 -n 1 -t 1 http://vhost3/; sleep 2; done
+while true; do ab -c 1 -n 1 -t 1 http://vhost4/; sleep 2; done
+while true; do ab -c 1 -n 1 -t 1 http://vhost5/; sleep 2; done
+```
+
+Cкриншоты:
+
+![](https://habrastorage.org/webt/mn/cg/vd/mncgvdh6qi9z2jfgz9xsjp7wlrm.png)
+
+![](https://habrastorage.org/webt/y_/oq/ec/y_oqecj8n7dkcuhsuswtrvaq0ry.png)
+
+![](https://habrastorage.org/webt/ai/2v/ob/ai2vobsdod8zhpad0nff347qmsk.png)
+
+![](https://habrastorage.org/webt/mg/gx/pr/mggxpr38h0dec5wt7inx00ahd6e.png)
+
+Прошу прощения за неровные скриншоты.
+
+Установка wiremock:
+
+```
+yum -y install yum-plugin-copr
+yum copr enable antonpatsev/wiremock-rpm
+yum -y install wiremock wiremock-popular-json
+systemctl start wiremock
+```
+
+Также в файлах vhost1-vhost5 в nginx нужно поменять порт с 8001 на 8080.
+
+Ниже загрузка CPU и MEM mockify при тестировании vhost1-vhost5
+
+![](https://habrastorage.org/webt/ni/ef/cr/niefcrrzubziumsublmzz3kqz8q.png)
+
+Ниже загрузка CPU и MEM wiremock при тестировании vhost1
+
+![](https://habrastorage.org/webt/ji/_8/u_/ji_8u_argra8h0gh34yyknnxqd8.png)
+
+Ниже загрузка CPU и MEM wiremock при тестировании vhost1-vhost2
+
+![](https://habrastorage.org/webt/-n/ts/s-/-ntss-moi6ybktxg8o6zfgn-ik0.png)
+
+Ниже загрузка CPU и MEM wiremock при тестировании vhost1-vhost3
+
+![](https://habrastorage.org/webt/zq/g4/u6/zqg4u6b8aowhewmqkejrb5cygqw.png)
+
+Ниже загрузка CPU и MEM wiremock при тестировании vhost1-vhost4
+
+![](https://habrastorage.org/webt/eg/jk/78/egjk781xzuh3xswxbugk_oeo-um.png)
+
+Ниже загрузка CPU и MEM wiremock при тестировании vhost1-vhost5. Иногда нагрузка на CPU выростала до 700%.
+
+![](https://habrastorage.org/webt/ga/vh/d9/gavhd9o27zy-s2cpcvfx52gbrmw.png)
+
+Выводы:
+
+По [Nginx VTS](https://github.com/vozlt/nginx-module-vts) хотелось бы больше метрик без правок конфигов.
+
+По Wiremock vs Mockify: используйте Mockify. Он меньше использует CPU и MEM.
+
+И напоследок сборка Golang приложений в Fedora Copr на примере Mockify.
+
+В качестве примера используйте репозиторий https://github.com/patsevanton/mockify-rpm.
 
