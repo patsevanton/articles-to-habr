@@ -133,13 +133,3 @@ Server: Jetty(9.2.z-SNAPSHOT)
 < 
 503 Service Unavailable
 ```
-
-P.S. ищутся желающие для добавления json запросов и ответов  публичных opensource проектов, приложений, утилит. PR присылайте в проект [wiremock-rpm](https://github.com/patsevanton/wiremock-rpm).
-
-
-
-
-
-
-
-![](https://habrastorage.org/webt/8r/rh/lu/8rrhluqog__9xtjd5orqys8uraa.png)
