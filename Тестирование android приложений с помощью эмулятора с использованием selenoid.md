@@ -149,7 +149,14 @@ device.setCapability("app", "http://ссылка-до-вашей-apk");
 или 
 
 ```bash
-device.setCapability("app", "http://localhost:8000/game2048.apk");
+device.setCapability("app", "http://hostname-или-FQDN-сервера-где-лежит-apk:8000/game2048.apk");
+```
+
+Если вы будете ссылаться на localhost из docker, то у вас будет вот такая ошибка, так как вы из сети docker пытаетесь обраться к localhost основного сервера:
+
+```bash
+Tests in error: 
+  browserTest(com.aerokube.selenoid.AndroidRemoteApkTest): An unknown server-side error occurred while processing the command. Original error: Problem downloading app from url http://localhost:8000/apk/game2048.apk: connect ECONNREFUSED 127.0.0.1:8000
 ```
 
 Как сделать доступной для скачивания ваши локальные файлы будет ниже.
