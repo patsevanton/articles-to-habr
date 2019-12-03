@@ -131,18 +131,6 @@ docker images
 
 или на другой адрес, там где вы запустили selenoid.
 
-В файле AndroidRemoteApkTest.java меняем чтобы лишний тяжелый android образ docker не качать.
-
-```bash
-device.setCapability("version", "7.1");
-```
-
-на 
-
-```bash
-device.setCapability("version", "6.0");
-```
-
 В файле AndroidRemoteApkTest.java меняем путь где можно скачать вашу APK.
 
 ```bash
@@ -174,4 +162,24 @@ device.setCapability("app", "http://localhost:8000/game2048.apk");
 ```bash
 ruby -rwebrick -e'WEBrick::HTTPServer.new(:Port => 8000, :DocumentRoot => Dir.pwd).start'
 ```
+
+### Запуск тестов
+
+В директории demo-tests запускаем тесты:
+
+Если вам нужно указать настройки и у вас используется maven-прокси (Nexus, Artifactory)
+
+```bash
+mvn -s settings.xml clean test
+```
+
+Если запускаем с прямым доступом в инет и без каких-либо настроек
+
+```bash
+mvn clean test
+```
+
+### Скорость
+
+Общее время разворачивания android эмулятора и запуск 1 теста занимает меньше 1 минуты.
 
