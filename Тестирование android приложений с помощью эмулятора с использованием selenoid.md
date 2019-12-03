@@ -86,7 +86,10 @@ aerokube-cm selenoid start --force --browsers "android:6.0;chrome:78" --args "-s
 ```
 
 Пока что версия мобильного хрома отстает от версии обычного хрома.
-
+Скачиваем образ мобильного хрома
+```bash
+docker pull selenoid/chrome-mobile:75.0
+```
 Проверяем что docker контейнер запустился и образы скачались.
 
 ```bash
