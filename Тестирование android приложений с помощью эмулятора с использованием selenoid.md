@@ -195,3 +195,7 @@ aerokube-cm selenoid stop
 aerokube-cm selenoid start
 ```
 
+### Извесные баги
+
+<https://github.com/aerokube/demo-tests/issues/5>
+
