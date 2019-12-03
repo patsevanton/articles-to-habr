@@ -97,6 +97,26 @@ docker images
 ### Запуск Selenoid UI используя Configuration manager
 
 ```bash
+aerokube-cm selenoid-ui start --registry https://docker-registry
+```
+
+Или
+
+```bash
 aerokube-cm selenoid-ui start
 ```
 
+Проверяем что docker контейнер запустился и образы скачались.
+
+```bash
+docker ps
+docker images
+```
+
+![](https://habrastorage.org/webt/-x/pd/cw/-xpdcwppkyiael9ly2agw0opgv4.png)
+
+Заходим в selenoid-ui по адресу ip-где-вы-запускали-selenoid-и-selenoid-ui:8080
+
+У вас должно быть гореть зеленым 2 слова CONNECTED и написано android и chrome.
+
+![](https://habrastorage.org/webt/no/ic/l8/noicl8rlt7_9tjmaihi2w3l1wia.png)
