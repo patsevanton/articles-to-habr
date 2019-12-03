@@ -139,7 +139,7 @@ device.setCapability("app", "http://ci.example.com/game2048.apk");
 
 на
 
-device.setCapability("app", "http://ссылка-до-вашей-apk/game2048.apk");
+device.setCapability("app", "http://ссылка-до-вашей-apk");
 
 или 
 
