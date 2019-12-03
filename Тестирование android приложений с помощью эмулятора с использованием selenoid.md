@@ -120,3 +120,58 @@ docker images
 У вас должно быть гореть зеленым 2 слова CONNECTED и написано android и chrome.
 
 ![](https://habrastorage.org/webt/no/ic/l8/noicl8rlt7_9tjmaihi2w3l1wia.png)
+
+### DEMO TEST
+
+Скачиваем https://github.com/aerokube/demo-tests
+
+Во всех трех java файлах меняем путь в RemoteWebDriver на localhost
+
+![](https://habrastorage.org/webt/i-/6v/3_/i-6v3_qo-z7gaxzdx5t_nsdxyrm.png)
+
+или на другой адрес, там где вы запустили selenoid.
+
+В файле AndroidRemoteApkTest.java меняем чтобы лишний тяжелый android образ docker не качать.
+
+```bash
+device.setCapability("version", "7.1");
+```
+
+на 
+
+```bash
+device.setCapability("version", "6.0");
+```
+
+В файле AndroidRemoteApkTest.java меняем путь где можно скачать вашу APK.
+
+```bash
+device.setCapability("app", "http://ci.example.com/game2048.apk");
+```
+
+на
+
+device.setCapability("app", "http://путь-до-вашей-apk/game2048.apk");
+
+или 
+
+```bash
+device.setCapability("app", "http://localhost:8000/game2048.apk");
+```
+
+Как сделать доступной для скачивания ваши локальные файлы будет ниже.
+
+В файле DemoTest.java добавляем setCapability для запуска chrome на Android чтобы получилось примерно так.
+
+![](https://habrastorage.org/webt/nb/at/4d/nbat4dgrfnrsjz-u-inkwdo_r8q.png)
+
+В каждом файле java вы можете включить или выключить запись видео, удаленный просмотр или управление через VNC и запись логов в файл. Чтобы выключить опцию нужно добавить 2 слеша в начало строки.
+
+![](https://habrastorage.org/webt/bl/dy/jd/bldyjdaxstceqigh7szqsb5qvlo.png)
+
+Чтобы сделать доступной для скачивания файлы из текущей директории, нужно запустить в отдельной консоле в этой директории команду:
+
+```bash
+ruby -rwebrick -e'WEBrick::HTTPServer.new(:Port => 8000, :DocumentRoot => Dir.pwd).start'
+```
+
