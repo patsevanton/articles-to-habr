@@ -183,3 +183,15 @@ mvn clean test
 
 Общее время разворачивания android эмулятора и запуск 1 теста занимает меньше 1 минуты.
 
+### Изменение browsers.json
+
+При изменении файла browsers.json нужно перезагрузить selenoid
+
+```bash
+aerokube-cm selenoid stop
+```
+
+```bash
+aerokube-cm selenoid start
+```
+
