@@ -41,14 +41,16 @@ yum -y install aerokube-cm
 Если у вас нет прямого доступа в инет и docker образы вы скачиваете через registry:
 
 ```bash
-aerokube-cm selenoid start --force --browsers "android:6.0;chrome:78" --registry ваш-docker-registry
+aerokube-cm selenoid start --force --browsers "android:6.0;chrome:78" --args "-session-attempt-timeout 2m -service-startup-timeout 2m" --registry ваш-docker-registry
 ```
 
 Если у вас есть прямой доступ в инет.
 
 ```bash
-aerokube-cm selenoid start --force --browsers "android:6.0;chrome:78"
+aerokube-cm selenoid start --force --browsers "android:6.0;chrome:78" --args "-session-attempt-timeout 2m -service-startup-timeout 2m"
 ```
+
+Ключ `--args "-session-attempt-timeout 2m -service-startup-timeout 2m"` нужен если у вас apk большого размера долго устанавливается.
 
 Ключ `--force` перезаписывает файл browsers.json
 
@@ -193,6 +195,10 @@ aerokube-cm selenoid stop
 
 ```bash
 aerokube-cm selenoid start
+
+Reloading configuration
+Можно сделать Reloading configuration. Подробности по ссылке:
+https://aerokube.com/selenoid/latest/#_reloading_configuration
 ```
 
 ### Извесные баги
