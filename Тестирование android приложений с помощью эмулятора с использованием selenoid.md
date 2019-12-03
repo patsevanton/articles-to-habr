@@ -195,11 +195,11 @@ aerokube-cm selenoid stop
 
 ```bash
 aerokube-cm selenoid start
-
+```
 Reloading configuration
 Можно сделать Reloading configuration. Подробности по ссылке:
 https://aerokube.com/selenoid/latest/#_reloading_configuration
-```
+
 
 ### Извесные баги
 
