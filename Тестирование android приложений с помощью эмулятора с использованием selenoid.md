@@ -90,6 +90,23 @@ aerokube-cm selenoid start --force --browsers "android:6.0;chrome:78" --args "-s
 ```bash
 docker pull selenoid/chrome-mobile:75.0
 ```
+
+### Изменение browsers.json
+
+При изменении файла browsers.json нужно перезагрузить selenoid
+
+```bash
+aerokube-cm selenoid stop
+```
+
+```bash
+aerokube-cm selenoid start
+```
+Reloading configuration
+Можно сделать Reloading configuration. Подробности по ссылке:
+https://aerokube.com/selenoid/latest/#_reloading_configuration
+
+
 Проверяем что docker контейнер запустился и образы скачались.
 
 ```bash
@@ -195,23 +212,23 @@ mvn clean test
 
 Общее время разворачивания android эмулятора и запуск 1 теста занимает меньше 1 минуты.
 
-### Изменение browsers.json
-
-При изменении файла browsers.json нужно перезагрузить selenoid
-
-```bash
-aerokube-cm selenoid stop
-```
-
-```bash
-aerokube-cm selenoid start
-```
-Reloading configuration
-Можно сделать Reloading configuration. Подробности по ссылке:
-https://aerokube.com/selenoid/latest/#_reloading_configuration
 
 
 ### Известные баги
 
 <https://github.com/aerokube/demo-tests/issues/5>
+
+### Видеозапись тестов
+
+AndroidDemoTest.java:
+
+https://vimeo.com/377272195
+
+AndroidRemoteApkTest.java:
+
+https://vimeo.com/377272491
+
+DemoTest.java:
+
+https://vimeo.com/377268541
 
