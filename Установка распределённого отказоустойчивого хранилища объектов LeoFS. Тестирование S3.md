@@ -6,7 +6,7 @@ LeoFS состоит из трёх компонентов:
 - [LeoFS Gateway](https://leo-project.net/leofs/docs/architecture/leo_gateway/) - обслуживает HTTP-запросы и перенаправляет ответы клиентам с использованием REST-API или S3-API, обеспечивает кэширование наиболее востребованных данных в памяти и на диске.
 - [LeoFS Manager](https://leo-project.net/leofs/docs/architecture/leo_manager/) - отслеживает работу узлов LeoFS Gateway и LeoFS Storage, ведёт мониторинг состояния узлов и проверяет контрольные суммы. Гарантирует целостность данных и высокую доступность хранилища.
 
-В этом посте установим Leofs c помощью ansible-playbook, протестируем S3.
+В этом посте установим Leofs c помощью ansible-playbook, протестируем S3, NFS.
 
 Если вы попытаетесь установить LeoFS используя официальные playbook-и, то вас ждут разные ошибки: [1](https://github.com/leo-project/leofs_ansible/issues/5),[2](https://github.com/leo-project/leofs_ansible/issues/4). В этом посте напишу что нужно сделать чтобы эти ошибки избежать.
 
@@ -23,8 +23,8 @@ build_install_path="/tmp/"
 build_branch="master"
 source="package"
 
-[builder]
-172.26.9.177
+#[builder]
+#172.26.9.177
 
 # nodename of leo_manager_0 and leo_manager_1 are set at group_vars/all
 [leo_manager_0]
@@ -39,10 +39,10 @@ source="package"
 172.26.9.181 leofs_module_nodename=S0@172.26.9.181
 172.26.9.182 leofs_module_nodename=S0@172.26.9.182
 172.26.9.183 leofs_module_nodename=S0@172.26.9.183
-172.26.9.184 leofs_module_nodename=S0@172.26.9.184
 
 [leo_gateway]
 172.26.9.180 leofs_module_nodename=G0@172.26.9.180
+172.26.9.184 leofs_module_nodename=G0@172.26.9.184
 
 [leofs_nodes:children]
 leo_manager_0
@@ -164,20 +164,20 @@ leofs-adm status
 -----------------------------------+----------
  Manager RING hash
 -----------------------------------+----------
-                 current ring-hash | ef9549a6
-                previous ring-hash | ef9549a6
+                 current ring-hash | a0314afb
+                previous ring-hash | a0314afb
 -----------------------------------+----------
 
  [State of Node(s)]
 -------+----------------------+--------------+---------+----------------+----------------+----------------------------
  type  |         node         |    state     | rack id |  current ring  |   prev ring    |          updated at         
 -------+----------------------+--------------+---------+----------------+----------------+----------------------------
-  S    | S0@172.26.9.179      | running      |         | ef9549a6       | ef9549a6       | 2019-12-05 08:36:52 +0000
-  S    | S0@172.26.9.181      | running      |         | ef9549a6       | ef9549a6       | 2019-12-05 08:36:53 +0000
-  S    | S0@172.26.9.182      | running      |         | ef9549a6       | ef9549a6       | 2019-12-05 08:36:52 +0000
-  S    | S0@172.26.9.183      | attached     |         |                |                | 2019-12-05 08:37:07 +0000
-  S    | S0@172.26.9.184      | running      |         | ef9549a6       | ef9549a6       | 2019-12-05 08:36:52 +0000
-  G    | G0@172.26.9.180      | running      |         | ef9549a6       | ef9549a6       | 2019-12-05 08:36:55 +0000
+  S    | S0@172.26.9.179      | running      |         | a0314afb       | a0314afb       | 2019-12-05 10:33:47 +0000
+  S    | S0@172.26.9.181      | running      |         | a0314afb       | a0314afb       | 2019-12-05 10:33:47 +0000
+  S    | S0@172.26.9.182      | running      |         | a0314afb       | a0314afb       | 2019-12-05 10:33:47 +0000
+  S    | S0@172.26.9.183      | attached     |         |                |                | 2019-12-05 10:33:58 +0000
+  G    | G0@172.26.9.180      | running      |         | a0314afb       | a0314afb       | 2019-12-05 10:33:49 +0000
+  G    | G0@172.26.9.184      | running      |         | a0314afb       | a0314afb       | 2019-12-05 10:33:49 +0000
 -------+----------------------+--------------+---------+----------------+----------------+----------------------------
 
 ```
@@ -186,12 +186,7 @@ leofs-adm status
 
 ```bash
 leofs-adm create-user leofs leofs
-```
 
-Создал юзера
-
-```bash
-leofs-adm create-user leofs leofs
   access-key-id: 9c2615f32e81e6a1caf5
   secret-access-key: 8aaaa35c1ad78a2cbfa1a6cd49ba8aaeb3ba39eb
 ```
@@ -291,6 +286,22 @@ ERROR: S3 error: 403 (AccessDenied): Access Denied
 
 То нужно в конфиге s3cmd поправить signature_v2 на True. Подробности в этом [issue](https://github.com/leo-project/leofs/issues/487).
 
+Если signature_v2 будет False, то будет вот такая ошибка:
+
+```bash
+WARNING: Retrying failed request: /?delimiter=%2F (getaddrinfo() argument 2 must be integer or string)
+WARNING: Waiting 3 sec...
+WARNING: Retrying failed request: /?delimiter=%2F (getaddrinfo() argument 2 must be integer or string)
+WARNING: Waiting 6 sec...
+WARNING: Retrying failed request: /?delimiter=%2F (getaddrinfo() argument 2 must be integer or string)
+WARNING: Waiting 9 sec...
+WARNING: Retrying failed request: /?delimiter=%2F (getaddrinfo() argument 2 must be integer or string)
+WARNING: Waiting 12 sec...
+WARNING: Retrying failed request: /?delimiter=%2F (getaddrinfo() argument 2 must be integer or string)
+WARNING: Waiting 15 sec...
+ERROR: Test failed: Request failed for: /?delimiter=%2F
+```
+
 Тестирование загрузки.
 
 Создаем файл 1ГБ
@@ -303,8 +314,76 @@ fallocate -l 1GB 1gb
 
 ```bash
 time s3cmd put 1gb s3://leofs/
-real	12m29,169s
-user	0m12,961s
-sys	0m1,672s
+real	0m19.099s
+user	0m7.855s
+sys	0m1.620s
+
 ```
+
+leofs-adm du для 1 ноды:
+
+```bash
+leofs-adm du S0@172.26.9.179
+ active number of objects: 156
+  total number of objects: 156
+   active size of objects: 602954495
+    total size of objects: 602954495
+     ratio of active size: 100.0%
+    last compaction start: ____-__-__ __:__:__
+      last compaction end: ____-__-__ __:__:__
+```
+
+leofs-adm whereis leofs/1gb
+
+
+```bash
+leofs-adm whereis leofs/1gb
+-------+----------------------+--------------------------------------+------------+--------------+----------------+----------------+----------------+----------------------------
+ del?  |         node         |             ring address             |    size    |   checksum   |  has children  |  total chunks  |     clock      |             when            
+-------+----------------------+--------------------------------------+------------+--------------+----------------+----------------+----------------+----------------------------
+       | S0@172.26.9.181      | 657a9f3a3db822a7f1f5050925b26270     |    976563K |   a4634eea55 | true           |             64 | 598f2aa976a4f  | 2019-12-05 10:48:15 +0000
+       | S0@172.26.9.182      | 657a9f3a3db822a7f1f5050925b26270     |    976563K |   a4634eea55 | true           |             64 | 598f2aa976a4f  | 2019-12-05 10:48:15 +0000
+```
+
+Активируем NFS на Leo Gateway.
+
+На сервере 172.26.9.184 установим nfs-utils
+
+```bash
+sudo yum install nfs-utils
+```
+
+Согласно инструкции поправим файл конфигурации `/usr/local/leofs/current/leo_gateway/etc/leo_gateway.conf`
+
+```bash
+protocol = nfs
+```
+На сервере 172.26.9.184 запустим rpcbind 
+```bash
+sudo service rpcbind start
+```
+На сервере где запущен leo_manager создадим bucket для NFS и сгенерируем ключ для подключения к NFS
+```bash
+leofs-adm add-bucket test 05236
+leofs-adm gen-nfs-mnt-key test 05236 ip-адрес-nfs-клиента
+
+Подключение к NFS
+
+​```bash
+sudo mkdir /mnt/leofs
+## for Linux - "sudo mount -t nfs -o nolock <host>:/<bucket>/<token> <dir>"
+sudo mount -t nfs -o nolock ip-адрес-nfs-сервера-там-где-у-вас-установлен-gateway:/bucket/access_key_id/ключ-полученный-от-gen-nfs-mnt-key /mnt/leofs
+sudo mount -t nfs -o nolock 172.26.9.184:/test/05236/bb5034f0c740148a346ed663ca0cf5157efb439f /mnt/leofs
+```
+
+Просмотр дискового простанства:
+
+```bash
+df -hP
+Filesystem                                                         Size  Used Avail Use% Mounted on
+172.26.9.184:/test/05236/e7298032e78749149dd83a1e366afb328811c95b   60G  3.6G   57G   6% /mnt/leofs
+
+```
+
+Логи находятся в директориях `/usr/local/leofs/current/*/log`
 
