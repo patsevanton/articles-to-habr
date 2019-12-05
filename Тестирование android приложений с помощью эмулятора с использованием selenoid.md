@@ -268,3 +268,9 @@ https://vimeo.com/377268541
 
 
 
+Телеграм чаты:
+
+https://t.me/aerokube - chat Aerokube
+
+https://t.me/atinfo_chat - chat for test automation engineers
+
