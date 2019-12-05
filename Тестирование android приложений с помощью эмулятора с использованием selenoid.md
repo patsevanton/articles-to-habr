@@ -232,3 +232,37 @@ DemoTest.java:
 
 https://vimeo.com/377268541
 
+### Поиск нужных location в мобильном приложении с помощью Appium
+
+Скачиваем и запускаем Appium
+
+Идем в `File` -->  `New Session Window`
+
+![](https://habrastorage.org/webt/5q/ri/v8/5qriv83ldaz31rwvhtrk2_bm_se.png)
+
+В поле `Remote host` указываем адрес сервера, где запущен Selenoid.
+
+В поле `Remote Port` указываем port, на котором запущен Selenoid - обычно это 4444.
+
+В поле `Remote Path` указывем `/wd/hub`
+
+В `Desired Capabiliting` указывем нужные вам `Capabilities`.
+
+Минимальный JSON получается такой:
+
+```json
+{
+  "browserName": "chrome",
+  "browserVersion": "mobile-75.0",
+  "enableVNC": true
+}
+```
+
+После старта сессии у вас появится вот такая картина:
+
+![](https://habrastorage.org/webt/le/yu/kl/leyuklvbvy3ivmpqfnnmehxutyu.png)
+
+Теперь можно исследовать/искать нужные вам location.
+
+![](https://habrastorage.org/webt/_7/1q/67/_71q67msm7lgv54-txgslr5cfqm.png)
+
