@@ -131,11 +131,19 @@ $ ansible-playbook -i hosts config_leofs.yml
 $ ansible-playbook -i hosts start_leofs.yml
 ```
 
-Проверяем статус кластера
+Проверяем статус кластера на Primary LeoManager
 
 ```bash
 leofs-adm status
 ```
+
+Primary и Secondary можно увидеть в логах ansible-playbook
+
+![](https://habrastorage.org/webt/do/kp/oj/dokpoj8lmzwh3bmakpxx9anc-4i.png)
+
+![](https://habrastorage.org/webt/ku/0o/bt/ku0obtn6ezvfghyfai01zldeaws.png)
+
+
 
 Вывод будет примерно такой
 
@@ -484,8 +492,20 @@ leo_storage
 df -hP
 Filesystem                                                         Size  Used Avail Use% Mounted on
 172.26.9.184:/test/05236/e7298032e78749149dd83a1e366afb328811c95b  120G  3.6G  117G   3% /mnt/leofs
-
 ```
 
+Если используется 5 нод storage
 
+```bash
+[leo_storage]
+172.26.9.178 leofs_module_nodename=S0@172.26.9.178
+172.26.9.179 leofs_module_nodename=S1@172.26.9.179
+172.26.9.181 leofs_module_nodename=S2@172.26.9.181
+172.26.9.182 leofs_module_nodename=S3@172.26.9.182
+172.26.9.183 leofs_module_nodename=S4@172.26.9.183
+```
 
+```bash
+df -hP
+172.26.9.184:/test/05236/e7298032e78749149dd83a1e366afb328811c95b  100G  3.0G   97G   3% /mnt/leofs
+```
