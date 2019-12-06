@@ -7,13 +7,12 @@ LeoFS состоит из трёх компонентов:
 - [LeoFS Manager](https://leo-project.net/leofs/docs/architecture/leo_manager/) - отслеживает работу узлов LeoFS Gateway и LeoFS Storage, ведёт мониторинг состояния узлов и проверяет контрольные суммы. Гарантирует целостность данных и высокую доступность хранилища.
 
 В этом посте установим Leofs c помощью ansible-playbook, протестируем S3, NFS.
-
+<cut />
 Если вы попытаетесь установить LeoFS используя официальные playbook-и, то вас ждут разные ошибки: [1](https://github.com/leo-project/leofs_ansible/issues/5),[2](https://github.com/leo-project/leofs_ansible/issues/4). В этом посте напишу что нужно сделать чтобы эти ошибки избежать.
 
 Там где вы будете запускать ansible-playbook, нужно установить netcat.
 
-Пример inventory (в репозитории hosts.sample):
-
+<spoiler title="Пример inventory (в репозитории hosts.sample):">
 ```ini
 # Please check roles/common/vars/leofs_releases for available versions
 [all:vars]
@@ -50,10 +49,10 @@ leo_manager_1
 leo_gateway
 leo_storage
 ```
+</spoiler>
 
 
-
-Отключение Selinux. Надеюсь что сообщество напишит политики Selinux для LeoFS.
+Отключение Selinux. Надеюсь что сообщество создаст политики Selinux для LeoFS.
 
 ```yaml
     - name: Install libselinux as prerequisite for SELinux Ansible module
@@ -144,9 +143,7 @@ Primary и Secondary можно увидеть в логах ansible-playbook
 ![](https://habrastorage.org/webt/ku/0o/bt/ku0obtn6ezvfghyfai01zldeaws.png)
 
 
-
-Вывод будет примерно такой
-
+<spoiler title="Вывод будет примерно такой">
 ```bash
  [System Confiuration]
 -----------------------------------+----------
@@ -189,8 +186,8 @@ Primary и Secondary можно увидеть в логах ansible-playbook
   G    | G0@172.26.9.180      | running      |         | a0314afb       | a0314afb       | 2019-12-05 10:33:49 +0000
   G    | G0@172.26.9.184      | running      |         | a0314afb       | a0314afb       | 2019-12-05 10:33:49 +0000
 -------+----------------------+--------------+---------+----------------+----------------+----------------------------
-
 ```
+</spoiler>
 
 Создаем юзера leofs:
 
@@ -303,12 +300,6 @@ WARNING: Retrying failed request: /?delimiter=%2F (getaddrinfo() argument 2 must
 WARNING: Waiting 3 sec...
 WARNING: Retrying failed request: /?delimiter=%2F (getaddrinfo() argument 2 must be integer or string)
 WARNING: Waiting 6 sec...
-WARNING: Retrying failed request: /?delimiter=%2F (getaddrinfo() argument 2 must be integer or string)
-WARNING: Waiting 9 sec...
-WARNING: Retrying failed request: /?delimiter=%2F (getaddrinfo() argument 2 must be integer or string)
-WARNING: Waiting 12 sec...
-WARNING: Retrying failed request: /?delimiter=%2F (getaddrinfo() argument 2 must be integer or string)
-WARNING: Waiting 15 sec...
 ERROR: Test failed: Request failed for: /?delimiter=%2F
 ```
 
@@ -327,7 +318,6 @@ time s3cmd put 1gb s3://leofs/
 real	0m19.099s
 user	0m7.855s
 sys	0m1.620s
-
 ```
 
 leofs-adm du для 1 ноды:
@@ -342,9 +332,10 @@ leofs-adm du S0@172.26.9.179
     last compaction start: ____-__-__ __:__:__
       last compaction end: ____-__-__ __:__:__
 ```
+Видим что вывод не очень информативный.
 
+Посмотрим где расположен этот файл.
 leofs-adm whereis leofs/1gb
-
 
 ```bash
 leofs-adm whereis leofs/1gb
@@ -393,10 +384,9 @@ sudo mount -t nfs -o nolock 172.26.9.184:/test/05236/bb5034f0c740148a346ed663ca0
 df -hP
 Filesystem                                                         Size  Used Avail Use% Mounted on
 172.26.9.184:/test/05236/e7298032e78749149dd83a1e366afb328811c95b   60G  3.6G   57G   6% /mnt/leofs
-
 ```
 
-Логи находятся в директориях `/usr/local/leofs/current/*/log`
+
 
 Установка LeoFS с 6 storage нодами.
 
@@ -509,5 +499,7 @@ Filesystem                                                         Size  Used Av
 df -hP
 172.26.9.184:/test/05236/e7298032e78749149dd83a1e366afb328811c95b  100G  3.0G   97G   3% /mnt/leofs
 ```
+
+Логи находятся в директориях `/usr/local/leofs/current/*/log`
 
 Телеграм канал: [SDS и Кластерные FS](https://t.me/sds_ru)
