@@ -310,7 +310,7 @@ ERROR: Test failed: Request failed for: /?delimiter=%2F
 fallocate -l 1GB 1gb
 ```
 
-Загружаем его в Leofs 
+Загружаем его в Leofs
 
 ```bash
 time s3cmd put 1gb s3://leofs/
@@ -345,9 +345,9 @@ leofs-adm whereis leofs/1gb
        | S0@172.26.9.182      | 657a9f3a3db822a7f1f5050925b26270     |    976563K |   a4634eea55 | true           |             64 | 598f2aa976a4f  | 2019-12-05 10:48:15 +0000
 ```
 
-Активируем NFS на Leo Gateway.
+Активируем NFS на сервере Leo Gateway 172.26.9.184. 
 
-На сервере 172.26.9.184 установим nfs-utils
+На сервере и клиенте установим nfs-utils
 
 ```bash
 sudo yum install nfs-utils
@@ -358,9 +358,10 @@ sudo yum install nfs-utils
 ```bash
 protocol = nfs
 ```
-На сервере 172.26.9.184 запустим rpcbind 
+На сервере 172.26.9.184 запустим rpcbind и leofs-gateway
 ```bash
 sudo service rpcbind start
+sudo service leofs-gateway restart
 ```
 На сервере где запущен leo_manager создадим bucket для NFS и сгенерируем ключ для подключения к NFS
 ```bash
@@ -376,7 +377,7 @@ sudo mount -t nfs -o nolock ip-адрес-nfs-сервера-там-где-у-в
 sudo mount -t nfs -o nolock 172.26.9.184:/test/05236/bb5034f0c740148a346ed663ca0cf5157efb439f /mnt/leofs
 ```
 
-Просмотр дискового простанства:
+Дисковое простанство c учетом что каждая нода storage имеет диск 40ГБ (3 ноды running, 1 нода attached):
 
 ```bash
 df -hP
@@ -386,4 +387,106 @@ Filesystem                                                         Size  Used Av
 ```
 
 Логи находятся в директориях `/usr/local/leofs/current/*/log`
+
+Установка LeoFS с 6 storage нодами.
+
+Inventory:
+
+```bash
+# Please check roles/common/vars/leofs_releases for available versions
+[all:vars]
+leofs_version=1.4.3
+build_temp_path="/tmp/leofs_builder"
+build_install_path="/tmp/"
+build_branch="master"
+source="package"
+
+#[builder]
+#172.26.9.177
+
+# nodename of leo_manager_0 and leo_manager_1 are set at group_vars/all
+[leo_manager_0]
+172.26.9.177
+
+# nodename of leo_manager_0 and leo_manager_1 are set at group_vars/all
+[leo_manager_1]
+172.26.9.176
+
+[leo_storage]
+172.26.9.178 leofs_module_nodename=S0@172.26.9.178
+172.26.9.179 leofs_module_nodename=S0@172.26.9.179
+172.26.9.181 leofs_module_nodename=S0@172.26.9.181
+172.26.9.182 leofs_module_nodename=S0@172.26.9.182
+172.26.9.183 leofs_module_nodename=S0@172.26.9.183
+172.26.9.185 leofs_module_nodename=S0@172.26.9.185
+
+[leo_gateway]
+172.26.9.180 leofs_module_nodename=G0@172.26.9.180
+172.26.9.184 leofs_module_nodename=G0@172.26.9.184
+
+[leofs_nodes:children]
+leo_manager_0
+leo_manager_1
+leo_gateway
+leo_storage
+```
+
+Вывод leofs-adm status
+
+```bash
+ [System Confiuration]
+-----------------------------------+----------
+ Item                              | Value    
+-----------------------------------+----------
+ Basic/Consistency level
+-----------------------------------+----------
+                    system version | 1.4.3
+                        cluster Id | leofs_1
+                             DC Id | dc_1
+                    Total replicas | 2
+          number of successes of R | 1
+          number of successes of W | 1
+          number of successes of D | 1
+ number of rack-awareness replicas | 0
+                         ring size | 2^128
+-----------------------------------+----------
+ Multi DC replication settings
+-----------------------------------+----------
+ [mdcr] max number of joinable DCs | 2
+ [mdcr] total replicas per a DC    | 1
+ [mdcr] number of successes of R   | 1
+ [mdcr] number of successes of W   | 1
+ [mdcr] number of successes of D   | 1
+-----------------------------------+----------
+ Manager RING hash
+-----------------------------------+----------
+                 current ring-hash | d8ff465e
+                previous ring-hash | d8ff465e
+-----------------------------------+----------
+
+ [State of Node(s)]
+-------+----------------------+--------------+---------+----------------+----------------+----------------------------
+ type  |         node         |    state     | rack id |  current ring  |   prev ring    |          updated at         
+-------+----------------------+--------------+---------+----------------+----------------+----------------------------
+  S    | S0@172.26.9.178      | running      |         | d8ff465e       | d8ff465e       | 2019-12-06 05:18:29 +0000
+  S    | S0@172.26.9.179      | running      |         | d8ff465e       | d8ff465e       | 2019-12-06 05:18:29 +0000
+  S    | S0@172.26.9.181      | running      |         | d8ff465e       | d8ff465e       | 2019-12-06 05:18:30 +0000
+  S    | S0@172.26.9.182      | running      |         | d8ff465e       | d8ff465e       | 2019-12-06 05:18:29 +0000
+  S    | S0@172.26.9.183      | running      |         | d8ff465e       | d8ff465e       | 2019-12-06 05:18:29 +0000
+  S    | S0@172.26.9.185      | running      |         | d8ff465e       | d8ff465e       | 2019-12-06 05:18:29 +0000
+  G    | G0@172.26.9.180      | running      |         | d8ff465e       | d8ff465e       | 2019-12-06 05:18:31 +0000
+  G    | G0@172.26.9.184      | running      |         | d8ff465e       | d8ff465e       | 2019-12-06 05:18:31 +0000
+-------+----------------------+--------------+---------+----------------+----------------+----------------------------
+```
+
+Дисковое простанство c учетом что каждая нода storage имеет диск 40ГБ (6 нод running):
+
+```bash
+df -hP
+Filesystem                                                         Size  Used Avail Use% Mounted on
+172.26.9.184:/test/05236/e7298032e78749149dd83a1e366afb328811c95b  120G  3.6G  117G   3% /mnt/leofs
+
+```
+
+
 
