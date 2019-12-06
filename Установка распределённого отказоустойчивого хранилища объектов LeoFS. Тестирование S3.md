@@ -509,3 +509,5 @@ Filesystem                                                         Size  Used Av
 df -hP
 172.26.9.184:/test/05236/e7298032e78749149dd83a1e366afb328811c95b  100G  3.0G   97G   3% /mnt/leofs
 ```
+
+Телеграм канал: [SDS и Кластерные FS](https://t.me/sds_ru)
