@@ -116,6 +116,8 @@ leo_storage
 
 ```
 
+Полную версию поправленых ansible playbook можно найти здесь: <https://github.com/patsevanton/leofs_ansible>
+
 Далее выполняем как написано в <https://github.com/leo-project/leofs_ansible> без build_leofs.yml
 
 ```bash
@@ -390,7 +392,7 @@ Filesystem                                                         Size  Used Av
 
 Установка LeoFS с 6 storage нодами.
 
-Inventory:
+Inventory (без builder):
 
 ```bash
 # Please check roles/common/vars/leofs_releases for available versions
@@ -400,9 +402,6 @@ build_temp_path="/tmp/leofs_builder"
 build_install_path="/tmp/"
 build_branch="master"
 source="package"
-
-#[builder]
-#172.26.9.177
 
 # nodename of leo_manager_0 and leo_manager_1 are set at group_vars/all
 [leo_manager_0]
