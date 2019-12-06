@@ -12,7 +12,10 @@ LeoFS состоит из трёх компонентов:
 
 Там где вы будете запускать ansible-playbook, нужно установить netcat.
 
+#### Пример inventory
+
 <spoiler title="Пример inventory (в репозитории hosts.sample):">
+
 ```ini
 # Please check roles/common/vars/leofs_releases for available versions
 [all:vars]
@@ -51,6 +54,7 @@ leo_storage
 ```
 </spoiler>
 
+#### Подготовка серверов
 
 Отключение Selinux. Надеюсь что сообщество создаст политики Selinux для LeoFS.
 
@@ -117,6 +121,8 @@ leo_storage
 
 Полную версию поправленых ansible playbook можно найти здесь: <https://github.com/patsevanton/leofs_ansible>
 
+#### Установка, конфигурирование, запуск
+
 Далее выполняем как написано в <https://github.com/leo-project/leofs_ansible> без build_leofs.yml
 
 ```bash
@@ -130,7 +136,7 @@ $ ansible-playbook -i hosts config_leofs.yml
 $ ansible-playbook -i hosts start_leofs.yml
 ```
 
-Проверяем статус кластера на Primary LeoManager
+#### Проверяем статус кластера на Primary LeoManager
 
 ```bash
 leofs-adm status
@@ -189,6 +195,8 @@ Primary и Secondary можно увидеть в логах ansible-playbook
 ```
 </spoiler>
 
+#### Создаем юзера
+
 Создаем юзера leofs:
 
 ```bash
@@ -208,6 +216,8 @@ _test_leofs | 9       | 05236                  | 2019-12-02 06:56:49 +0000
 leofs       | 1       | 9c2615f32e81e6a1caf5   | 2019-12-02 10:43:29 +0000
 ```
 
+#### Создаем Bucket
+
 Сделал bucket
 
 ```bash
@@ -224,7 +234,9 @@ cluster id   | bucket   | owner  | permissions      | created at
 leofs_1      | leofs    | leofs  | Me(full_control) | 2019-12-02 10:44:02 +0000
 ```
 
-Конфигурирование s3cmd. В поле `HTTP Proxy server name` указываем IP сервера Gateway
+#### Конфигурирование s3cmd
+
+В поле `HTTP Proxy server name` указываем IP сервера Gateway
 
 ```bash
 s3cmd --configure 
@@ -303,7 +315,7 @@ WARNING: Waiting 6 sec...
 ERROR: Test failed: Request failed for: /?delimiter=%2F
 ```
 
-Тестирование загрузки.
+#### Тестирование загрузки
 
 Создаем файл 1ГБ
 
@@ -319,6 +331,8 @@ real	0m19.099s
 user	0m7.855s
 sys	0m1.620s
 ```
+
+#### Статистика
 
 leofs-adm du для 1 ноды:
 
@@ -345,6 +359,8 @@ leofs-adm whereis leofs/1gb
        | S0@172.26.9.181      | 657a9f3a3db822a7f1f5050925b26270     |    976563K |   a4634eea55 | true           |             64 | 598f2aa976a4f  | 2019-12-05 10:48:15 +0000
        | S0@172.26.9.182      | 657a9f3a3db822a7f1f5050925b26270     |    976563K |   a4634eea55 | true           |             64 | 598f2aa976a4f  | 2019-12-05 10:48:15 +0000
 ```
+
+#### Активируем NFS 
 
 Активируем NFS на сервере Leo Gateway 172.26.9.184. 
 
@@ -378,6 +394,8 @@ sudo mount -t nfs -o nolock ip-адрес-nfs-сервера-там-где-у-в
 sudo mount -t nfs -o nolock 172.26.9.184:/test/05236/bb5034f0c740148a346ed663ca0cf5157efb439f /mnt/leofs
 ```
 
+#### Просмотр дискового простанства через NFS клиент
+
 Дисковое простанство c учетом что каждая нода storage имеет диск 40ГБ (3 ноды running, 1 нода attached):
 
 ```bash
@@ -386,9 +404,7 @@ Filesystem                                                         Size  Used Av
 172.26.9.184:/test/05236/e7298032e78749149dd83a1e366afb328811c95b   60G  3.6G   57G   6% /mnt/leofs
 ```
 
-
-
-Установка LeoFS с 6 storage нодами.
+#### Установка LeoFS с 6 storage нодами.
 
 Inventory (без builder):
 
@@ -428,7 +444,7 @@ leo_gateway
 leo_storage
 ```
 
-Вывод leofs-adm status
+#### Вывод leofs-adm status
 
 ```bash
  [System Confiuration]
@@ -484,7 +500,7 @@ Filesystem                                                         Size  Used Av
 172.26.9.184:/test/05236/e7298032e78749149dd83a1e366afb328811c95b  120G  3.6G  117G   3% /mnt/leofs
 ```
 
-Если используется 5 нод storage
+#### Если используется 5 нод storage
 
 ```bash
 [leo_storage]
@@ -499,6 +515,8 @@ Filesystem                                                         Size  Used Av
 df -hP
 172.26.9.184:/test/05236/e7298032e78749149dd83a1e366afb328811c95b  100G  3.0G   97G   3% /mnt/leofs
 ```
+
+#### Логи
 
 Логи находятся в директориях `/usr/local/leofs/current/*/log`
 
