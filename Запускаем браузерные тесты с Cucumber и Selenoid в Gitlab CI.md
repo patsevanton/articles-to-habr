@@ -207,6 +207,27 @@ build:
 
 Появится URL, по которому можно просмотреть Allure отчет.
 
+Для отображения Allure отчета нужно чтобы на gitlab runner был установлен nginx с такой конфигурацией:
+```bash
+server {
+    listen       9090;
+    listen       [::]:9090;
+    server_name  _;
+    root         /home/gitlab-runner/builds;
+
+    location / {
+        autoindex on;
+    }
+
+    error_page 404 /404.html;
+        location = /40x.html {
+    }
+
+    error_page 500 502 503 504 /50x.html;
+        location = /50x.html {
+    }
+```
+
 Скриншот Allure отчета
 
 ![](https://habrastorage.org/webt/1a/nk/-v/1ank-vhxpxd1fc2mkoykry6f8ja.png)
