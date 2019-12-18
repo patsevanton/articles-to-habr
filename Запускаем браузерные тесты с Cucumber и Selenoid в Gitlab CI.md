@@ -2,7 +2,7 @@
 
 [Selenoid](https://github.com/aerokube/selenoid) представляет собой альтернативное решение Selenium Server, хотя суть та же — организация работы драйверов.
 
-В этом посте будет запуск простых браузерных тестов с помощью Cucumber и Selenoid в Gitlab CI.md.
+В этом посте будет запуск простого браузерного теста с помощью Cucumber и Selenoid в Gitlab CI c Allure отчетом в конце.
 
 ### Подготовка
 
@@ -172,3 +172,41 @@ mvn clean test
 ### Запуск тестов в Gitlab CI
 
 Чтобы каждый раз не запускать Selenoid и Selenoid-UI при запуске тестов, можно запустить Selenoid и Selenoid-UI один раз при запуске Gitlab Runner с помощью Ansible, Puppet, Chef или других инструментов.
+
+Итоговый .gitlab-ci.yml
+
+```yaml
+---
+variables:
+  MAVEN_OPTS: "-Dhttps.protocols=TLSv1.2 -Dmaven.repo.local=/home/gitlab-runner/.m2/repository -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=WARN -Dorg.slf4j.simpleLogger.showDateTime=true -Djava.awt.headless=true"
+  MAVEN_CLI_OPTS: "--batch-mode --errors --fail-at-end --show-version -DinstallAtEnd=true -DdeployAtEnd=true"
+
+before_script:
+  - export PATH="/opt/rh/rh-maven33/root/usr/bin:$PATH"
+
+build:
+  stage: build
+  script:
+    - aerokube-cm selenoid start --force --browsers "firefox:70;firefox:71;chrome:78;chrome:79" --registry docker-registry
+    - aerokube-cm selenoid-ui start --registry docker-registry
+    - cat ~/.aerokube/selenoid/browsers.json
+    - set +e
+    - mvn -s maven_settings.xml clean install -Dmaven.test.skip=true
+    - mvn -s maven_settings.xml clean test || EXIT_CODE=$?
+    - mvn -s maven_settings.xml allure:aggregate;
+    - export PATH_WITHOUT_HOME=$(pwd | sed -e "s/\/home\/gitlab-runner\/builds//g")
+    - echo '***********************************************************************'
+    - echo "http://$HOSTNAME:9090$PATH_WITHOUT_HOME/target/site/allure-maven-plugin/"
+    - echo '***********************************************************************'
+    - set -e
+    - exit ${EXIT_CODE}
+
+```
+
+После строки `echo "http://$HOSTNAME:9090$PATH_WITHOUT_HOME/target/site/allure-maven-plugin/"`
+
+Появится URL, по которому можно просмотреть Allure отчет.
+
+Скриншот Allure отчета
+
+![](https://habrastorage.org/webt/1a/nk/-v/1ank-vhxpxd1fc2mkoykry6f8ja.png)
