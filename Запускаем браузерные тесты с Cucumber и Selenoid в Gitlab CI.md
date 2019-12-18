@@ -88,7 +88,7 @@ docker ps
 docker images
 ```
 
-![](https://habrastorage.org/webt/6u/xe/4s/6uxe4sj8mr1whgda1ayt6pceoos.png)
+![](https://habrastorage.org/webt/ti/bz/nh/tibznhc23bodj4jxrx1to95znbo.png)
 
 ### Запуск Selenoid UI используя Configuration manager
 
@@ -109,7 +109,7 @@ docker ps
 docker images
 ```
 
-![](https://habrastorage.org/webt/-x/pd/cw/-xpdcwppkyiael9ly2agw0opgv4.png)
+![](https://habrastorage.org/webt/mv/c9/g7/mvc9g78xgxhyy45cf3xxahdsy3i.png)
 
 Заходим в selenoid-ui по адресу ip-где-вы-запускали-selenoid-и-selenoid-ui:8080
 
@@ -125,7 +125,7 @@ docker images
 
 DEMO TEST
 
-Скачиваем https://github.com/aerokube/demo-tests
+Скачиваем https://github.com/andewBr/cucumber_selenium_test
 
 
 
@@ -133,7 +133,7 @@ DEMO TEST
 
 или на другой адрес, там где вы запустили selenoid.
 
-В файле DemoTest.java добавляем setCapability для запуска chrome на Android чтобы получилось примерно так. Если вы используете прокси сервер, то добавьте строки про прокси как на стриншоте.
+В файле WebdriverBeanConfig.java добавляем Capability для запуска chrome. Если вы используете прокси сервер, то добавьте строки про прокси как на стриншоте.
 
 ![](https://habrastorage.org/webt/zw/vs/em/zwvsemk7jsrrxobacuqzg5hzvfu.png)
 
