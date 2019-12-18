@@ -37,25 +37,35 @@ aerokube-cm selenoid start --force --browsers "firefox:70.0;firefox:71.0;chrome:
 Ключ `--force` перезаписывает файл browsers.json.
 
 
-Итоговый файл browsers.json для тестирования Chrome и firefox
+Итоговый файл browsers.json для тестирования Chrome и Firefox. Заметьте что path у Chrome и Firefox разные.
 
 ```json
 {
-    "android": {
-        "default": "6.0",
+    "chrome": {
+        "default": "79.0",
         "versions": {
-            "6.0": {
-                "image": "docker-registry:443/selenoid/android:6.0",
+            "78.0": {
+                "image": "docker-registry/selenoid/chrome:78.0",
                 "port": "4444",
-                "path": "/wd/hub"
+                "path": "/"
+            },
+            "79.0": {
+                "image": "docker-registry/selenoid/chrome:79.0",
+                "port": "4444",
+                "path": "/"
             }
         }
     },
-    "chrome": {
-        "default": "mobile-75.0",
+    "firefox": {
+        "default": "71.0",
         "versions": {
-            "mobile-75.0": {
-                "image": "docker-registry:443/selenoid/chrome-mobile:75.0",
+            "70.0": {
+                "image": "docker-registry/selenoid/firefox:70.0",
+                "port": "4444",
+                "path": "/wd/hub"
+            },
+            "71.0": {
+                "image": "docker-registry/selenoid/firefox:71.0",
                 "port": "4444",
                 "path": "/wd/hub"
             }
@@ -64,26 +74,11 @@ aerokube-cm selenoid start --force --browsers "firefox:70.0;firefox:71.0;chrome:
 }
 ```
 
-Пока что версия мобильного хрома отстает от версии обычного хрома.
-Скачиваем образ мобильного хрома
-```bash
-docker pull selenoid/chrome-mobile:75.0
-```
-
 ### Изменение browsers.json
 
-При изменении файла browsers.json нужно перезагрузить selenoid
+При изменении версий браузеров можно изменить файл browsers.json и перезагрузить selenoid.
 
-```bash
-aerokube-cm selenoid stop
-```
-
-```bash
-aerokube-cm selenoid start
-```
-Reloading configuration
-Можно сделать Reloading configuration. Подробности по ссылке:
-https://aerokube.com/selenoid/latest/#_reloading_configuration
+Но если вы используете ключ `--force`, то browsers.json перезапишится с новыми версиями браузеров.
 
 
 Проверяем что docker контейнер запустился и образы скачались.
@@ -120,55 +115,36 @@ docker images
 
 У вас должно быть гореть зеленым 2 слова CONNECTED и написано android и chrome.
 
-![](https://habrastorage.org/webt/no/ic/l8/noicl8rlt7_9tjmaihi2w3l1wia.png)
+![](https://habrastorage.org/webt/-k/fi/dj/-kfidjzsisil5mdy8migutx-xro.png)
+
+В capabilities видим доступные браузеры.
+
+![](https://habrastorage.org/webt/ed/re/bp/edrebpyonygfiokgctqgy0catak.png)
+
+
 
 ### DEMO TEST
 
 Скачиваем https://github.com/aerokube/demo-tests
 
-Во всех трех java файлах меняем путь в RemoteWebDriver на localhost
+
 
 ![](https://habrastorage.org/webt/i-/6v/3_/i-6v3_qo-z7gaxzdx5t_nsdxyrm.png)
 
 или на другой адрес, там где вы запустили selenoid.
 
-В файле AndroidRemoteApkTest.java меняем путь где можно скачать вашу APK.
+В файле DemoTest.java добавляем setCapability для запуска chrome на Android чтобы получилось примерно так. Если вы используете прокси сервер, то добавьте строки про прокси как на стриншоте.
 
-```bash
-device.setCapability("app", "http://ci.example.com/game2048.apk");
-```
-
-на
-
-device.setCapability("app", "http://ссылка-до-вашей-apk");
-
-или 
-
-```bash
-device.setCapability("app", "http://hostname-или-FQDN-сервера-где-лежит-apk:8000/game2048.apk");
-```
-
-Если вы будете ссылаться на localhost из docker, то у вас будет вот такая ошибка, так как вы из сети docker пытаетесь обраться к localhost основного сервера:
-
-```bash
-Tests in error: 
-  browserTest(com.aerokube.selenoid.AndroidRemoteApkTest): An unknown server-side error occurred while processing the command. Original error: Problem downloading app from url http://localhost:8000/apk/game2048.apk: connect ECONNREFUSED 127.0.0.1:8000
-```
-
-Как сделать доступной для скачивания ваши локальные файлы будет ниже.
-
-В файле DemoTest.java добавляем setCapability для запуска chrome на Android чтобы получилось примерно так.
-
-![](https://habrastorage.org/webt/nb/at/4d/nbat4dgrfnrsjz-u-inkwdo_r8q.png)
+![](https://habrastorage.org/webt/zw/vs/em/zwvsemk7jsrrxobacuqzg5hzvfu.png)
 
 В каждом файле java вы можете включить или выключить запись видео, удаленный просмотр или управление через VNC и запись логов в файл. Чтобы выключить опцию нужно добавить 2 слеша в начало строки.
 
-![](https://habrastorage.org/webt/bl/dy/jd/bldyjdaxstceqigh7szqsb5qvlo.png)
+![](https://habrastorage.org/webt/ji/wx/mh/jiwxmhj3ezvbcf8eh-vlha3gpg4.png)
 
-Чтобы сделать доступной для скачивания файлы из текущей директории, нужно запустить в отдельной консоле в этой директории команду:
+
 
 ```bash
-ruby -rwebrick -e'WEBrick::HTTPServer.new(:Port => 8000, :DocumentRoot => Dir.pwd).start'
+
 ```
 
 ### Запуск тестов
@@ -189,67 +165,8 @@ mvn clean test
 
 ### Скорость
 
-Общее время разворачивания android эмулятора и запуск 1 теста занимает меньше 1 минуты.
+Общее время запуск 1 теста занимает меньше 1 минуты.
 
 
 
-### Известные баги
-
-<https://github.com/aerokube/demo-tests/issues/5>
-
-### Видеозапись тестов
-
-AndroidDemoTest.java:
-
-https://vimeo.com/377272195
-
-AndroidRemoteApkTest.java:
-
-https://vimeo.com/377272491
-
-DemoTest.java:
-
-https://vimeo.com/377268541
-
-### Поиск нужных location в мобильном приложении с помощью Appium
-
-Скачиваем и запускаем Appium
-
-Идем в `File` -->  `New Session Window`
-
-![](https://habrastorage.org/webt/5q/ri/v8/5qriv83ldaz31rwvhtrk2_bm_se.png)
-
-В поле `Remote host` указываем адрес сервера, где запущен Selenoid.
-
-В поле `Remote Port` указываем port, на котором запущен Selenoid - обычно это 4444.
-
-В поле `Remote Path` указывем `/wd/hub`
-
-В `Desired Capabiliting` указывем нужные вам `Capabilities`.
-
-Минимальный JSON получается такой:
-
-```json
-{
-  "browserName": "chrome",
-  "browserVersion": "mobile-75.0",
-  "enableVNC": true
-}
-```
-
-После старта сессии у вас появится вот такая картина:
-
-![](https://habrastorage.org/webt/le/yu/kl/leyuklvbvy3ivmpqfnnmehxutyu.png)
-
-Теперь можно исследовать/искать нужные вам location.
-
-![](https://habrastorage.org/webt/_7/1q/67/_71q67msm7lgv54-txgslr5cfqm.png)
-
-
-
-Телеграм чаты:
-
-https://t.me/aerokube - chat Aerokube
-
-https://t.me/atinfo_chat - chat for test automation engineers
 
