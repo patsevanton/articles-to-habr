@@ -22,7 +22,7 @@ yum -y install aerokube-cm
 
 ### Запуск Selenoid используя Configuration manager и формирование browsers.json
 
-Если у вас нет прямого доступа в инет и docker образы вы скачиваете через registry:
+Если у вас нет прямого доступа в инет и docker образы вы скачиваете через registry.
 
 ```bash
 aerokube-cm selenoid start --force --browsers "firefox:70.0;firefox:71.0;chrome:78.0;chrome:79.0" --registry ваш-docker-registry
@@ -123,7 +123,7 @@ docker images
 
 
 
-### DEMO TEST
+DEMO TEST
 
 Скачиваем https://github.com/aerokube/demo-tests
 
@@ -169,4 +169,6 @@ mvn clean test
 
 
 
+### Запуск тестов в Gitlab CI
 
+Чтобы каждый раз не запускать Selenoid и Selenoid-UI при запуске тестов, можно запустить Selenoid и Selenoid-UI один раз при запуске Gitlab Runner с помощью Ansible, Puppet, Chef или других инструментов.
