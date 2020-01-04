@@ -54,7 +54,7 @@
 
 ![](https://habrastorage.org/webt/a2/pk/in/a2pkinpahr-3q5viu9b1ptpoboi.png)
 
-Обычно VCS испольуют схему HTTS. В **Branch specification:** указано смотреть все бранчи и все теги:
+Обычно VCS испольуют схему HTTPS. В **Branch specification:** указано смотреть все бранчи и все теги:
 
 ```bash
 +:refs/heads/*
