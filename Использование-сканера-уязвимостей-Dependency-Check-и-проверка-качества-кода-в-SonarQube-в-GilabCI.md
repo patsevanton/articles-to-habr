@@ -162,3 +162,13 @@ verify:
 
 ```
 
+### SonarQube
+
+Для установки sonarqube из rpm пакетов воспользуемся репозиторием https://harbottle.gitlab.io/harbottle-main.
+
+Установим пакет с репозиторием для CentOS 7.
+
+```bash
+yum install -y https://harbottle.gitlab.io/harbottle-main/7/x86_64/harbottle-main-release.rpm
+```
+
