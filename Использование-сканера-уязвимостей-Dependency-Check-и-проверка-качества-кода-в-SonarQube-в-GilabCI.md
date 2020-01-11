@@ -218,8 +218,7 @@ build:
   stage: build
   script:
     - wget http://ftp.ru.debian.org/debian/pool/main/j/jq/jq_1.4-2.1+deb8u1_amd64.deb
-    - dpkg -i jq_1.4-2.1+deb8u1_amd64.deb
-    - rm -f jq_1.4-2.1+deb8u1_amd64.deb || true
+    - dpkg -i jq_1.4-2.1+deb8u1_amd64.deb && rm -f jq_1.4-2.1+deb8u1_amd64.deb || true
     - mvn $MAVEN_CLI_OPTS -Dmaven.test.failure.ignore=true org.jacoco:jacoco-maven-plugin:0.8.5:prepare-agent clean verify org.jacoco:jacoco-maven-plugin:0.8.5:report
     - mvn $MAVEN_CLI_OPTS -Dmaven.test.skip=true verify sonar:sonar -Dsonar.host.url=$SONAR_HOST_URL -Dsonar.login=$LOGIN -Dsonar.password=$PASSWORD -Dsonar.gitlab.project_id=$CI_PROJECT_PATH -Dsonar.gitlab.commit_sha=$CI_COMMIT_SHA -Dsonar.gitlab.ref_name=$CI_COMMIT_REF_NAME
     - export URL=$(cat target/sonar/report-task.txt | grep ceTaskUrl | cut -c11- ) #URL where report gets stored
