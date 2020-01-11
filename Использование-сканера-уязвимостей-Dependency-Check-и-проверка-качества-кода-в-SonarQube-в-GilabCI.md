@@ -17,11 +17,11 @@ SonarQube - это открытая платформа для обеспечен
 
 ### OWASP Dependency Check
 
-Для тестирования и демонстрации работы Dependency Check используем этот репозиторий:
+Для тестирования и демонстрации работы Dependency Check используем этот репозиторий [dependency-check-example](https://github.com/patsevanton/dependency-check-example).
 
-https://github.com/patsevanton/dependency-check-example 
+Для просмотра HTML отчета нужно настроить web-севрер nginx на вашем gitlab-runner.
 
-Для просмотра HTML отчета нужно настроить web-севрер nginx на вашем gitlab-runner:
+Пример минимального конфига nginx:
 
 ```nginx
 server {
@@ -78,6 +78,8 @@ https://gitlab.com/anton_patsev/dependency-check-example-gitlab-pages/-/jobs/400
 
 
 
+##### Регулирование уровня CVE уязвимостей
+
 Самая главная строка в файле gitlab-ci.yaml:
 
 ```bash
@@ -85,3 +87,78 @@ mvn $MAVEN_CLI_OPTS test org.owasp:dependency-check-maven:check -DfailBuildOnCVS
 ```
 
 Параметром failBuildOnCVSS вы можете регулировать уровень CVE уязвимостей, на которые нужно реагировать.
+
+##### Скачивание с интернета базы данных уязвимос­тей (NVD) NIST
+
+Вы заметили что постоянно скачивает базы данных уязвимос­тей (NVD) NIST с интернета:
+
+![](https://habrastorage.org/webt/7s/hy/8b/7shy8blkqreiypfplbfcpgtg50s.png)
+
+Для скачивания можно использовать утилиту [nist_data_mirror_golang](https://github.com/patsevanton/nist_data_mirror_golang)
+
+Установим и запустим ее.
+
+```
+yum -y install yum-plugin-copr
+yum copr enable antonpatsev/nist_data_mirror_golang
+yum -y install nist-data-mirror
+systemctl start nist-data-mirror
+```
+
+Nist-data-mirror закачивает CVE JSON NIST в /var/www/repos/nist-data-mirror/ при запуске и обновляет данные каждые 24 часа.
+
+Для скачивания CVE JSON NIST нужно настроить web-севрер nginx (например на вашем gitlab-runner).
+
+Пример минимального конфига nginx:
+
+```nginx
+server {
+    listen       12345;
+    listen       [::]:12345;
+    server_name  _;
+    root         /var/www/repos/nist-data-mirror/;
+
+    location / {
+        autoindex on;
+    }
+
+    error_page 404 /404.html;
+        location = /40x.html {
+    }
+
+    error_page 500 502 503 504 /50x.html;
+        location = /50x.html {
+    }
+
+}
+```
+
+Чтобы не делать длинную строку где запускается mvn вынесем параметры в отдельную переменную  DEPENDENCY_OPTS.
+
+Итоговый минимальный конфиг .gitlab-ci.yml получится вот так: 
+
+```yaml
+variables:
+  MAVEN_OPTS: "-Dhttps.protocols=TLSv1.2 -Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=WARN -Dorg.slf4j.simpleLogger.showDateTime=true -Djava.awt.headless=true"
+  MAVEN_CLI_OPTS: "--batch-mode --errors --fail-at-end --show-version -DinstallAtEnd=true -DdeployAtEnd=true"
+  DEPENDENCY_OPTS: "-DfailBuildOnCVSS=7 -DcveUrlModified=http://localhost:12345/nvdcve-1.1-modified.json.gz -DcveUrlBase=http://localhost:12345/nvdcve-1.1-%d.json.gz"
+
+cache:
+  paths:
+    - .m2/repository
+
+verify:
+  stage: test
+  script:
+    - set +e
+    - mvn $MAVEN_CLI_OPTS test org.owasp:dependency-check-maven:check $DEPENDENCY_OPTS || EXIT_CODE=$?
+    - export PATH_WITHOUT_HOME=$(pwd | sed -e "s/\/home\/gitlab-runner\/builds//g")
+    - echo "************************* URL Dependency-check-report.html *************************"
+    - echo "http://$HOSTNAME:9999$PATH_WITHOUT_HOME/target/dependency-check-report.html"
+    - set -e
+    - exit ${EXIT_CODE}
+  tags:
+    - shell
+
+```
+
