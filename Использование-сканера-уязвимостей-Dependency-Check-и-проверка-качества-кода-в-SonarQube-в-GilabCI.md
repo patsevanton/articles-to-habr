@@ -25,8 +25,8 @@ https://github.com/patsevanton/dependency-check-example
 
 ```nginx
 server {
-    listen       9090;
-    listen       [::]:9090;
+    listen       9999;
+    listen       [::]:9999;
     server_name  _;
     root         /home/gitlab-runner/builds;
 
