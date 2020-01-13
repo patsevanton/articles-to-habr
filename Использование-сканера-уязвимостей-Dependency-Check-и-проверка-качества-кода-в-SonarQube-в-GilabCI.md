@@ -261,3 +261,14 @@ build:
 ```
 
 Файл .gitlab-ci.yml неидеальный. Тестировался если задачи проверки в sonarqube завершались статусом: "SUCCESS". Пока что другие статусов не было. Как будут другие статусы, поправлю .gitlab-ci.yml  в этом посте.
+
+
+кто может поставьте + этой теме
+
+https://community.sonarsource.com/t/badges-on-private-projects/4894/13
+
+SonarQube не может отобразить Badges для  приватных проектов.
+
+например поместить их в  readme.md
+
+бага https://jira.sonarsource.com/browse/MMF-1178
