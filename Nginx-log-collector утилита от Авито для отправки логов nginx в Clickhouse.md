@@ -4,7 +4,7 @@
 
 Устанавливаем кластер clickhouse с помощью ansible-playbook от [Дениса Проскурина](https://daybydayz.ru/2018/02/05/ансибл-роль-для-установки-clickhouse-и-zookeper/).
 
-Создание бд и таблиц в clickhouse
+### Создание бд и таблиц в clickhouse
 
 В этом [файле](https://github.com/avito-tech/nginx-log-collector/blob/master/etc/examples/clickhouse/table_schema.sql) описаны SQL запросы для создания бд и таблиц для nginx-log-collector в clickhouse.
 
@@ -16,7 +16,7 @@
 ENGINE = Distributed('logs_cluster', 'nginx', 'access_log_shard', rand())
 ```
 
-
+### Устанавливка и настройка nginx-log-collector-rpm
 
 Nginx-log-collector не имеет rpm. Здесь https://github.com/patsevanton/nginx-log-collector-rpm создаем ему rpm. Собираться rpm будет с помощью [Fedora Copr](https://copr.fedorainfracloud.org/coprs/antonpatsev/nginx-log-collector-rpm/) 
 
@@ -44,6 +44,8 @@ systemctl start nginx-log-collector
     table: nginx.error_log
     dsn: http://ip-адрес-кластера-clickhouse:8123/
 ```
+
+### Настройка nginx
 
 Общий конфиг nginx:
 
@@ -130,7 +132,9 @@ server {
 ip-адрес-сервера-с-nginx vhost1
 ```
 
-В качестве эмулятора HTTP сервиса будем использовать [nodejs-stub-server](https://github.com/maxiko/nodejs-stub-server) от [Maxim Ignatenko](https://habr.com/users/Anthrax_Beta/)
+### Эмулятор HTTP сервера
+
+В качестве эмулятора HTTP сервера будем использовать [nodejs-stub-server](https://github.com/maxiko/nodejs-stub-server) от [Maxim Ignatenko](https://habr.com/users/Anthrax_Beta/)
 
 Nodejs-stub-server не имеет rpm. Здесь https://github.com/patsevanton/nodejs-stub-server создаем ему rpm. Собираться rpm будет с помощью [Fedora Copr](https://copr.fedorainfracloud.org/coprs/antonpatsev/nodejs-stub-server/) 
 
@@ -143,8 +147,7 @@ yum -y install stub_http_server
 systemctl start stub_http_server
 ```
 
-Так же вам нужно создать переменную table с содержимым `nginx.access_log`.
-![](https://habrastorage.org/webt/hs/ta/jd/hstajdx3bnaqy07jxy96lj5wpjw.png)
+### Нагрузочное тестирование
 
 Тестирование проводим с помощью Apache benchmark.
 
@@ -164,11 +167,16 @@ while true; do ab -H "User-Agent: 4server" -c 10 -n 10 -t 10 http://vhost1/; sle
 while true; do ab -H "User-Agent: 5server" -c 10 -n 10 -t 10 http://vhost1/; sleep 1; done
 ```
 
+### Настройка Grafana
+
 На официальном сайте Grafana вы не найдете дашборд. 
 
 Поэтому будем делать его вручую.
 
 Мой сохраненный дашборд вы можете найти [тут](https://gist.github.com/patsevanton/e6fb0dfda1dfcf97efb6d762088bda18).
+
+Так же вам нужно создать переменную table с содержимым `nginx.access_log`.
+![](https://habrastorage.org/webt/hs/ta/jd/hstajdx3bnaqy07jxy96lj5wpjw.png)
 
 Singlestat Total Requests:
 
