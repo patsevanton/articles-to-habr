@@ -1,12 +1,21 @@
-В этой статье будет рассматриваться проект [nginx-log-collector](https://github.com/avito-tech/nginx-log-collector), который будет читать логи nginx, отправлять их в кластер clickhouse. Для просмотра аналитики по логам создадим дашборд для Grafana.  
+В этой статье будет рассматриваться проект [nginx-log-collector](https://github.com/avito-tech/nginx-log-collector), который будет читать логи nginx, отправлять их в кластер Clickhouse. Обычно для логов используют ElasticSearch. Для Clickhouse требуется меньше ресурсов (дисковое пространство, ОЗУ, ЦПУ). Clickhouse быстрее записывает данные. Clickhouse сжимает данные, что делает данные на диске еще компакнее. Преимущества Clickhouse видны по 2 слайдам с доклада [Как VK вставляет данные в ClickHouse с десятков тысяч серверов.](https://habr.com/ru/company/ua-hosting/blog/483712/)
+
+![](https://habrastorage.org/webt/2s/xr/fw/2sxrfwyzgj72wfqblvhlu8fphf0.jpeg)
+
+![](https://habrastorage.org/webt/wb/uv/ik/wbuvikg6tm42r0pjhkrtdrcye08.jpeg)
+
+Для просмотра аналитики по логам создадим дашборд для Grafana.
+
+Кому интересно, добро пожаловать под кат.
+
 <cut />
 Устанавливаем nginx, grafana стандартным способом.
 
 Устанавливаем кластер clickhouse с помощью ansible-playbook от [Дениса Проскурина](https://daybydayz.ru/2018/02/05/ансибл-роль-для-установки-clickhouse-и-zookeper/).
 
-### Создание бд и таблиц в clickhouse
+### Создание бд и таблиц в Clickhouse
 
-В этом [файле](https://github.com/avito-tech/nginx-log-collector/blob/master/etc/examples/clickhouse/table_schema.sql) описаны SQL запросы для создания бд и таблиц для nginx-log-collector в clickhouse.
+В этом [файле](https://github.com/avito-tech/nginx-log-collector/blob/master/etc/examples/clickhouse/table_schema.sql) описаны SQL запросы для создания бд и таблиц для nginx-log-collector в Clickhouse.
 
 Каждый запрос делаем поочередно на каждом сервере кластера Clickhouse.
 
@@ -303,9 +312,13 @@ $columns(status, count(*) as c) from $table
 Надеюсь, сообщество подключится к разработке/тестированию и использованию nginx-log-collector.
 
 Telegram каналы:
-[Clickhouse](https://t.me/clickhouse_ru) 
-[Nginx](https://t.me/nginx_ru)
-[Церковь метрик](https://t.me/metrics_ru)
 
-Вопрос к читателям: Если вы храните метрики в clickhouse, то какими self-hosted утилитами/проектами вы получаете метрики по статус кодам и по виртуальным хостам с Nginx?
+- [Clickhouse](https://t.me/clickhouse_ru) 
+- [Nginx](https://t.me/nginx_ru)
+- [Церковь метрик](https://t.me/metrics_ru)
+- [Сбор и аналитика системных сообщений](https://t.me/ru_logs)
+- [Grafana](https://t.me/grafana_ru)
 
+### Миллисекунды:
+
+Кому важны миллисекунды, напишите или проголосуйте, пожалуйста, в этом [issue](https://github.com/avito-tech/nginx-log-collector/issues/7).
