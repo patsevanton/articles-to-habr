@@ -305,11 +305,17 @@ Table Count Status for all vhost:
 $columns(status, count(*) as c) from $table
 ```
 
+###  Общий вид дашборда
+![](https://habrastorage.org/webt/is/gw/qw/isgwqw9zoo7-xidser8nrguyh2a.png)
+
+![](https://habrastorage.org/webt/el/7d/2j/el7d2jq0ekail_lkuxjwdsnzm5k.png)
+
+![](https://habrastorage.org/webt/ig/if/ph/igifphdfkwhurvzsf8y97xi6sqq.png)
+
 Вывод:
 
-Надеюсь, разработчики сделают официальный Grafana дашборд.
-
 Надеюсь, сообщество подключится к разработке/тестированию и использованию nginx-log-collector.
+И кто-нибудь когда внедрит nginx-log-collector расскажет сколько сэкономил диска, ОЗУ, ЦПУ.
 
 Telegram каналы:
 
