@@ -41,6 +41,8 @@ systemctl start minio
 
 WAL-G в rpm собираю я (Антон Пацев). [Github](https://github.com/patsevanton/wal-g-rpm), [Fedora COPR](https://copr.fedorainfracloud.org/coprs/antonpatsev/wal-g/).
 
+У кого не RPM-based система используйте официальную [инструкцию](https://github.com/wal-g/wal-g#installation) по установке.
+
 Вместе с бинарником wal-g в rpm присутствуют скрипты, которые импортируют переменные из файла /etc/wal-g.d/server-s3.conf.
 
 ```
@@ -84,11 +86,11 @@ export AWS_SECRET_ACCESS_KEY="yyyy" # SecretKey из /etc/minio/minio.conf
 export PGDATA=/var/lib/pgsql/$PG_VER/data/
 export PGHOST=/var/run/postgresql/.s.PGSQL.5432 # Сокет для подключения к PostgreSQL
 
-export WALG_UPLOAD_CONCURRENCY=
-export WALG_DOWNLOAD_CONCURRENCY=
-export WALG_UPLOAD_DISK_CONCURRENCY=
-export WALG_DELTA_MAX_STEPS=
-export WALG_COMPRESSION_METHOD=brotli
+export WALG_UPLOAD_CONCURRENCY=2 # Кол-во потоков для закачки 
+export WALG_DOWNLOAD_CONCURRENCY=2 # Кол-во потоков для скачивания
+export WALG_UPLOAD_DISK_CONCURRENCY=2 # Кол-во потоков на диске для закачки
+export WALG_DELTA_MAX_STEPS=7
+export WALG_COMPRESSION_METHOD=brotli # Какой метод сжатия использовать.
 
 ```
 
@@ -106,7 +108,7 @@ yum install -y postgresql96 postgresql96-server mc
 /usr/pgsql-9.6/bin/postgresql96-setup initdb
 Initializing database ... OK
 ```
-Если вы тестируете на 1 сервере, то нужно перенастроить параметр wal_level на archive.
+Если вы тестируете на 1 сервере, то нужно перенастроить параметр wal_level на archive для PostgreSQL меньше 10 версии, и replica для PostgreSQL 10 версии и старше.
 
 ```
 wal_level = archive
@@ -116,7 +118,7 @@ wal_level = archive
 ```
 archive_mode = on
 archive_command = '/usr/local/bin/wal-push.sh %p'
-archive_timeout = 60
+archive_timeout = 60 # Каждые 60 секунд будет выполнятся команда archive_command.
 ```
 Стартуем PostgreSQL
 
