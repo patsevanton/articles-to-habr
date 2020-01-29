@@ -37,7 +37,7 @@ systemctl start minio
 
 WAL-G в rpm собираю я (Антон Пацев). [Github](https://github.com/patsevanton/wal-g-rpm), [Fedora COPR](https://copr.fedorainfracloud.org/coprs/antonpatsev/wal-g/).
 
-Вместе с бинарником wal-g в rpm присутствуют скрипты:
+Вместе с бинарником wal-g в rpm присутствуют скрипты, которые импортируют переменные из файла /etc/wal-g.d/server-s3.conf.
 
 ```
 backup-fetch.sh
