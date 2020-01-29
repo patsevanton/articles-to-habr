@@ -113,3 +113,18 @@ build:
 Файл .gitlab-ci.yml неидеальный. Тестировался если задачи проверки в sonarqube завершались статусом: "SUCCESS". Пока что другие статусов не было. Как будут другие статусы, поправлю .gitlab-ci.yml  в этом посте.
 
 ### Отображение на главной странице проекта статус контроля качества исходного кода.
+
+метрики
+
+https://github.com/QualInsight/qualinsight-plugins-sonarqube-badges/wiki/Measure-badges
+
+http://172.26.9.223:9000/api/badges/measure?key=com.github.jitpack:maven-simple&metric=coverage
+
+http://172.26.9.223:9000/api/badges/measure?key=com.github.jitpack:maven-simple&metric=bugs
+
+http://172.26.9.223:9000/api/badges/measure?key=com.github.jitpack:maven-simple&metric=vulnerabilities
+
+http://172.26.9.223:9000/api/badges/measure?key=com.github.jitpack:maven-simple&metric=code_smells
+
+http://172.26.9.223:9000/api/badges/gate?key=com.github.jitpack:maven-simple
+
