@@ -35,6 +35,19 @@ systemctl start minio
 
 ## Сервер БД
 
+WAL-G в rpm собираю я (Антон Пацев). [Github](https://github.com/patsevanton/wal-g-rpm), [Fedora COPR](https://copr.fedorainfracloud.org/coprs/antonpatsev/wal-g/).
+
+Вместе с бинарником wal-g в rpm присутствуют скрипты:
+
+```
+backup-fetch.sh
+backup-list.sh
+backup-push.sh
+wal-fetch.sh
+wal-g-run.sh
+wal-push.sh
+```
+
 Устанавливаем wal-g.
 
 ```
