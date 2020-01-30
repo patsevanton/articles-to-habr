@@ -332,3 +332,5 @@ real    0m23.408s
 ![](https://habrastorage.org/webt/ry/zd/p6/ryzdp6nq8jdqbextit_kzisxvd4.png)
 
 Как видим, что Brotli сопоставим по размеру с LZMA, но бекап выполняется за время LZ4.
+
+Чат русскоязычного сообщества PostgreSQL: https://t.me/pgsql
