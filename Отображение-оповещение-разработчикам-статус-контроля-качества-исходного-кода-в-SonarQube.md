@@ -114,6 +114,16 @@ build:
 
 ### Отображение на главной странице проекта статус контроля качества исходного кода.
 
+Устанавливаем плагин для SonarQube
+
+```bash
+yum install -y sonarqube-qualinsight-badges
+```
+
+Опции для получение метрик можно посмотреть тут:
+
+https://github.com/QualInsight/qualinsight-plugins-sonarqube-badges/wiki/Measure-badges
+
 
 
 [![Quality Gate](http://172.26.9.223:9000/api/badges/gate?key=com.github.jitpack:maven-simple)](http://172.26.9.223:9000/dashboard?id=com.github.jitpack%3Amaven-simple)
