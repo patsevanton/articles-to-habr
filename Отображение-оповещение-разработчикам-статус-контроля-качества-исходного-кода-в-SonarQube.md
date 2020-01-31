@@ -132,3 +132,15 @@ https://github.com/QualInsight/qualinsight-plugins-sonarqube-badges/wiki/Measure
 [![Coverage](http://172.26.9.223:9000/api/badges/measure?key=com.github.jitpack:maven-simple&metric=coverage)](http://172.26.9.223:9000/dashboard?id=com.github.jitpack%3Amaven-simple)
 [![Duplications](http://172.26.9.223:9000/api/badges/measure?key=com.github.jitpack:maven-simple&metric=duplicated_lines_density)](http://172.26.9.223:9000/dashboard?id=com.github.jitpack%3Amaven-simple)
 
+
+https://github.com/QualInsight/qualinsight-plugins-sonarqube-badges/wiki/Measure-badges
+
+http://172.26.9.223:9000/api/badges/measure?key=com.github.jitpack:maven-simple&metric=coverage
+
+http://172.26.9.223:9000/api/badges/measure?key=com.github.jitpack:maven-simple&metric=bugs
+
+http://172.26.9.223:9000/api/badges/measure?key=com.github.jitpack:maven-simple&metric=vulnerabilities
+
+http://172.26.9.223:9000/api/badges/measure?key=com.github.jitpack:maven-simple&metric=code_smells
+
+http://172.26.9.223:9000/api/badges/gate?key=com.github.jitpack:maven-simple
