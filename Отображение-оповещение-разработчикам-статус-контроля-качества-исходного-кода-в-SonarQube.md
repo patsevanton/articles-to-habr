@@ -210,3 +210,5 @@ Project Key находится справа внизу. В URL находитс�
 https://github.com/QualInsight/qualinsight-plugins-sonarqube-badges/wiki/Measure-badges
 
 Все pull request на улучшение, исправления ошибок присылайте в этот репозиторий <https://github.com/maxiko/qualinsight-plugins-sonarqube-badges>
+
+Телеграм чат про SonarQube https://t.me/sonarqube_ru
