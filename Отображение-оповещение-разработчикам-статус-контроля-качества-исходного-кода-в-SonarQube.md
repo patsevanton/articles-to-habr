@@ -142,7 +142,41 @@ yum install -y sonarqube-qualinsight-badges
 
 ![](https://habrastorage.org/webt/--/4z/rd/--4zrd1ngsyoiek-ecv6wbh_qjw.png)
 
-Заходим в 
+Заходим в Administration -> Security -> Permission Templates -> Default template (и другие шаблоны, которые у вас будут).
+
+У пользователя badges необходимо установить галку "Browse".
+
+Тестирование.
+
+Для примера возьмем проект <https://github.com/jitpack/maven-simple>.
+
+Импортируем этот проект. 
+
+Добавляяем файл .gitlab-ci.yml в корень проекта со следующим содержимым.
+
+```yaml
+variables:
+  MAVEN_OPTS: "-Dhttps.protocols=TLSv1.2 -Dmaven.repo.local=~/.m2/repository -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=WARN -Dorg.slf4j.simpleLogger.showDateTime=true -Djava.awt.headless=true"
+  MAVEN_CLI_OPTS: "--batch-mode --errors --fail-at-end --show-version -DinstallAtEnd=true -DdeployAtEnd=true"
+  SONAR_HOST_URL: "http://172.26.9.115:9000"
+  LOGIN: "admin" # логин sonarqube
+  PASSWORD: "admin" # пароль sonarqube
+
+cache:
+  paths:
+    - .m2/repository
+
+build:
+  image: maven:3.3.9-jdk-8
+  stage: build
+  script:
+    - mvn $MAVEN_CLI_OPTS -Dmaven.test.failure.ignore=true org.jacoco:jacoco-maven-plugin:0.8.5:prepare-agent clean verify org.jacoco:jacoco-maven-plugin:0.8.5:report
+    - mvn $MAVEN_CLI_OPTS -Dmaven.test.skip=true verify sonar:sonar -Dsonar.host.url=$SONAR_HOST_URL -Dsonar.login=$LOGIN -Dsonar.password=$PASSWORD -Dsonar.gitlab.project_id=$CI_PROJECT_PATH -Dsonar.gitlab.commit_sha=$CI_COMMIT_SHA -Dsonar.gitlab.ref_name=$CI_COMMIT_REF_NAME
+  tags:
+    - docker
+```
+
+
 
 Опции для получение метрик можно посмотреть тут:
 
