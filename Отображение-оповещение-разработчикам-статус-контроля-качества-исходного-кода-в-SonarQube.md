@@ -118,6 +118,30 @@ build:
 
 ```bash
 yum install -y sonarqube-qualinsight-badges
+
+Заходим в SonarQube по адресу http://172.26.9.115:9000/
+Создаем обычного пользователя, например "badges".
+Заходим под этим пользователем в SonarQube.
+
+![](https://habrastorage.org/webt/sh/py/jh/shpyjhemnnulcw9kbrxakwza1lu.png)
+
+Заходим в "My account", создаем новый токер, например с названием "read_all_repository" и нажимаем "Genereate".
+
+![](https://habrastorage.org/webt/a4/mm/qi/a4mmqitdr2mlbbspaxvlosm_0ty.png)
+
+Видим что появился токен. Он появлется только 1 раз.
+
+Заходим под администратором.
+
+Идем в Configuration -> SVG Badges
+
+![](https://habrastorage.org/webt/_1/la/oz/_1laozdzrcqevucvlg6fkvzws_s.png)
+
+Копируем этот токен в поле "Activity badge token" и нажимаем кнопку save.
+
+![](https://habrastorage.org/webt/--/4z/rd/--4zrd1ngsyoiek-ecv6wbh_qjw.png)
+
+Заходим в 
 ```
 
 Опции для получение метрик можно посмотреть тут:
