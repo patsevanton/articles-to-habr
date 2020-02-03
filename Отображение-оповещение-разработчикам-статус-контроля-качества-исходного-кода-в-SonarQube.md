@@ -118,6 +118,7 @@ build:
 
 ```bash
 yum install -y sonarqube-qualinsight-badges
+```
 
 Заходим в SonarQube по адресу http://172.26.9.115:9000/
 Создаем обычного пользователя, например "badges".
@@ -142,7 +143,6 @@ yum install -y sonarqube-qualinsight-badges
 ![](https://habrastorage.org/webt/--/4z/rd/--4zrd1ngsyoiek-ecv6wbh_qjw.png)
 
 Заходим в 
-```
 
 Опции для получение метрик можно посмотреть тут:
 
