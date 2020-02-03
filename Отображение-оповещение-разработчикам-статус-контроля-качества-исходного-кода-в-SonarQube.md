@@ -176,29 +176,37 @@ build:
     - docker
 ```
 
+В SonarQube проект будет видет вот так:
 
+![](https://habrastorage.org/webt/8h/do/cz/8hdoczabrifcatucgmkh9wnanm4.png)
+
+Badgets в главном репозитории добавляем в README.md и они будут выглядить вот так:
+
+![](https://habrastorage.org/webt/nj/0x/kx/nj0xkxvt8uyfjwpyf1f7s_ruh-g.png)
+
+
+
+Код отображения badges выглят так:
+
+![](https://habrastorage.org/webt/nl/ue/7r/nlue7rfncrql2b-r7w_fon3fxoo.png)
+
+Разбор строки отображения badges:
+
+```bash
+[![Quality Gate](http://172.26.9.115:9000/api/badges/gate?key=com.github.jitpack:maven-simple)](http://172.26.9.115:9000/dashboard?id=com.github.jitpack%3Amaven-simple)
+[![Название](http://172.26.9.115:9000/api/badges/gate?key=Project Key)](http://172.26.9.115:9000/dashboard?id=id-проекта)
+[![Coverage](http://172.26.9.115:9000/api/badges/measure?key=com.github.jitpack:maven-simple&metric=coverage)](http://172.26.9.115:9000/dashboard?id=com.github.jitpack%3Amaven-simple)
+[![Название Метрики](http://172.26.9.115:9000/api/badges/measure?key=Project Key&metric=МЕТРИКА)](http://172.26.9.115:9000/dashboard?id=id-проекта)
+```
+
+Где взять/проверить Project Key и id-проекта.
+
+Project Key находится справа внизу. В URL находится id-проекта.
+
+![](https://habrastorage.org/webt/ur/_x/3x/ur_x3xctww3smxq5c8exxbad2b0.png)
 
 Опции для получение метрик можно посмотреть тут:
 
 https://github.com/QualInsight/qualinsight-plugins-sonarqube-badges/wiki/Measure-badges
 
-
-
-[![Quality Gate](http://172.26.9.223:9000/api/badges/gate?key=com.github.jitpack:maven-simple)](http://172.26.9.223:9000/dashboard?id=com.github.jitpack%3Amaven-simple)
-[![Vulnerabilities](http://172.26.9.223:9000/api/badges/measure?key=com.github.jitpack:maven-simple&metric=vulnerabilities)](http://172.26.9.223:9000/dashboard?id=com.github.jitpack%3Amaven-simple)
-[![Code Smells](http://172.26.9.223:9000/api/badges/measure?key=com.github.jitpack:maven-simple&metric=code_smells)](http://172.26.9.223:9000/dashboard?id=com.github.jitpack%3Amaven-simple)
-[![Coverage](http://172.26.9.223:9000/api/badges/measure?key=com.github.jitpack:maven-simple&metric=coverage)](http://172.26.9.223:9000/dashboard?id=com.github.jitpack%3Amaven-simple)
-[![Duplications](http://172.26.9.223:9000/api/badges/measure?key=com.github.jitpack:maven-simple&metric=duplicated_lines_density)](http://172.26.9.223:9000/dashboard?id=com.github.jitpack%3Amaven-simple)
-
-
-https://github.com/QualInsight/qualinsight-plugins-sonarqube-badges/wiki/Measure-badges
-
-http://172.26.9.223:9000/api/badges/measure?key=com.github.jitpack:maven-simple&metric=coverage
-
-http://172.26.9.223:9000/api/badges/measure?key=com.github.jitpack:maven-simple&metric=bugs
-
-http://172.26.9.223:9000/api/badges/measure?key=com.github.jitpack:maven-simple&metric=vulnerabilities
-
-http://172.26.9.223:9000/api/badges/measure?key=com.github.jitpack:maven-simple&metric=code_smells
-
-http://172.26.9.223:9000/api/badges/gate?key=com.github.jitpack:maven-simple
+Все pull request на улучшение, исправления ошибок присылайте в этот репозиторий <https://github.com/maxiko/qualinsight-plugins-sonarqube-badges>
