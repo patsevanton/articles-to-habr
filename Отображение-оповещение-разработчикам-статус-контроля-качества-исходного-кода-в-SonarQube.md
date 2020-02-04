@@ -212,3 +212,4 @@ https://github.com/QualInsight/qualinsight-plugins-sonarqube-badges/wiki/Measure
 Все pull request на улучшение, исправления ошибок присылайте в этот репозиторий <https://github.com/maxiko/qualinsight-plugins-sonarqube-badges>
 
 Телеграм чат про SonarQube https://t.me/sonarqube_ru
+Телеграм чат про DevSecOps - безопасный DevOps https://t.me/sec_devops
