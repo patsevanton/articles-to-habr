@@ -31,11 +31,11 @@ systemctl start inotify-createrepo
 
 ### Использование
 
-При добавлении любого файла в директорию `/var/www/repos/rpm-repo/` inotifywait создаст файл `/tmp/need_create`.  Функция run_createrepo запускается в бесконечном цикле и мониторит файл `/tmp/need_create`. Если файл существует, то запускается`createrepo --update`.
+При добавлении любого файла в директорию `/var/www/repos/rpm-repo/` inotifywait создаст файл `/tmp/need_create`.  Функция run_createrepo запускается в бесконечном цикле и мониторит файл `/tmp/need_create`. Если файл существует, то запускается `createrepo --update`.
 
 ### Возможность сделать высокую доступность (high availability)
 
-Чтобы сделать высокую доступность (high availability) из существующего рещения, думаю можно использовать Lsyncd. [Lsyncd](http://code.google.com/p/lsyncd) — демон, который следит за изменениями в локальной директории, агрегирует их, и по прошествии определенного времени стартует rsync для их синхронизации. Подробности и настройка описана в посте "[Cкоростная синхронизация миллиарда файлов](https://habr.com/ru/post/132098/)".
+Чтобы сделать высокую доступность (high availability) из существующего рещения, думаю можно использовать 2 сервера, Keepalived для HA и Lsyncd для синхронизации артефактов. [Lsyncd](http://code.google.com/p/lsyncd) — демон, который следит за изменениями в локальной директории, агрегирует их, и по прошествии определенного времени стартует rsync для их синхронизации. Подробности и настройка описана в посте "[Cкоростная синхронизация миллиарда файлов](https://habr.com/ru/post/132098/)".
 
 ### Загрузка файлов
 
@@ -45,12 +45,14 @@ systemctl start inotify-createrepo
 - NFS
 - WebDav
 
-Мне больше нравиться WebDav. 
+WebDav кажется современным и простым вариантом.
 
 ### WebDav
 
-Для WebDav будем использовать Apache httpd. Почему не nginx? Потому что это оказалось самым простым решением.
+Для WebDav будем использовать Apache httpd. Почему не nginx?
 
-Хочется использовать автоматизированные средства для сборки Nginx + модули (например, Webdav). Есть проект по сборке Nginx + модули - [Nginx-builder](https://github.com/TinkoffCreditSystems/Nginx-builder). Если использовать nginx + wevdav для загрузки файлов, то нужен модуль [nginx-dav-ext-module](https://github.com/arut/nginx-dav-ext-module). При попытке собрать и использовать Nginx с [nginx-dav-ext-module](https://github.com/arut/nginx-dav-ext-module) при помощи [Nginx-builder](https://github.com/TinkoffCreditSystems/Nginx-builder) мы получим ошибку [Used by http_dav_module instead of nginx-dav-ext-module](https://github.com/TinkoffCreditSystems/Nginx-builder/issues/27). Эта же ошибка была еще летом [nginx: [emerg] unknown directive dav_methods](https://github.com/TinkoffCreditSystems/Nginx-builder/issues/12). 
+Хочется использовать автоматизированные средства для сборки Nginx + модули (например, Webdav).
 
-Я делал Pull request [Add check git_url for embedded, refactored --with-{}_module](https://github.com/TinkoffCreditSystems/Nginx-builder/pull/18) и [if module == "http_dav_module" append --with](https://github.com/TinkoffCreditSystems/Nginx-builder/pull/14)
+Есть проект по сборке Nginx + модули - [Nginx-builder](https://github.com/TinkoffCreditSystems/Nginx-builder). Если использовать nginx + wevdav для загрузки файлов, то нужен модуль [nginx-dav-ext-module](https://github.com/arut/nginx-dav-ext-module). При попытке собрать и использовать Nginx с [nginx-dav-ext-module](https://github.com/arut/nginx-dav-ext-module) при помощи [Nginx-builder](https://github.com/TinkoffCreditSystems/Nginx-builder) мы получим ошибку [Used by http_dav_module instead of nginx-dav-ext-module](https://github.com/TinkoffCreditSystems/Nginx-builder/issues/27). Такая же ошибка была закрыта летом [nginx: [emerg] unknown directive dav_methods](https://github.com/TinkoffCreditSystems/Nginx-builder/issues/12). 
+
+Я делал Pull request [Add check git_url for embedded, refactored --with-{}_module](https://github.com/TinkoffCreditSystems/Nginx-builder/pull/18) и [if module == "http_dav_module" append --with](https://github.com/TinkoffCreditSystems/Nginx-builder/pull/14). Но их не приняли.
