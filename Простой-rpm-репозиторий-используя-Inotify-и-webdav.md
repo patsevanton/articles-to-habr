@@ -1,8 +1,9 @@
-В этом посте рассмотрим хранилище rpm артефактов c помощью простого скрипта с inotify + createrepo. Заливка артефактов осуществляется через webdav + apache. Почему не webdav + nginx будет написано в конце.
+В этом посте рассмотрим хранилище rpm артефактов c помощью простого скрипта с inotify + createrepo. Заливка артефактов осуществляется через webdav на apache. Почему не webdav на nginx будет написано в конце.
 
 ### Итак, решение должно отвечать cледующим требованиям для организации только RPM хранилища:
 
 - Бесплатное
+- Доступность пакета в репозитории через несколько секунд после загрузки в хранилище артефактов.
 - Простое в установке и обслуживании
 - Возможность сделать высокую доступность (high availability)
 
@@ -14,3 +15,42 @@
 - Артефакты в [SonaType Nexus](https://habr.com/ru/post/473358/) хранятся в blob. При внезапном выключении электричества вы не сможете восстановить blob, если у в вас нет бекапа.
 
 ### Установка 
+
+```bash
+yum -y install yum-plugin-copr
+yum copr enable antonpatsev/inotify-createrepo
+yum -y install inotify-createrepo
+systemctl start inotify-createrepo
+```
+
+### Конфигурирование
+
+По умолчанию inotify-createrepo мониторит директорию `/var/www/repos/rpm-repo/`.
+
+Изменить эту директорию можно в файле `/etc/inotify-createrepo.conf.`
+
+### Использование
+
+При добавлении любого файла в директорию `/var/www/repos/rpm-repo/` inotifywait создаст файл `/tmp/need_create`.  Функция run_createrepo запускается в бесконечном цикле и мониторит файл `/tmp/need_create`. Если файл существует, то запускается`createrepo --update`.
+
+### Возможность сделать высокую доступность (high availability)
+
+Чтобы сделать высокую доступность (high availability) из существующего рещения, думаю можно использовать Lsyncd. [Lsyncd](http://code.google.com/p/lsyncd) — демон, который следит за изменениями в локальной директории, агрегирует их, и по прошествии определенного времени стартует rsync для их синхронизации. Подробности и настройка описана в посте "[Cкоростная синхронизация миллиарда файлов](https://habr.com/ru/post/132098/)".
+
+### Загрузка файлов
+
+Загружать файлы можно несколькими путями:
+
+- SSH
+- NFS
+- WebDav
+
+Мне больше нравиться WebDav. 
+
+### WebDav
+
+Для WebDav будем использовать Apache httpd. Почему не nginx? Потому что это оказалось самым простым решением.
+
+Хочется использовать автоматизированные средства для сборки Nginx + модули (например, Webdav). Есть проект по сборке Nginx + модули - [Nginx-builder](https://github.com/TinkoffCreditSystems/Nginx-builder). Если использовать nginx + wevdav для загрузки файлов, то нужен модуль [nginx-dav-ext-module](https://github.com/arut/nginx-dav-ext-module). При попытке собрать и использовать Nginx с [nginx-dav-ext-module](https://github.com/arut/nginx-dav-ext-module) при помощи [Nginx-builder](https://github.com/TinkoffCreditSystems/Nginx-builder) мы получим ошибку [Used by http_dav_module instead of nginx-dav-ext-module](https://github.com/TinkoffCreditSystems/Nginx-builder/issues/27). Эта же ошибка была еще летом [nginx: [emerg] unknown directive dav_methods](https://github.com/TinkoffCreditSystems/Nginx-builder/issues/12). 
+
+Я делал Pull request [Add check git_url for embedded, refactored --with-{}_module](https://github.com/TinkoffCreditSystems/Nginx-builder/pull/18) и [if module == "http_dav_module" append --with](https://github.com/TinkoffCreditSystems/Nginx-builder/pull/14)
