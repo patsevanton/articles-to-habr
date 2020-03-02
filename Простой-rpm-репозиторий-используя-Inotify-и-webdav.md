@@ -1,4 +1,4 @@
-В этом посте рассмотрим хранилище rpm артефактов c помощью простого скрипта с inotify + createrepo. Заливка артефактов осуществляется через webdav на apache httpd. Почему webdav на apache httpd будет написано в конце.
+В этом посте рассмотрим хранилище rpm артефактов c помощью простого скрипта с inotify + createrepo. Заливка артефактов осуществляется через webdav используя apache httpd. Почему apache httpd будет написано ближе к концу поста.
 
 ### Итак, решение должно отвечать cледующим требованиям для организации только RPM хранилища:
 
@@ -74,21 +74,33 @@ systemctl start inotify-createrepo
 
 При добавлении любого файла в директорию `/var/www/repos/rpm-repo/` inotifywait создаст файл `/tmp/need_create`.  Функция run_createrepo запускается в бесконечном цикле и мониторит файл `/tmp/need_create`. Если файл существует, то запускается `createrepo --update`.
 
+В файле появится запись:
+
+```
+/var/www/repos/rpm-repo/ CREATE nginx-1.16.1-1.el7.ngx.x86_64.rpm
+start createrepo 2020-03-02 09:46:21+03:00
+Spawning worker 0 with 1 pkgs
+Spawning worker 1 with 0 pkgs
+Spawning worker 2 with 0 pkgs
+Spawning worker 3 with 0 pkgs
+Workers Finished
+Saving Primary metadata
+Saving file lists metadata
+Saving other metadata
+Generating sqlite DBs
+Sqlite DBs complete
+finish createrepo 2020-03-02 09:46:22+03:00
+```
+
+
+
 ### Возможность сделать высокую доступность (high availability)
 
 Чтобы сделать высокую доступность (high availability) из существующего рещения, думаю можно использовать 2 сервера, Keepalived для HA и Lsyncd для синхронизации артефактов. [Lsyncd](http://code.google.com/p/lsyncd) — демон, который следит за изменениями в локальной директории, агрегирует их, и по прошествии определенного времени стартует rsync для их синхронизации. Подробности и настройка описана в посте "[Cкоростная синхронизация миллиарда файлов](https://habr.com/ru/post/132098/)".
 
-### Загрузка файлов
+### WebDav
 
 Загружать файлы можно несколькими путями: SSH, NFS, WebDav. WebDav кажется современным и простым вариантом.
-
-Загрузка rpm очень простая.
-
-```bash
-curl -T ./nginx-1.16.1-1.el7.ngx.x86_64.rpm https://ваш-виртуальный-хост/rpm/
-```
-
-### WebDav
 
 Для WebDav будем использовать Apache httpd. Почему Apache httpd в 2020 году, а не nginx?
 
@@ -144,3 +156,10 @@ server {
 }
 ```
 
+### Загрузка файлов через WebDav
+
+Загрузка rpm очень простая.
+
+```bash
+curl -T ./nginx-1.16.1-1.el7.ngx.x86_64.rpm https://ваш-виртуальный-хост/rpm/
+```
