@@ -41,9 +41,15 @@ systemctl start inotify-createrepo
 
 Загружать файлы можно несколькими путями: SSH, NFS, WebDav. WebDav кажется современным и простым вариантом.
 
+Загрузка rpm очень простая.
+
+```bash
+curl -T ./nginx-1.16.1-1.el7.ngx.x86_64.rpm https://ваш-виртуальный-хост/rpm/
+```
+
 ### WebDav
 
-Для WebDav будем использовать Apache httpd. Почему не nginx?
+Для WebDav будем использовать Apache httpd. Почему Apache httpd в 2020 году, а не nginx?
 
 Хочется использовать автоматизированные средства для сборки Nginx + модули (например, Webdav).
 
