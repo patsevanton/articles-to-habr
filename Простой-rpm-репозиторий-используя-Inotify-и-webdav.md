@@ -72,11 +72,13 @@ DavLockDB /var/www/html/DavLock
 </VirtualHost>
 ```
 
+Остальную настройку Apache httpd я думаю вы сделаете сами.
+
 ### Nginx перед Apache httpd
 
 В отличие от Apache, Nginx использует событийную модель обработки запросов, благодаря чему на любое количество клиентов требуется всего один процесс HTTP-сервера. Вы можете использовать nginx и снизить нагрузку на сервер.
 
-Конфиг nginx-front.conf
+Конфиг nginx-front.conf. Остальную настройку nginx я думаю вы сделаете сами.
 
 ```nginx
 upstream nginx_front {
