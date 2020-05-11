@@ -71,6 +71,19 @@ metadata_expire=300
 yum install -y prometheus2 postgres_exporter
 ```
 
+В файле prometheus.yml для работы с postgres_exporter в scrape_configs добавьте следующую секцию:
+
+```
+scrape_configs:
+  - job_name: postgresql
+    static_configs:
+      - targets: ['ip-адрес-prometheus:9187']
+        labels:
+          alias: postgres
+```
+
+
+
 Запускаем prometheus2 и postgres_exporter
 
 ```
