@@ -82,8 +82,6 @@ scrape_configs:
           alias: postgres
 ```
 
-
-
 Запускаем prometheus2 и postgres_exporter
 
 ```
@@ -154,6 +152,6 @@ P.S. В этом дашборде мне не хватает знаний в pro
 
 P.S. Как руки дойдут, планирую сделать дашборд для информации по конретной БД внутри PostgreSQL.
 
-P.S. Хочется получить вот такую схему
+P.S. Хочется получить вот такую схему с high availability
 
 ![](https://habrastorage.org/webt/n_/06/at/n_06atgmuesvmbsbukc6zegedmw.png)
