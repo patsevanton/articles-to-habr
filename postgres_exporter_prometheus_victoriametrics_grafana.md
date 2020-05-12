@@ -49,6 +49,8 @@ systemctl start postgresql-9.6
 
 ### Postgres_exporter и Prometheus
 
+Уточнение. Кто будет устанавливать postgres_exporter без rpm из бинарников, то ознакомьтесь с этим постом: https://mcs.mail.ru/help/monitoring-with-prometheus/postgresql-exporter
+
 Postgres_exporter и Prometheus для Redhat систем устанавливаем из этого репозитория: https://github.com/lest/prometheus-rpm
 
 Создаем файл `/etc/yum.repos.d/prometheus.repo` со следующим содержимым:
@@ -120,6 +122,10 @@ systemctl start grafana-server
 
 
 Берем dashboard здесь
+
+https://grafana.com/grafana/dashboards/12273
+
+Исходный код тут:
 
 https://github.com/patsevanton/postgresql_overview_postgres_exporter
 
