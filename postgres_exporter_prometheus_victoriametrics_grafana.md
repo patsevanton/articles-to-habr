@@ -4,7 +4,7 @@
 
 Я объединил все другие дашборды postgres_exporter в один.
 
-Этот дашбор показывает общую информацию по кластеру.
+Этот дашборд показывает общую информацию по кластеру.
 
 Скриншоты и краткая инструкция по установке: postgresql, postgres_exporter, prometheus, grafana под катом.
 
@@ -26,6 +26,7 @@
 - Телеграф как часть платформы TICK(буква T), например, они ломали поддержку Прометея в телеграфе 1.3.2 ([замена символов](https://github.com/influxdata/telegraf/issues/2937) не попадающих под `[a-z]`). Или, например, невозможность оверрайдить Retention Policy в (input,output).kafka, т.е. организовать полноценную связку `metrics -> telegraf -> kafka -> telegraf -> influx` у вас не получится.
 - Капаситор(бука K в TICK), очень неадекватно себя ведет, подстать InfluxDB. Выжирает RAM как не в себя, может говорить, что всё "ок", когда данных нет. Требует нежного обращения и ухода.
 </spoiler>
+
 ### PostgreSQL
 
 ```
@@ -34,20 +35,36 @@ yum install -y postgresql96 postgresql96-server postgresql96-contrib
 ```
 
 Инициализируем PostgreSQL.
-
 ```
 /usr/pgsql-9.6/bin/postgresql96-setup initdb
 ```
 
-Стартуем PostgreSQL
+В PostgreSQL добавляем расширение pg_stat_statements в postgresql.conf
+```
+shared_preload_libraries = 'pg_stat_statements'
+```
 
+Стартуем PostgreSQL
 ```
 systemctl start postgresql-9.6
 ```
 
+После этого в БД, выполните следующую команду:
+```
+CREATE EXTENSION pg_stat_statements
+```
+
 ### Postgres_exporter и Prometheus
 
-Уточнение. Кто будет устанавливать postgres_exporter без rpm из бинарников, то ознакомьтесь с этим постом: https://mcs.mail.ru/help/monitoring-with-prometheus/postgresql-exporter
+<spoiler title="Уточнение. Кто будет устанавливать postgres_exporter из бинарников">
+Ознакомьтесь с этим постом: https://mcs.mail.ru/help/monitoring-with-prometheus/postgresql-exporter
+Конфиг экспортера от mail.ru заточен на k8s
+
+А для большей части запросов в графиках надо подключать queries.yaml
+Ссылка на файл в начале статьи есть, но вот в .service нет упоминания extend.query-path
+
+Необходимые файлы вы можете взять здесь: https://github.com/lest/prometheus-rpm/tree/master/postgres_exporter
+</spoiler>
 
 Postgres_exporter и Prometheus для Redhat систем устанавливаем из этого репозитория: https://github.com/lest/prometheus-rpm
 
@@ -134,7 +151,7 @@ https://github.com/patsevanton/postgresql_overview_postgres_exporter
 
 ![](https://habrastorage.org/webt/km/sb/yc/kmsbycvyy5zpgphtlq8enzefob4.jpeg)
 
-![](https://habrastorage.org/webt/xm/sd/4j/xmsd4jhin8-_a2ywmehg7ohir_8.jpeg)
+![](https://habrastorage.org/webt/kj/uw/zq/kjuwzqfxsglk4dzyx44w7yka_fs.jpeg)
 
 ![](https://habrastorage.org/webt/zg/me/xz/zgmexzb97zio0xcr4gvbnvyeoe0.jpeg)
 
