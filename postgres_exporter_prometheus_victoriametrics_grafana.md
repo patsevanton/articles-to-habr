@@ -150,14 +150,6 @@ https://github.com/patsevanton/postgresql_overview_postgres_exporter
 
 ![](https://habrastorage.org/webt/e6/w-/p3/e6w-p3if6zw4kug1qi327uj8nqc.jpeg)
 
-
-
 P.S. В этом дашборде мне не хватает знаний в promql и postgresql. Поэтому я надеюсь на то что вы мне поможете советом как улучшить дашборд или сделаете pull request.
 
-
-
 P.S. Как руки дойдут, планирую сделать дашборд для информации по конретной БД внутри PostgreSQL.
-
-P.S. Хочется получить вот такую схему с high availability
-
-![](https://habrastorage.org/webt/n_/06/at/n_06atgmuesvmbsbukc6zegedmw.png)
