@@ -358,3 +358,5 @@ java.lang.ArithmeticException: / by zero
 ![](https://habrastorage.org/webt/vw/4s/of/vw4sofgypw0dahzubw9ay0rkahg.png)
 
 ![](https://habrastorage.org/webt/8m/qh/dc/8mqhdcxo8stjzknjyhl8rdojgzw.png)
+
+Телеграм чат по Sentry https://t.me/sentry_ru
