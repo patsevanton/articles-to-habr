@@ -1,6 +1,6 @@
 # Первый перевод: Как использовать grok exporter для создания метрик prometheus из неструктурированных журналов
 
-Давно не виделись. Прошло уже несколько недель с момента моего последнего поста в блоге. Давайте сломаем лед и поговорим о grok exporter. В этой статье я объясню, как можно использовать [grok exporter](https://github.com/fstab/grok_exporter) для создания метрик prometheus из неструктурированных журналов.
+Поговорим о grok exporter. В этой статье я объясню, как можно использовать [grok exporter](https://github.com/fstab/grok_exporter) для создания метрик prometheus из неструктурированных журналов.
 
 ![](https://www.easyaslinux.com/wp-content/uploads/2019/05/use-grok-exporter-to-create-prometheus-metrics-from-unstructured-logs-1024x576.png)
 
@@ -221,3 +221,4 @@ COMMONAPACHELOG %{IPORHOST:clientip} %{HTTPDUSER:ident} %{USER:auth} \[%{HTTPDAT
 
 Это небольшая проба того, что вы можете сделать с экспортером Grok. Как вы можете видеть, синтаксический анализ журналов требует некоторой конфигурации, поэтому вы должны использовать такой экспортер только в том случае, если у вас нет возможности заставить само приложение создавать хорошие показатели. 
 
+Телеграм чат по метрикам https://t.me/metrics_ru
