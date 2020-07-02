@@ -2,7 +2,7 @@
 
 ![](https://miro.medium.com/max/1280/1*xZyTGkgbJw59NNl5UL5gQA.jpeg)
 
-Эта статья является частью серии, начинающейся с сообщения об ошибках Sentry на примере: [Часть 1](https://medium.com/@johntucker_48673/sentry-error-reporting-by-example-part-1-999b2df11556). 
+Эта статья является частью серии, начинающейся с сообщения об ошибках Sentry на примере: [Часть 1](https://habr.com/ru/post/508686/). 
 
 **Реализация React**  
 
