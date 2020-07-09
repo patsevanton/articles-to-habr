@@ -4,6 +4,8 @@
 
 С помощью SQL запросом можно узнать полезную статистику по Confluence.
 
+<cut />
+
 ### Общий размер всех вложений в Confluence:
 
 ```sql
@@ -106,3 +108,5 @@ LIMIT 5;
 Вывод:
 
 ![](https://habrastorage.org/webt/ts/jz/hb/tsjzhbbmzk0vcf0a2khqpljlx90.jpeg)
+
+P.S. Дополняйте пост полезными SQL запросами для Confluence
