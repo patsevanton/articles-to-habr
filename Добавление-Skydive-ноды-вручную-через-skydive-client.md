@@ -139,4 +139,4 @@ skydive client edge-rule create --src="G.V().Has('TID', '50037073-7862-5234-4996
 P.S. Ссылка на [оригинал поста](http://skydive.network/blog/topology-rules.html)
 
 Ищутся люди, которые могли бы писать посты о других возможностях Skydive.
-→ [Телеграм-чат](https://t.me/skydive_network_ru) по skydive.network.
+[Телеграм-чат](https://t.me/skydive_network_ru) по skydive.network.
