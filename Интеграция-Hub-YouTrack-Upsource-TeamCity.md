@@ -237,9 +237,31 @@ git commit -m "This is done! #FOO-1 Fixed Critical"
 
 ![](https://habrastorage.org/webt/3o/qj/3f/3oqj3fegnvjh3hy_v7gvk4opi5y.png)
 
-Интеграция TeamCity довольно прямолинейна, в первую очередь вы указываете где находится сервер TeamCity.
+Интеграция Youtrack с TeamCity, если у вас используется Hub.
 
-![](https://habrastorage.org/webt/34/dv/rb/34dvrblhr2680lrwe2afo5pgpfu.png)
+Зайдите в Hub в список ваших проектов. Откройте проект для которого нужно сделать интеграцию.
+
+![](https://habrastorage.org/webt/xi/ho/1j/xiho1josq_l8-tf-gej50hoessu.png)
+
+В проекте нажмите на Edit Project
+
+![](https://habrastorage.org/webt/uv/ot/rx/uvotrx6pge5deouny1vubakzh9w.png)
+
+Перейдите во вкладку Build Server Integration
+
+![](https://habrastorage.org/webt/1h/bz/ho/1hbzhoafa0y1nvbycde-kflwvm4.png)
+
+Создайте новый mapping с вашим teamcity сервером.
+
+![](https://habrastorage.org/webt/k1/ny/ju/k1nyjudihx9rbj__elnei254jwm.png)
+
+В mapping укажите главный проект в YouTrack, TeamCity server, TeamCity проект, TeamCity Build. Это основные параметры, которые нужно указать.
+
+![](https://habrastorage.org/webt/ng/qk/36/ngqk36wgnfycpcvax7sklgavxgy.png)
+
+Если у вас есть открытая issue в YouTrack, например FOO-1, то вы можете сделать коммит с именем `#FOO-1 Fixed` , после того как TeamCity соберет ваш проект успешно, YouTrack засинхронизирует данные из Teamcity и закроет issue FOO-1. По умолчанию YouTrack синхронизирует каждые 10 минут. Но вы можете вручную нажать синхронизацию - кнопка Play.
+
+![](https://habrastorage.org/webt/9p/gs/un/9pgsun2fiz2f3hyz2-ohcsjjd2y.png)
 
 Тут имеются дополнительные опции, которые вы можете указать.
 
