@@ -345,3 +345,4 @@ Sentry.showReportDialog();
 
 Сегодня мы описали один из способов интеграции Sentry в приложение React.
 
+Телеграм чат по Sentry https://t.me/sentry_ru
