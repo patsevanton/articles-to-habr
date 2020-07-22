@@ -231,7 +231,8 @@ data_dir = "/var/lib/vector"
     request.in_flight_limit = 20
 ```
 
-Вы можете откорректировать секцию transforms.nginx_parse_add_defaults   
+Вы можете откорректировать секцию transforms.nginx_parse_add_defaults.
+
 Так как я использую данные конфиги для небольшого CDN и там в upstream_* может прилетать несколько значений   
 
 Например:
@@ -515,7 +516,7 @@ ORDER BY timestamp ASC
 └─────────────────────┴──────────────┴────────┴──────────┴───────┘
 ```
 
-Так как clickhouse еще не сдлелал Merge для timestamp 
+Так как clickhouse еще не сделал Merge для timestamp 
 ```text
 ┌───────────timestamp─┬─domain───────┬─cached─┬─uncached─┬─total─┐
 │ 2020-07-22 14:00:00 │ example.com  │      8 │        0 │     8 │
