@@ -48,3 +48,10 @@ cd upsource-2020.1.1782/bin/
 ./upsource.sh start
 ```
 
+
+
+
+
+
+
+https://gitlab.com/gitlab-org/gitlab-foss/-/issues/57948
