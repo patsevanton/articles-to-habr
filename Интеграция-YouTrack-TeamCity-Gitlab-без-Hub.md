@@ -68,7 +68,7 @@ cd TeamCity/bin
 
 Интеграцию YouTrack c TeamCity нужно делать попроектно. Для этого в поле **Main YouTrack project** указываем проект в YouTrack. В поле **TeamCity project** указываем проект в TeamCity. В поле **TeamCity build** указываем таску в TeamCity, в которой будет собираться ваш проект. Можно выставить **Fixed in build** в поле **Add build numbers to the set of values in a custom field**. В YouTrack будет указано в каком билде исправлена эта issue.
 
-![](https://habrastorage.org/webt/yi/hv/vp/yihvvpkwi7kgp3jjto0q75jul0a.png)
+![](https://habrastorage.org/webt/ux/ac/6i/uxac6iasxoltiqvueloetuf7chq.png)
 
 Если вы видите сообщеие **The VCS user name does not match any user in YouTrack.**, то вам нужно проверить и сравнить **VCS user name** в git user.name и в настройках вашего пользователя.
 
@@ -85,7 +85,9 @@ Date:   Wed Jul 29 11:45:23 2020 +0600
 
 Вам нужно либо создать нужно пользователя или добавить name и email в профиль пользователя.
 
-![](https://habrastorage.org/webt/o3/ma/fp/o3mafpaszhy0fzncpqesnaxz-yq.png)
+Так же если вы нажмете на коммит **4643208d**, то вы перейдете в TeamCity где увидите ошибку *Unknown (none of TeamCity users defined **user1** username in their VCS username settings)*. TeamCity пишет что у него нет пользователя с именем user1. Поэтому нужно его добавить.
+
+
 
 
 
