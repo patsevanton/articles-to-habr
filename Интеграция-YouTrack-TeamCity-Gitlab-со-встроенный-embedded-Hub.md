@@ -36,7 +36,7 @@ cd TeamCity/bin
 ./runAll.sh start
 ```
 
-После установки Gitlab, YouTrack, Teamcity со встроенным (embedded) Hub имеется возможность сделать следующие интеграции:
+После установки YouTrack со встроенным (embedded) Hub, Teamcity, Gitlab имеется возможность сделать следующие интеграции:
 
 - YouTrack c TeamCity - Build Server Integration
 - YouTrack с Gitlab - VCS Integrations
