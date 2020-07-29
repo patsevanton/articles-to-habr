@@ -85,7 +85,15 @@ Date:   Wed Jul 29 11:45:23 2020 +0600
 
 Вам нужно либо создать нужно пользователя или добавить name и email в профиль пользователя.
 
-Так же если вы нажмете на коммит **4643208d**, то вы перейдете в TeamCity где увидите ошибку *Unknown (none of TeamCity users defined **user1** username in their VCS username settings)*. TeamCity пишет что у него нет пользователя с именем user1. Поэтому нужно его добавить.
+Так же если вы нажмете на коммит **4643208d**, то вы перейдете в TeamCity где увидите ошибку *Unknown (none of TeamCity users defined **user1** username in their VCS username settings)*. TeamCity пишет что у него нет пользователя с именем user1. Поэтому нужно его добавить в TeamCity.
+
+![](https://habrastorage.org/webt/ot/mr/ct/otmrct6qsyl1b6a3vploknpu-c4.png)
+
+Если у вас **Unknown command: Fixed**, то это значит что ваш пользователь, который пытается закрыть issue, не имеет права это делать.
+
+![](https://habrastorage.org/webt/3w/1t/gy/3w1tgygrqxbairaz4ywkvlly2du.png)
+
+Добавляем права юзеру
 
 
 
