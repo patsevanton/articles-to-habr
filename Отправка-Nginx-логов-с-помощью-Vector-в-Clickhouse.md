@@ -12,7 +12,7 @@ Vector это замена filebeat и logstash, он может выступа�
 
 Примеры проще посмотреть в документации.   
 
-Будем настраивать связку Nginx (Access logs) -> Vector (Client | Filebeat) -> Vector (Server | Logstash) -> Clickhouse. Установим 4 сервера. Хотя можно обойти 2 серверами.
+Будем настраивать связку Nginx (Access logs) -> Vector (Client | Filebeat) -> Vector (Server | Logstash) -> Clickhouse. Установим 3 сервера. Хотя можно обойти 2 серверами.
 
 ### На сервере (Log server)
 
@@ -70,7 +70,7 @@ yum install https://packages.timber.io/vector/0.9.X/vector-x86_64.rpm
 /etc/vector/vector.toml
 
 ```text
-# repo: etc/vector/vector.toml.server
+# repo: /etc/vector/vector.toml.server
 
 data_dir = "/var/lib/vector"
 
