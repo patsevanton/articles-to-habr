@@ -1,4 +1,4 @@
-Интеграция Youtrack, Teamcity, Gitlab без Hub.
+Интеграция Youtrack, Teamcity, Gitlab со встроенным (embedded) Hub.
 
 В этом посте будет рассказано о том как сделать интеграцию Youtrack, Teamcity, Gitlab без Hub.
 
