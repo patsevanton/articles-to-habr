@@ -93,10 +93,33 @@ Date:   Wed Jul 29 11:45:23 2020 +0600
 
 ![](https://habrastorage.org/webt/3w/1t/gy/3w1tgygrqxbairaz4ywkvlly2du.png)
 
-Добавляем права юзеру
+Добавляем юзеру user1 роль Developer в проекте project1.
 
+![](https://habrastorage.org/webt/qy/7t/yy/qy7tyyg0o2vxpu_sfwnerfd0she.png)
 
+После этого делаем еще один текстовый коммит, который закрывает issue. Мы видим что ошибок нет, state перешел в состояние Fixed, в поле Fixed in Build проставилась номер таски в TeamCity, в котором закрылась эта issue.
 
+#### VCS Integrations
 
+Чтобы продемонстрировать чистую VCS Integrations отключим интеграцию с TeamCity.
 
-https://gitlab.com/gitlab-org/gitlab-foss/-/issues/57948
+![](https://habrastorage.org/webt/ut/j7/u5/utj7u5ehvrgfyuetmrbqo43srqk.png)
+
+В **Main YouTrack project** укажите нужный проект, выбрите Gitlab, в Repository URL нужно указать полный URL до нужного репозитория, в Personal access token нужно указать api токен. Нажимаем **Generate token** и откроется Access Tokens в User Settings вашего текущего пользователя.
+
+![](https://habrastorage.org/webt/1h/ct/xv/1hctxvvsrsemwzdmby42k15jjri.png)
+
+Генерируем токен для api. Почему не подходят другие scope? Потому что Youtrack создает на сервере Gitlab webhook.
+
+Указываем токен в **Personal access token**. И создаем интеграцию.
+
+После создания интеграции проверяем что Youtrack создал на сервере Gitlab webhook. Идем в *projects1 -> Webhook Settings*.
+
+Youtrack создает на сервере Gitlab webhook.
+
+![](https://habrastorage.org/webt/fl/ja/pf/fljapfohd4xnk55qdam9u-lqxrm.png)
+
+Далее нужно разрешить webhook в локальной сети. Далее переходим: **Admin -> Settings -> Network -> Outbound Requests -> Allow requests to the local network from hooks and services**
+
+Если этого не сделать, у вас будут ошибки: [**Unable to save project. Error: Import url is blocked: Requests to the local network are not allowed**](https://gitlab.com/gitlab-org/gitlab-foss/-/issues/57948)
+
