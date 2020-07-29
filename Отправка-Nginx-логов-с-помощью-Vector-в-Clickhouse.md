@@ -77,7 +77,7 @@ data_dir = "/var/lib/vector"
 [sources.nginx_input_vector]
   # General
   type                          = "vector"
-  address                       = "128.66.0.1:9876"
+  address                       = "0.0.0.0:9876"
   shutdown_timeout_secs         = 30
 
 [transforms.nginx_parse_json]
