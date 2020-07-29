@@ -10,7 +10,7 @@ Vector это замена filebeat и logstash, он может выступа�
 
 Если в Logstash цепочка строится как input -> filter -> output то в Vector это [sources](https://vector.dev/docs/reference/sources/) -> [transforms](https://vector.dev/docs/reference/transforms/) -> [sinks](https://vector.dev/docs/reference/sinks/)  
 
-Примеры проще посмотреть в документации.   
+Примеры можно посмотреть в документации.   
 
 Будем настраивать связку Nginx (Access logs) -> Vector (Client | Filebeat) -> Vector (Server | Logstash) -> Clickhouse. Установим 3 сервера. Хотя можно обойти 2 серверами.
 
@@ -63,11 +63,10 @@ mv GeoLite2-City_20191029/GeoLite2-City.mmdb .
 #### Установка [Vector](https://vector.dev/docs/setup/installation/)
 
 ```text
-yum install https://packages.timber.io/vector/0.9.X/vector-x86_64.rpm
+yum install -y https://packages.timber.io/vector/0.9.X/vector-x86_64.rpm
 ```
 
-Настроим Vector как замену Logstash   
-/etc/vector/vector.toml
+Настроим Vector как замену Logstash. Редактируем файл /etc/vector/vector.toml
 
 ```text
 # repo: /etc/vector/vector.toml.server
@@ -246,7 +245,7 @@ data_dir = "/var/lib/vector"
 
 Создадим настройки service для systemd /etc/systemd/system/vector.service
 ```text
-# repo: etc/systemd/system/vector.service
+# repo: /etc/systemd/system/vector.service
 
 [Unit]
 Description=Vector
@@ -270,7 +269,7 @@ WantedBy=multi-user.target
 Теперь перейдем к настройке Clickhouse   
 
 ```shell script
-[root@log-1 ~]# clickhouse-client
+[root@log-1 ~]# clickhouse-client -m
 
 CREATE DATABASE vector;
 
@@ -372,18 +371,35 @@ ORDER BY (domain, timestamp) ASC;
 
 После создания таблиц и вьюшек можно запускать Vector
 
-```systemctl enable vector --now```
-
+```
+systemctl enable vector --now
+```
 
 ### На клиенте (Web server)
+
+#### Установим nginx. 
+
+Добавил файл репозитория nginx /etc/yum.repos.d/nginx.repo
+
+```
+[nginx-stable]
+name=nginx stable repo
+baseurl=http://nginx.org/packages/centos/$releasever/$basearch/
+gpgcheck=1
+enabled=1
+gpgkey=https://nginx.org/keys/nginx_signing.key
+module_hotfixes=true
+```
+
+Установим пакет nginx
+
+```
+yum install -y nginx
+```
 
 Для начала нам надо настроить формат логов в Nginx для этого в nginx.conf или в отдельный фаил надо добавить новый формат
 
 ```text
-# repo: etc/nginx/conf.d/vector.conf
-# Можно добавлять "node_name":"web-us-1" чреез шаблон в Ansible например 
-#  
-
 log_format vector escape=json
     '{'
         '"node_name":"web-us-1",'
@@ -438,8 +454,7 @@ nginx -s reload
 
 Теперь установим сам [Vector](https://vector.dev/docs/setup/installation/)
 ```text
-
-yum install https://packages.timber.io/vector/0.9.X/vector-x86_64.rpm
+yum install -y https://packages.timber.io/vector/0.9.X/vector-x86_64.rpm
 ```
 
 Создадим фаил настроек для systemd (/etc/systemd/system/vector.service)
