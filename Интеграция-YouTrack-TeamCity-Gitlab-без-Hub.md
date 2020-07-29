@@ -123,3 +123,8 @@ Youtrack создает на сервере Gitlab webhook.
 
 Если этого не сделать, у вас будут ошибки: [**Unable to save project. Error: Import url is blocked: Requests to the local network are not allowed**](https://gitlab.com/gitlab-org/gitlab-foss/-/issues/57948)
 
+Сделаем коммит в репозиторий.
+
+![](https://habrastorage.org/webt/jk/1z/rx/jk1zrx0yddmzdft6qwyijmrxaxu.png)
+
+В YouTrack увидем что issue закрылся и увидем всплываеющее сообщение об изменении VCS.
