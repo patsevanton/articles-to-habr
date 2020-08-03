@@ -429,6 +429,12 @@ systemctl start vector
 
 ### На клиенте (Web server)
 
+На cервере с nginx необходимо выключить ipv6, так как в таблице logs в clickhouse используется поле `upstream_addr` IPv4, так как я не использую ipv6 внутри сети. Если ipv6 не выключить, то будут ошибки:
+
+```
+DB::Exception: Invalid IPv4 value.: (while read the value of key upstream_addr)
+```
+
 #### Установим nginx. 
 
 Добавил файл репозитория nginx /etc/yum.repos.d/nginx.repo
@@ -497,6 +503,70 @@ server {
 ```
 
 Не забудте добавить правило в logrotate для новых логов (если log фаил не заканчивается на .log)
+
+Добавляем виртуальный хост vhost1- vhost5
+
+```
+upstream backend {
+    server 127.0.0.1:8080;
+}
+
+server {
+    listen 80;
+    server_name vhost1; # делаем 5 виртуальных хостов отличающиеся только server_name
+    location / {
+        proxy_pass http://backend;
+    }
+}
+```
+
+Добавляем в файл /etc/hosts виртуальные хосты:
+
+```
+ip-адрес-сервера-с-nginx vhost1
+ip-адрес-сервера-с-nginx vhost1
+ip-адрес-сервера-с-nginx vhost1
+ip-адрес-сервера-с-nginx vhost1
+ip-адрес-сервера-с-nginx vhost1
+```
+
+### Эмулятор HTTP сервера
+
+В качестве эмулятора HTTP сервера будем использовать [nodejs-stub-server](https://github.com/maxiko/nodejs-stub-server) от [Maxim Ignatenko](https://habr.com/users/Anthrax_Beta/)
+
+Nodejs-stub-server не имеет rpm. Здесь https://github.com/patsevanton/nodejs-stub-server создаем ему rpm. Собираться rpm будет с помощью [Fedora Copr](https://copr.fedorainfracloud.org/coprs/antonpatsev/nodejs-stub-server/)
+
+Устанавливаем на upstream nginx rpm пакет nodejs-stub-server
+
+```
+yum -y install yum-plugin-copr
+yum copr enable antonpatsev/nodejs-stub-server
+yum -y install stub_http_server
+systemctl start stub_http_server
+```
+
+### Нагрузочное тестирование
+
+Тестирование проводим с помощью Apache benchmark.
+
+Устанавливаем его:
+
+```
+yum install -y httpd-tools
+```
+
+Запускаем тестирование с помощью Apache benchmark c 5 разных серверов:
+
+```
+while true; do ab -H "User-Agent: 1server" -c 10 -n 10 -t 10 http://vhost1/; sleep 1; done
+while true; do ab -H "User-Agent: 2server" -c 10 -n 10 -t 10 http://vhost1/; sleep 1; done
+while true; do ab -H "User-Agent: 3server" -c 10 -n 10 -t 10 http://vhost1/; sleep 1; done
+while true; do ab -H "User-Agent: 4server" -c 10 -n 10 -t 10 http://vhost1/; sleep 1; done
+while true; do ab -H "User-Agent: 5server" -c 10 -n 10 -t 10 http://vhost1/; sleep 1; done
+```
+
+
+
 И если все готово то 
 
 ```text
