@@ -38,6 +38,12 @@ sudo yum-config-manager --add-repo https://repo.clickhouse.tech/rpm/stable/x86_6
 sudo yum install -y clickhouse-server clickhouse-client
 ```
 
+Разрешаем clickhouse-server слушать не только localhost.
+
+```
+<listen_host>0.0.0.0</listen_host>
+```
+
 Для запуска сервера в качестве демона, выполните:
 
 ```
@@ -417,7 +423,8 @@ SHOW TABLES
 После создания таблиц и вьюшек можно запускать Vector
 
 ```
-systemctl enable vector --now
+systemctl enable vector
+systemctl start vector
 ```
 
 ### На клиенте (Web server)
@@ -550,7 +557,8 @@ usermod -a -G adm vector
 Запустим сервис vector
 
 ```text
-systemctl enable vector --now
+systemctl enable vector
+systemctl start vector
 ```
 
 
@@ -601,3 +609,7 @@ ORDER BY timestamp ASC
 │ 2020-07-22 14:00:00 │  19787 │        0 │ 19787 │
 └─────────────────────┴────────┴──────────┴───────┘
 ```
+
+### Устанавливаем Elasticsearch и Kibana для сравнения с ClickHouse
+
+Устанавливаем Elasticsearch
