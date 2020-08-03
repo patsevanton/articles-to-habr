@@ -484,7 +484,7 @@ log_format vector escape=json
 server {
     ...
     access_log		/var/log/nginx/access.log main;             # Стандартный лог
-    access_log		/var/log/nginx/access.json.log vector;      # Новый лог в формате json
+    access_log		/var/log/nginx/access.log.json vector;      # Новый лог в формате json
     ...
 }
 ```
