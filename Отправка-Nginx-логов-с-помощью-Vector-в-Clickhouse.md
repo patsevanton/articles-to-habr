@@ -381,8 +381,8 @@ CREATE MATERIALIZED VIEW vector.view_domain_traffic TO vector.data_domain_traffi
 SELECT
     toStartOfHour(timestamp) AS timestamp,
     domainWithoutWWW(domain(lowerUTF8(request_http_host))) AS domain,
-    sumIf(response_body_bytes_sent, upstream_cache_status == "HIT") AS cached,
-    sumIf(response_body_bytes_sent, upstream_cache_status != "HIT") AS uncached,
+    sumIf(response_body_bytes_sent, upstream_cache_status == 'HIT') AS cached,
+    sumIf(response_body_bytes_sent, upstream_cache_status != 'HIT') AS uncached,
     sum(response_body_bytes_sent) AS total
 FROM vector.logs
 WHERE (IPv4StringToNum(domain) = 0) AND (domain != '')
