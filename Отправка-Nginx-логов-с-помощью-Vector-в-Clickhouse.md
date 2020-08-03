@@ -69,7 +69,7 @@ yum install -y https://packages.timber.io/vector/0.9.X/vector-x86_64.rpm
 Настроим Vector как замену Logstash. Редактируем файл /etc/vector/vector.toml
 
 ```text
-# repo: /etc/vector/vector.toml.server
+# /etc/vector/vector.toml
 
 data_dir = "/var/lib/vector"
 
@@ -218,7 +218,7 @@ data_dir = "/var/lib/vector"
 
     database = "vector"
     healthcheck = true
-    host = "http://10.0.0.5:8123" #  Адрес Clickhouse
+    host = "http://172.26.10.109:8123" #  Адрес Clickhouse
     table = "logs"
 
     encoding.timestamp_format = "unix"
@@ -245,7 +245,7 @@ data_dir = "/var/lib/vector"
 
 Создадим настройки service для systemd /etc/systemd/system/vector.service
 ```text
-# repo: /etc/systemd/system/vector.service
+# /etc/systemd/system/vector.service
 
 [Unit]
 Description=Vector
@@ -268,11 +268,21 @@ WantedBy=multi-user.target
 
 Теперь перейдем к настройке Clickhouse   
 
-```shell script
-[root@log-1 ~]# clickhouse-client -m
+Создадим БД vector
 
+```
 CREATE DATABASE vector;
+```
 
+Проверим что бд есть.
+
+```
+show databases;
+```
+
+Создаем таблицу vector.logs. Запускаем `clickhouse-client -m `и делаем запрос.
+
+```sql
 /* Это таблица где хранятся логи как есть */
 
 CREATE TABLE vector.logs
@@ -323,7 +333,11 @@ PARTITION BY toYYYYMMDD(timestamp)
 ORDER BY timestamp
 TTL timestamp + toIntervalMonth(1)
 SETTINGS index_granularity = 8192;
+```
 
+Создаем таблицу vector.data_domain_traffic. Запускаем `clickhouse-client -m` и делаем запрос.
+
+```
 /* Например мы хотим сделать статистику по кол-ву трафика в разрезе домена с шагом в час */
 /* Это таблица в которой будет хранится статистика */
 
@@ -340,7 +354,11 @@ PARTITION BY toYYYYMMDD(timestamp)
 ORDER BY (domain, timestamp)
 TTL timestamp + toIntervalMonth(3)
 SETTINGS index_granularity = 8192;
+```
 
+Создаем MATERIALIZED VIEW vector.view_domain_traffic. Запускаем `clickhouse-client -m` и делаем запрос.
+
+```shell script
 /* А это Materialized view который считает статистику и отправляет ее в нужную таблицу */
 /* В моем случаи так как это проксирование всех запросов то кеш или не кеш я определяю адресом upstream (если он 127.0.0.1 то нода отдала из кэша) */
 /* В вашем случаи надо смотреть на значения upstream_cache_status “MISS”, “BYPASS”, “EXPIRED”, “STALE”, “UPDATING”, “REVALIDATED” или “HIT” */
@@ -366,7 +384,34 @@ GROUP BY (domain, timestamp)
 ORDER BY (domain, timestamp) ASC;
 
 /* Остальные примеры смотрите в repo: clickhouse-sql/schemes.txt */
+```
 
+Проверяем что создались таблицы. Запускаем `clickhouse-client` и делаем запрос.
+
+Переходим в бд vector.
+
+```
+use vector;
+
+USE vector
+
+Ok.
+
+0 rows in set. Elapsed: 0.001 sec.
+```
+
+Смотрим таблицы.
+
+```
+show tables;
+
+SHOW TABLES
+
+┌─name────────────────┐
+│ data_domain_traffic │
+│ logs                │
+│ view_domain_traffic │
+└─────────────────────┘
 ```
 
 После создания таблиц и вьюшек можно запускать Vector
@@ -449,7 +494,7 @@ server {
 
 ```text
 nginx -t 
-nginx -s reload
+systemctl restart nginx
 ```
 
 Теперь установим сам [Vector](https://vector.dev/docs/setup/installation/)
@@ -459,8 +504,6 @@ yum install -y https://packages.timber.io/vector/0.9.X/vector-x86_64.rpm
 
 Создадим фаил настроек для systemd (/etc/systemd/system/vector.service)
 ```text
-# repo: etc/systemd/system/vector.service
-
 [Unit]
 Description=Vector
 After=network-online.target
@@ -480,7 +523,7 @@ SyslogIdentifier=vector
 WantedBy=multi-user.target
 ```
 
-И настроим замену Filebeat (/etc/vector/vector.toml) где 128.66.0.1 это IP адрес log сервера
+И настроим замену Filebeat (/etc/vector/vector.toml) где 172.26.10.108 это IP адрес log сервера
 
 ```text
 data_dir = "/var/lib/vector"
@@ -495,26 +538,28 @@ data_dir = "/var/lib/vector"
   type                          = "vector"
   inputs                        = [ "nginx_file" ]
 
-  address                       = 128.66.0.1:9876"
+  address                       = 172.26.10.108:9876"
 ```
 
-Не забудте добавить юзера vector в нужную группу что бы он мог читать log файлы
-Ну и запустим сервис
+Не забудте добавить юзера vector в нужную группу что бы он мог читать log файлы. Например, nginx в centos создает логи с правами группы adm.
+
+```
+usermod -a -G adm vector
+```
+
+Запустим сервис vector
 
 ```text
 systemctl enable vector --now
 ```
 
 
-### Проверим
+### Проверим. 
 
 ```text
 clickhouse-client
 
-SELECT *
-FROM vector.data_domain_requests
-WHERE domain = 'example.com'
-ORDER BY timestamp ASC
+SELECT * FROM vector.data_domain_traffic WHERE domain = 'vhost1' ORDER BY timestamp ASC
 
 ┌───────────timestamp─┬─domain───────┬─cached─┬─uncached─┬─total─┐
 │ 2020-07-22 13:00:00 │ example.com  │  34370 │        0 │ 34370 │
@@ -546,8 +591,8 @@ SELECT
     sum(cached) AS cached,
     sum(uncached) AS uncached,
     sum(total) AS total
-FROM vector.data_domain_requests
-WHERE domain = 'example.com'
+FROM vector.data_domain_traffic
+WHERE domain = 'vhost1'
 GROUP BY timestamp
 ORDER BY timestamp ASC
 
