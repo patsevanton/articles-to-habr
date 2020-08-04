@@ -27,7 +27,7 @@ grep -q sse4_2 /proc/cpuinfo && echo "SSE 4.2 supported" || echo "SSE 4.2 not su
 Сначала нужно подключить официальный репозиторий:
 
 ```
-sudo yum install -y yum-utils
+sudo yum install -y yum-utils mc
 sudo rpm --import https://repo.clickhouse.tech/CLICKHOUSE-KEY.GPG
 sudo yum-config-manager --add-repo https://repo.clickhouse.tech/rpm/stable/x86_64
 ```
@@ -69,7 +69,7 @@ mv GeoLite2-City_20191029/GeoLite2-City.mmdb .
 #### Установка [Vector](https://vector.dev/docs/setup/installation/)
 
 ```text
-yum install -y https://packages.timber.io/vector/0.9.X/vector-x86_64.rpm
+yum install -y https://packages.timber.io/vector/0.9.X/vector-x86_64.rpm mc
 ```
 
 Настроим Vector как замену Logstash. Редактируем файл /etc/vector/vector.toml
@@ -462,7 +462,7 @@ module_hotfixes=true
 Установим пакет nginx
 
 ```
-yum install -y nginx
+yum install -y nginx mc
 ```
 
 Для начала нам надо настроить формат логов в Nginx для этого в nginx.conf или в отдельный фаил надо добавить новый формат
@@ -661,7 +661,7 @@ systemctl start vector
 Устанавливаем его:
 
 ```
-yum install -y httpd-tools
+yum install -y httpd-tools mc
 ```
 
 Запускаем тестирование с помощью Apache benchmark c 5 разных серверов:
@@ -722,6 +722,3 @@ ORDER BY timestamp ASC
 └─────────────────────┴────────┴──────────┴───────┘
 ```
 
-### Устанавливаем Elasticsearch и Kibana для сравнения с ClickHouse
-
-Устанавливаем Elasticsearch
