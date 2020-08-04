@@ -468,6 +468,25 @@ yum install -y nginx
 Для начала нам надо настроить формат логов в Nginx для этого в nginx.conf или в отдельный фаил надо добавить новый формат
 
 ```text
+user  nginx;
+worker_processes  1;
+
+error_log  /var/log/nginx/error.log warn;
+pid        /var/run/nginx.pid;
+
+
+events {
+    worker_connections  1024;
+}
+
+http {
+    include       /etc/nginx/mime.types;
+    default_type  application/octet-stream;
+
+    log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '
+                      '$status $body_bytes_sent "$http_referer" '
+                      '"$http_user_agent" "$http_x_forwarded_for"';
+
 log_format vector escape=json
     '{'
         '"node_name":"web-us-1",'
@@ -499,6 +518,21 @@ log_format vector escape=json
         '"upstream_status": "$upstream_status",'
         '"upstream_content_type":"$upstream_http_content_type"'
     '}';
+
+
+
+    access_log  /var/log/nginx/access.log  main;
+    access_log  /var/log/nginx/access.json.log vector;      # Новый лог в формате json
+
+    sendfile        on;
+    #tcp_nopush     on;
+
+    keepalive_timeout  65;
+
+    #gzip  on;
+
+    include /etc/nginx/conf.d/*.conf;
+}
 ```
 
 Что бы не поломать вашу текущую конфигурациию, Nginx позволяет иметь несколько директив access_log  
@@ -553,26 +587,7 @@ yum -y install yum-plugin-copr
 yum copr enable antonpatsev/nodejs-stub-server
 yum -y install stub_http_server
 systemctl start stub_http_server
-```
-
-### Нагрузочное тестирование
-
-Тестирование проводим с помощью Apache benchmark.
-
-Устанавливаем его:
-
-```
-yum install -y httpd-tools
-```
-
-Запускаем тестирование с помощью Apache benchmark c 5 разных серверов:
-
-```
-while true; do ab -H "User-Agent: 1server" -c 10 -n 10 -t 10 http://vhost1/; sleep 1; done
-while true; do ab -H "User-Agent: 2server" -c 10 -n 10 -t 10 http://vhost1/; sleep 1; done
-while true; do ab -H "User-Agent: 3server" -c 10 -n 10 -t 10 http://vhost1/; sleep 1; done
-while true; do ab -H "User-Agent: 4server" -c 10 -n 10 -t 10 http://vhost1/; sleep 1; done
-while true; do ab -H "User-Agent: 5server" -c 10 -n 10 -t 10 http://vhost1/; sleep 1; done
+systemctl enable stub_http_server
 ```
 
 И если все готово то 
@@ -639,6 +654,25 @@ systemctl enable vector
 systemctl start vector
 ```
 
+### Нагрузочное тестирование
+
+Тестирование проводим с помощью Apache benchmark.
+
+Устанавливаем его:
+
+```
+yum install -y httpd-tools
+```
+
+Запускаем тестирование с помощью Apache benchmark c 5 разных серверов:
+
+```
+while true; do ab -H "User-Agent: 1server" -c 10 -n 10 -t 10 http://vhost1/; sleep 1; done
+while true; do ab -H "User-Agent: 2server" -c 10 -n 10 -t 10 http://vhost1/; sleep 1; done
+while true; do ab -H "User-Agent: 3server" -c 10 -n 10 -t 10 http://vhost1/; sleep 1; done
+while true; do ab -H "User-Agent: 4server" -c 10 -n 10 -t 10 http://vhost1/; sleep 1; done
+while true; do ab -H "User-Agent: 5server" -c 10 -n 10 -t 10 http://vhost1/; sleep 1; done
+```
 
 ### Проверим. 
 
