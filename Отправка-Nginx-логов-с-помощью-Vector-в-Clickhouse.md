@@ -24,6 +24,13 @@ ClickHouse используют набор инструкций SSE 4.2, поэ�
 grep -q sse4_2 /proc/cpuinfo && echo "SSE 4.2 supported" || echo "SSE 4.2 not supported"
 ```
 
+Выключаем Selinux на всех ваших серверах
+
+```
+sed -i 's/^SELINUX=.*/SELINUX=disabled/g' /etc/selinux/config
+reboot
+```
+
 Сначала нужно подключить официальный репозиторий:
 
 ```
@@ -38,16 +45,20 @@ sudo yum-config-manager --add-repo https://repo.clickhouse.tech/rpm/stable/x86_6
 sudo yum install -y clickhouse-server clickhouse-client
 ```
 
-Разрешаем clickhouse-server слушать не только localhost.
+Разрешаем clickhouse-server слушать сетевую карту в файле /etc/clickhouse-server/config.xml
 
 ```
 <listen_host>0.0.0.0</listen_host>
 ```
 
+Меняем уровень логирования c trace до debug
+
+<level>debug</level>
+
 Для запуска сервера в качестве демона, выполните:
 
 ```
-sudo service clickhouse-server start
+service clickhouse-server start
 ```
 
 #### Установка GeoLite2-City.mmdb
@@ -274,6 +285,14 @@ WantedBy=multi-user.target
 
 Теперь перейдем к настройке Clickhouse   
 
+Заходим в Clickhouse
+
+```
+clickhouse-client -h 172.26.10.109 -m
+```
+
+172.26.10.109 - IP сервера где установилен Clickhouse.
+
 Создадим БД vector
 
 ```
@@ -286,7 +305,7 @@ CREATE DATABASE vector;
 show databases;
 ```
 
-Создаем таблицу vector.logs. Запускаем `clickhouse-client -m `и делаем запрос.
+Создаем таблицу vector.logs.
 
 ```sql
 /* Это таблица где хранятся логи как есть */
@@ -341,7 +360,7 @@ TTL timestamp + toIntervalMonth(1)
 SETTINGS index_granularity = 8192;
 ```
 
-Создаем таблицу vector.data_domain_traffic. Запускаем `clickhouse-client -m` и делаем запрос.
+Создаем таблицу vector.data_domain_traffic.
 
 ```
 /* Например мы хотим сделать статистику по кол-ву трафика в разрезе домена с шагом в час */
@@ -399,8 +418,6 @@ ORDER BY (domain, timestamp) ASC;
 ```
 use vector;
 
-USE vector
-
 Ok.
 
 0 rows in set. Elapsed: 0.001 sec.
@@ -410,8 +427,6 @@ Ok.
 
 ```
 show tables;
-
-SHOW TABLES
 
 ┌─name────────────────┐
 │ data_domain_traffic │
@@ -427,6 +442,18 @@ systemctl enable vector
 systemctl start vector
 ```
 
+Логи vector можно посмотреть так
+
+```
+journalctl -f -u vector
+```
+
+В логах должна быть такая запись
+
+```
+INFO vector::topology::builder: Healthcheck: Passed.
+```
+
 ### На клиенте (Web server)
 
 На cервере с nginx необходимо выключить ipv6, так как в таблице logs в clickhouse используется поле `upstream_addr` IPv4, так как я не использую ipv6 внутри сети. Если ipv6 не выключить, то будут ошибки:
@@ -434,6 +461,8 @@ systemctl start vector
 ```
 DB::Exception: Invalid IPv4 value.: (while read the value of key upstream_addr)
 ```
+
+Возможно читатели, добавлять поддержку ipv6.
 
 Создаем файл /etc/sysctl.d/98-disable-ipv6.conf
 
@@ -443,7 +472,11 @@ net.ipv6.conf.default.disable_ipv6 = 1
 net.ipv6.conf.lo.disable_ipv6 = 1
 ```
 
+Применяем настройки
 
+```
+sysctl --system
+```
 
 #### Установим nginx. 
 
@@ -520,8 +553,8 @@ log_format vector escape=json
     '}';
 
 
-
-    access_log  /var/log/nginx/access.log  main;
+    # Что бы не поломать вашу текущую конфигурациию, Nginx позволяет иметь несколько директив access_log
+    access_log  /var/log/nginx/access.log  main;            # Стандартный лог
     access_log  /var/log/nginx/access.json.log vector;      # Новый лог в формате json
 
     sendfile        on;
@@ -535,20 +568,15 @@ log_format vector escape=json
 }
 ```
 
-Что бы не поломать вашу текущую конфигурациию, Nginx позволяет иметь несколько директив access_log  
-
-```text
-server {
-    ...
-    access_log		/var/log/nginx/access.log main;             # Стандартный лог
-    access_log		/var/log/nginx/access.json.log vector;      # Новый лог в формате json
-    ...
-}
-```
-
 Не забудте добавить правило в logrotate для новых логов (если log фаил не заканчивается на .log)
 
-Добавляем виртуальный хост vhost1- vhost5
+Удаляем default.conf из /etc/nginx/conf.d/
+
+```
+rm /etc/nginx/conf.d/default.conf
+```
+
+Добавляем виртуальный хост /etc/nginx/conf.d/vhost1.conf - vhost5.conf
 
 ```
 upstream backend {
@@ -583,7 +611,7 @@ Nodejs-stub-server не имеет rpm. Здесь https://github.com/patsevanto
 Устанавливаем на upstream nginx rpm пакет nodejs-stub-server
 
 ```
-yum -y install yum-plugin-copr
+yum -y install yum-plugin-copr epel-release
 yum copr enable antonpatsev/nodejs-stub-server
 yum -y install stub_http_server
 systemctl start stub_http_server
