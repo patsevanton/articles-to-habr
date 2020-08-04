@@ -435,6 +435,16 @@ systemctl start vector
 DB::Exception: Invalid IPv4 value.: (while read the value of key upstream_addr)
 ```
 
+Создаем файл /etc/sysctl.d/98-disable-ipv6.conf
+
+```
+net.ipv6.conf.all.disable_ipv6 = 1
+net.ipv6.conf.default.disable_ipv6 = 1
+net.ipv6.conf.lo.disable_ipv6 = 1
+```
+
+
+
 #### Установим nginx. 
 
 Добавил файл репозитория nginx /etc/yum.repos.d/nginx.repo
@@ -497,7 +507,7 @@ log_format vector escape=json
 server {
     ...
     access_log		/var/log/nginx/access.log main;             # Стандартный лог
-    access_log		/var/log/nginx/access.log.json vector;      # Новый лог в формате json
+    access_log		/var/log/nginx/access.json.log vector;      # Новый лог в формате json
     ...
 }
 ```
@@ -513,7 +523,7 @@ upstream backend {
 
 server {
     listen 80;
-    server_name vhost1; # делаем 5 виртуальных хостов отличающиеся только server_name
+    server_name vhost1; # делаем 5 виртуальных хостов, отличающиеся только server_name
     location / {
         proxy_pass http://backend;
     }
@@ -524,10 +534,10 @@ server {
 
 ```
 ip-адрес-сервера-с-nginx vhost1
-ip-адрес-сервера-с-nginx vhost1
-ip-адрес-сервера-с-nginx vhost1
-ip-адрес-сервера-с-nginx vhost1
-ip-адрес-сервера-с-nginx vhost1
+ip-адрес-сервера-с-nginx vhost2
+ip-адрес-сервера-с-nginx vhost3
+ip-адрес-сервера-с-nginx vhost4
+ip-адрес-сервера-с-nginx vhost5
 ```
 
 ### Эмулятор HTTP сервера
@@ -564,8 +574,6 @@ while true; do ab -H "User-Agent: 3server" -c 10 -n 10 -t 10 http://vhost1/; sle
 while true; do ab -H "User-Agent: 4server" -c 10 -n 10 -t 10 http://vhost1/; sleep 1; done
 while true; do ab -H "User-Agent: 5server" -c 10 -n 10 -t 10 http://vhost1/; sleep 1; done
 ```
-
-
 
 И если все готово то 
 
@@ -607,7 +615,7 @@ data_dir = "/var/lib/vector"
 
 [sources.nginx_file]
   type                          = "file"
-  include                       = [ "/var/log/nginx/access.log.json", "/var/log/nginx/access.log.json.1" ]
+  include                       = [ "/var/log/nginx/access.json.log" ]
   start_at_beginning            = false
   fingerprinting.strategy       = "device_and_inode"
 
