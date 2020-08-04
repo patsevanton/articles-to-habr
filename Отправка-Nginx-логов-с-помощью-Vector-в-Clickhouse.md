@@ -630,7 +630,7 @@ systemctl restart nginx
 yum install -y https://packages.timber.io/vector/0.9.X/vector-x86_64.rpm
 ```
 
-Создадим фаил настроек для systemd (/etc/systemd/system/vector.service)
+Создадим фаил настроек для systemd /etc/systemd/system/vector.service
 ```text
 [Unit]
 Description=Vector
@@ -651,7 +651,7 @@ SyslogIdentifier=vector
 WantedBy=multi-user.target
 ```
 
-И настроим замену Filebeat (/etc/vector/vector.toml) где 172.26.10.108 это IP адрес log сервера
+И настроим замену Filebeat в конфиге /etc/vector/vector.toml где 172.26.10.108 это IP адрес log сервера (Vector-Server)
 
 ```text
 data_dir = "/var/lib/vector"
@@ -666,7 +666,7 @@ data_dir = "/var/lib/vector"
   type                          = "vector"
   inputs                        = [ "nginx_file" ]
 
-  address                       = 172.26.10.108:9876"
+  address                       = "172.26.10.108:9876"
 ```
 
 Не забудте добавить юзера vector в нужную группу что бы он мог читать log файлы. Например, nginx в centos создает логи с правами группы adm.
@@ -696,18 +696,24 @@ yum install -y httpd-tools mc
 
 ```
 while true; do ab -H "User-Agent: 1server" -c 10 -n 10 -t 10 http://vhost1/; sleep 1; done
-while true; do ab -H "User-Agent: 2server" -c 10 -n 10 -t 10 http://vhost1/; sleep 1; done
-while true; do ab -H "User-Agent: 3server" -c 10 -n 10 -t 10 http://vhost1/; sleep 1; done
-while true; do ab -H "User-Agent: 4server" -c 10 -n 10 -t 10 http://vhost1/; sleep 1; done
-while true; do ab -H "User-Agent: 5server" -c 10 -n 10 -t 10 http://vhost1/; sleep 1; done
+while true; do ab -H "User-Agent: 2server" -c 10 -n 10 -t 10 http://vhost2/; sleep 1; done
+while true; do ab -H "User-Agent: 3server" -c 10 -n 10 -t 10 http://vhost3/; sleep 1; done
+while true; do ab -H "User-Agent: 4server" -c 10 -n 10 -t 10 http://vhost4/; sleep 1; done
+while true; do ab -H "User-Agent: 5server" -c 10 -n 10 -t 10 http://vhost5/; sleep 1; done
 ```
 
 ### Проверим. 
 
-```text
-clickhouse-client
+Заходим в Clickhouse
 
-SELECT * FROM vector.data_domain_traffic WHERE domain = 'vhost1' ORDER BY timestamp ASC
+```
+clickhouse-client -h 172.26.10.109 -m
+```
+
+Делаем SQL запрос
+
+```text
+SELECT * FROM vector.data_domain_traffic WHERE domain = 'vhost1' ORDER BY timestamp ASC;
 
 ┌───────────timestamp─┬─domain───────┬─cached─┬─uncached─┬─total─┐
 │ 2020-07-22 13:00:00 │ example.com  │  34370 │        0 │ 34370 │
@@ -742,7 +748,7 @@ SELECT
 FROM vector.data_domain_traffic
 WHERE domain = 'vhost1'
 GROUP BY timestamp
-ORDER BY timestamp ASC
+ORDER BY timestamp ASC;
 
 ┌───────────timestamp─┬─cached─┬─uncached─┬─total─┐
 │ 2020-07-22 13:00:00 │  34370 │        0 │ 34370 │
