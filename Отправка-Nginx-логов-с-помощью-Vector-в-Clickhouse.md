@@ -195,7 +195,7 @@ data_dir = "/var/lib/vector"
     end
 
     if (event.log.fields.geoip.longitude == "") then
-        event.log.upstream_status = "0.0"
+        event.log.upstream_status = 0.0
     end
 
     emit(event)
