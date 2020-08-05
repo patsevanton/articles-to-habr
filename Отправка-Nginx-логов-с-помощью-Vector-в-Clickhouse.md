@@ -22,7 +22,7 @@ Aug 05 06:25:31.889 DEBUG transform{name=nginx_parse_rename_fields type=rename_f
 
 Будем настраивать связку Nginx (Access logs) -> Vector (Client | Filebeat) -> Vector (Server | Logstash) -> Clickhouse. Установим 3 сервера. Хотя можно обойти 2 серверами.
 
-![](https://habrastorage.org/webt/nd/ok/yi/ndokyi-y4ggx18kqhmzk3h4bk_i.png)
+![](https://habrastorage.org/webt/i8/dl/ke/i8dlkexrhct0242f28d0jsxjace.png)
 
 Схема примерно такая.
 
