@@ -10,7 +10,15 @@ Vector это замена filebeat и logstash, он может выступа�
 
 Если в Logstash цепочка строится как input -> filter -> output то в Vector это [sources](https://vector.dev/docs/reference/sources/) -> [transforms](https://vector.dev/docs/reference/transforms/) -> [sinks](https://vector.dev/docs/reference/sinks/)  
 
-Примеры можно посмотреть в документации.   
+Примеры можно посмотреть в документации.
+
+Эта инструкция переработанная инстукция от [Вячеслава Рахинского](https://git.sys.im/oss/configs/nginx-vector-logs). В оригинальной инструкции есть обработка geoip. У меня при тестировании geoip из внутренней сети, vector выдавал ошибку.
+
+```
+Aug 05 06:25:31.889 DEBUG transform{name=nginx_parse_rename_fields type=rename_fields}: vector::transforms::rename_fields: Field did not exist field=«geoip.country_name» rate_limit_secs=30
+```
+
+Если кому-то нужно обрабатывать geoip, то обратитесь ко оригинальной инструкции от [Вячеслава Рахинского](https://git.sys.im/oss/configs/nginx-vector-logs).
 
 Будем настраивать связку Nginx (Access logs) -> Vector (Client | Filebeat) -> Vector (Server | Logstash) -> Clickhouse. Установим 3 сервера. Хотя можно обойти 2 серверами.
 
@@ -742,6 +750,38 @@ type=rpm-md
 Установим elasticsearch и kibana
 
 ```
-yum install -y kibana elasticsearch
+yum install -y kibana elasticsearch mc
+```
+
+Так как  будет в 1 экземпляре, то в файл /etc/elasticsearch/elasticsearch.yml нужно добавить:
+
+```
+discovery.type: single-node
+```
+
+Чтобы vector смог отправлять данные в elasticsearch с другого сервера изменим network.host.
+
+```
+network.host: 0.0.0.0
+```
+
+Чтобы подключится к kibana изменим параметр server.host.
+
+```
+server.host: "0.0.0.0"
+```
+
+Старуем и включаем в автозапуск elasticsearch
+
+```
+systemctl enable elasticsearch
+systemctl start elasticsearch
+```
+
+ и kibana
+
+```
+systemctl enable kibana
+systemctl start kibana
 ```
 
