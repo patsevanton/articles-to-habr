@@ -656,7 +656,7 @@ while true; do ab -H "User-Agent: 4server" -c 10 -n 10 -t 10 http://vhost4/; sle
 while true; do ab -H "User-Agent: 5server" -c 10 -n 10 -t 10 http://vhost5/; sleep 1; done
 ```
 
-### Проверим. 
+### Проверим данные в Clickhouse
 
 Заходим в Clickhouse
 
@@ -701,5 +701,47 @@ FROM vector.data_domain_traffic WHERE domain = 'vhost1' GROUP BY timestamp ORDER
 │ 2020-07-22 13:00:00 │  34370 │        0 │ 34370 │
 │ 2020-07-22 14:00:00 │  19787 │        0 │ 19787 │
 └─────────────────────┴────────┴──────────┴───────┘
+```
+
+### Отправка тех же данных в Elasticsearch для сравнения с Clickhouse
+
+Добавим публичный rpm ключ
+
+```
+rpm --import https://artifacts.elastic.co/GPG-KEY-elasticsearch
+```
+
+Создадим 2 репо:
+
+/etc/yum.repos.d/elasticsearch.repo
+
+```
+[elasticsearch]
+name=Elasticsearch repository for 7.x packages
+baseurl=https://artifacts.elastic.co/packages/7.x/yum
+gpgcheck=1
+gpgkey=https://artifacts.elastic.co/GPG-KEY-elasticsearch
+enabled=0
+autorefresh=1
+type=rpm-md
+```
+
+/etc/yum.repos.d/kibana.repo
+
+```
+[kibana-7.x]
+name=Kibana repository for 7.x packages
+baseurl=https://artifacts.elastic.co/packages/7.x/yum
+gpgcheck=1
+gpgkey=https://artifacts.elastic.co/GPG-KEY-elasticsearch
+enabled=1
+autorefresh=1
+type=rpm-md
+```
+
+Установим elasticsearch и kibana
+
+```
+yum install -y kibana elasticsearch
 ```
 
