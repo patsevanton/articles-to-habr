@@ -65,22 +65,6 @@ sudo yum install -y clickhouse-server clickhouse-client
 service clickhouse-server start
 ```
 
-#### Установка GeoLite2-City.mmdb
-
-Если вам нужен GeoIP, то там где у вас будет установлен Vector скачайте базу Maxmind и положите в /opt/geoip/GeoLite2-City.mmdb.
-
-Раньше MaxMind предоставляли часть своих библиотек для прямого скачивания по ссылке. Однако сейчас [функция прямого скачивания без регистрации недоступна](https://blog.maxmind.com/2019/12/18/significant-changes-to-accessing-and-using-geolite2-databases/). Поэтому сначала нужно [зарегистрироваться здесь](https://www.maxmind.com/en/geolite2/signup) и скачать базу:
-
-Пример скачивания старой бд Maxmind 2019 года.
-
-```
-mkdir /opt/geoip
-cd /opt/geoip
-wget https://github.com/DocSpring/geolite2-city-mirror/raw/master/GeoLite2-City.tar.gz
-tar zxvf GeoLite2-City.tar.gz
-mv GeoLite2-City_20191029/GeoLite2-City.mmdb .
-```
-
 #### Установка [Vector](https://vector.dev/docs/setup/installation/)
 
 ```text
