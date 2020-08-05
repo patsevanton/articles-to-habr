@@ -104,29 +104,8 @@ data_dir = "/var/lib/vector"
   inputs                        = [ "nginx_input_vector" ]
   type                          = "json_parser"
 
-[transforms.nginx_parse_geoip]
-  inputs                        = [ "nginx_parse_json" ]
-  type                          = "geoip"
-  database                      = "/opt/geoip/GeoLite2-City.mmdb"
-  source                        = "remote_addr"
-  target                        = "geoip"
-
-[transforms.nginx_parse_rename_fields]
-  inputs                        = ["nginx_parse_geoip"]
-  type                          = "rename_fields"
-
-  fields.geoip.city_name        = "remote_geoip_city_name"
-  fields.geoip.country_code     = "remote_geoip_country_iso_code"
-  fields.geoip.country_name     = "remote_geoip_country_name"
-  fields.geoip.continent_code   = "remote_geoip_continent_code"
-  fields.geoip.continent_name   = "remote_geoip_continent_name"
-  fields.geoip.region_code      = "remote_geoip_region_iso_code"
-  fields.geoip.region_name      = "remote_geoip_region_name"
-  fields.geoip.latitude         = "remote_geoip_location_latitude"
-  fields.geoip.longitude        = "remote_geoip_location_longitude"
-
 [transforms.nginx_parse_add_defaults]
-  inputs                        = [ "nginx_parse_rename_fields" ]
+  inputs                        = [ "nginx_parse_json" ]
   type                          = "lua"
   version                       = "2"
 
@@ -198,10 +177,6 @@ data_dir = "/var/lib/vector"
         event.log.upstream_status = "0"
     end
 
-    if (event.log.fields.geoip.longitude == "") then
-        event.log.upstream_status = 0.0
-    end
-
     emit(event)
 
   end
@@ -210,7 +185,7 @@ data_dir = "/var/lib/vector"
 [transforms.nginx_parse_remove_fields]
     inputs                              = [ "nginx_parse_add_defaults" ]
     type                                = "remove_fields"
-    fields                              = ["data", "file", "geoip", "host", "source_type"]
+    fields                              = ["data", "file", "host", "source_type"]
 
 [transforms.nginx_parse_coercer]
 
@@ -224,8 +199,6 @@ data_dir = "/var/lib/vector"
     types.response_body_bytes_sent = "int"
 
     types.remote_port = "int"
-    types.remote_geoip_location_latitude = "float"
-    types.remote_geoip_location_longitude = "float"
 
     types.upstream_bytes_received = "int"
     types.upstream_bytes_send = "int"
@@ -339,15 +312,6 @@ CREATE TABLE vector.logs
     `remote_addr` IPv4,
     `remote_port` UInt32,
     `remote_user` String,
-    `remote_geoip_city_name` String,
-    `remote_geoip_country_iso_code` String,
-    `remote_geoip_country_name` String,
-    `remote_geoip_continent_code` String,
-    `remote_geoip_continent_name` String,
-    `remote_geoip_region_iso_code` String,
-    `remote_geoip_region_name` String,
-    `remote_geoip_location_latitude` Float32,
-    `remote_geoip_location_longitude` Float32,
     `upstream_addr` IPv4,
     `upstream_port` UInt32,
     `upstream_bytes_received` UInt64,
@@ -530,7 +494,7 @@ http {
 
 log_format vector escape=json
     '{'
-        '"node_name":"web-us-1",'
+        '"node_name":"nginx-vector",'
         '"timestamp":"$time_iso8601",'
         '"server_name":"$server_name",'
         '"request_full": "$request",'
@@ -575,6 +539,8 @@ log_format vector escape=json
     include /etc/nginx/conf.d/*.conf;
 }
 ```
+
+Не забудьте поменять node_name c nginx-vector на ваше название сервера в log_format vector
 
 Не забудте добавить правило в logrotate для новых логов (если log фаил не заканчивается на .log)
 
@@ -748,15 +714,8 @@ SELECT * FROM vector.data_domain_traffic WHERE domain = 'vhost1' ORDER BY timest
 
 То правильнее будет наверно делать запрос так
 ```text
-SELECT
-    timestamp,
-    sum(cached) AS cached,
-    sum(uncached) AS uncached,
-    sum(total) AS total
-FROM vector.data_domain_traffic
-WHERE domain = 'vhost1'
-GROUP BY timestamp
-ORDER BY timestamp ASC;
+SELECT timestamp, sum(cached) AS cached, sum(uncached) AS uncached,sum(total) AS total
+FROM vector.data_domain_traffic WHERE domain = 'vhost1' GROUP BY timestamp ORDER BY timestamp ASC;
 
 ┌───────────timestamp─┬─cached─┬─uncached─┬─total─┐
 │ 2020-07-22 13:00:00 │  34370 │        0 │ 34370 │
