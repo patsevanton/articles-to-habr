@@ -125,10 +125,6 @@ data_dir = "/var/lib/vector"
         event.log.upstream_addr = "127.0.0.1"
     end
 
-    if event.log.user_id == "" then
-        event.log.user_id = "0"
-    end
-
     if (event.log.upstream_bytes_received == "-" or event.log.upstream_bytes_received == "") then
         event.log.upstream_bytes_received = "0"
     end
