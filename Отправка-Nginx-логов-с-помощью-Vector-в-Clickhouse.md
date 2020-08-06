@@ -139,57 +139,6 @@ TTL timestamp + toIntervalMonth(1)
 SETTINGS index_granularity = 8192;
 ```
 
-Создаем таблицу vector.data_domain_traffic.
-
-```
-/* Например мы хотим сделать статистику по кол-ву трафика в разрезе домена с шагом в час */
-/* Это таблица в которой будет хранится статистика */
-
-CREATE TABLE vector.data_domain_traffic
-(
-    `timestamp` DateTime,
-    `domain` String,
-    `cached` UInt64,
-    `uncached` UInt64,
-    `total` UInt64
-)
-ENGINE = SummingMergeTree()
-PARTITION BY toYYYYMMDD(timestamp)
-ORDER BY (domain, timestamp)
-TTL timestamp + toIntervalMonth(3)
-SETTINGS index_granularity = 8192;
-```
-
-Создаем MATERIALIZED VIEW vector.view_domain_traffic. Запускаем `clickhouse-client -m` и делаем запрос.
-
-```shell script
-/* А это Materialized view который считает статистику и отправляет ее в нужную таблицу */
-/* В моем случаи так как это проксирование всех запросов то кеш или не кеш я определяю адресом upstream (если он 127.0.0.1 то нода отдала из кэша) */
-/* В вашем случаи надо смотреть на значения upstream_cache_status “MISS”, “BYPASS”, “EXPIRED”, “STALE”, “UPDATING”, “REVALIDATED” или “HIT” */
-/* Например так */
-
-CREATE MATERIALIZED VIEW vector.view_domain_traffic TO vector.data_domain_traffic
-(
-    `timestamp` DateTime('Etc/UTC'),
-    `domain` String,
-    `cached` UInt64,
-    `uncached` UInt64,
-    `total` UInt64
-) AS
-SELECT
-    toStartOfHour(timestamp) AS timestamp,
-    domainWithoutWWW(domain(lowerUTF8(request_http_host))) AS domain,
-    sumIf(response_body_bytes_sent, upstream_cache_status == 'HIT') AS cached,
-    sumIf(response_body_bytes_sent, upstream_cache_status != 'HIT') AS uncached,
-    sum(response_body_bytes_sent) AS total
-FROM vector.logs
-WHERE (IPv4StringToNum(domain) = 0) AND (domain != '')
-GROUP BY (domain, timestamp)
-ORDER BY (domain, timestamp) ASC;
-
-/* Остальные примеры смотрите в repo: clickhouse-sql/schemes.txt */
-```
-
 Проверяем что создались таблицы. Запускаем `clickhouse-client` и делаем запрос.
 
 Переходим в бд vector.
@@ -208,9 +157,7 @@ Ok.
 show tables;
 
 ┌─name────────────────┐
-│ data_domain_traffic │
 │ logs                │
-│ view_domain_traffic │
 └─────────────────────┘
 ```
 
@@ -829,24 +776,5 @@ SELECT * FROM vector.logs;
 ┌─node_name────┬───────────timestamp─┬─server_name─┬─user_id─┬─request_full───┬─request_user_agent─┬─request_http_host─┬─request_uri─┬─request_scheme─┬─request_method─┬─request_length─┬─request_time─┬─request_referrer─┬─response_status─┬─response_body_bytes_sent─┬─response_content_type─┬───remote_addr─┬─remote_port─┬─remote_user─┬─upstream_addr─┬─upstream_port─┬─upstream_bytes_received─┬─upstream_bytes_sent─┬─upstream_cache_status─┬─upstream_connect_time─┬─upstream_header_time─┬─upstream_response_length─┬─upstream_response_time─┬─upstream_status─┬─upstream_content_type─┐
 │ nginx-vector │ 2020-08-06 06:00:29 │ vhost1      │         │ GET / HTTP/1.0 │ 2server            │ vhost2            │ /           │ http           │ GET            │             66 │        7.604 │                  │             404 │                       27 │                       │ 172.26.10.108 │       49158 │             │     127.0.0.1 │             0 │                     109 │                  86 │ DISABLED              │                     0 │                7.604 │                       27 │                  7.604 │             404 │                       │
 └──────────────┴─────────────────────┴─────────────┴─────────┴────────────────┴────────────────────┴───────────────────┴─────────────┴────────────────┴────────────────┴────────────────┴──────────────┴──────────────────┴─────────────────┴──────────────────────────┴───────────────────────┴───────────────┴─────────────┴─────────────┴───────────────┴───────────────┴─────────────────────────┴─────────────────────┴───────────────────────┴───────────────────────┴──────────────────────┴──────────────────────────┴────────────────────────┴─────────────────┴───────────────────────┘
-```
-
-Так как clickhouse еще не сделал Merge для timestamp 
-```text
-┌───────────timestamp─┬─domain───────┬─cached─┬─uncached─┬─total─┐
-│ 2020-07-22 14:00:00 │ example.com  │      8 │        0 │     8 │
-│ 2020-07-22 14:00:00 │ example.com  │  16531 │        0 │ 16531 │
-└─────────────────────┴──────────────┴────────┴──────────┴───────┘
-```
-
-То правильнее будет наверно делать запрос так
-```text
-SELECT timestamp, sum(cached) AS cached, sum(uncached) AS uncached,sum(total) AS total
-FROM vector.data_domain_traffic WHERE domain = 'vhost1' GROUP BY timestamp ORDER BY timestamp ASC;
-
-┌───────────timestamp─┬─cached─┬─uncached─┬─total─┐
-│ 2020-07-22 13:00:00 │  34370 │        0 │ 34370 │
-│ 2020-07-22 14:00:00 │  19787 │        0 │ 19787 │
-└─────────────────────┴────────┴──────────┴───────┘
 ```
 
