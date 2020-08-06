@@ -26,21 +26,19 @@ Aug 05 06:25:31.889 DEBUG transform{name=nginx_parse_rename_fields type=rename_f
 
 Схема примерно такая.
 
-### На сервере (Log server)
+### Выключаем Selinux на всех ваших серверах
 
-#### [Установка Clickhouse](https://clickhouse.tech/docs/ru/getting-started/install/)
+```
+sed -i 's/^SELINUX=.*/SELINUX=disabled/g' /etc/selinux/config
+reboot
+```
+
+### [Установка Clickhouse](https://clickhouse.tech/docs/ru/getting-started/install/) на 3 сервере
 
 ClickHouse используют набор инструкций SSE 4.2, поэтому, если не указано иное, его поддержка в используемом процессоре, становится дополнительным требованием к системе. Вот команда, чтобы проверить, поддерживает ли текущий процессор SSE 4.2:
 
 ```
 grep -q sse4_2 /proc/cpuinfo && echo "SSE 4.2 supported" || echo "SSE 4.2 not supported"
-```
-
-Выключаем Selinux на всех ваших серверах
-
-```
-sed -i 's/^SELINUX=.*/SELINUX=disabled/g' /etc/selinux/config
-reboot
 ```
 
 Сначала нужно подключить официальный репозиторий:
@@ -73,7 +71,232 @@ sudo yum install -y clickhouse-server clickhouse-client
 service clickhouse-server start
 ```
 
-#### Установка [Vector](https://vector.dev/docs/setup/installation/)
+Теперь перейдем к настройке Clickhouse   
+
+Заходим в Clickhouse
+
+```
+clickhouse-client -h 172.26.10.109 -m
+```
+
+172.26.10.109 - IP сервера где установлен Clickhouse.
+
+Создадим БД vector
+
+```
+CREATE DATABASE vector;
+```
+
+Проверим что бд есть.
+
+```
+show databases;
+```
+
+Создаем таблицу vector.logs.
+
+```sql
+/* Это таблица где хранятся логи как есть */
+
+CREATE TABLE vector.logs
+(
+    `node_name` String,
+    `timestamp` DateTime,
+    `server_name` String,
+    `user_id` String,
+    `request_full` String,
+    `request_user_agent` String,
+    `request_http_host` String,
+    `request_uri` String,
+    `request_scheme` String,
+    `request_method` String,
+    `request_length` UInt64,
+    `request_time` Float32,
+    `request_referrer` String,
+    `response_status` UInt16,
+    `response_body_bytes_sent` UInt64,
+    `response_content_type` String,
+    `remote_addr` IPv4,
+    `remote_port` UInt32,
+    `remote_user` String,
+    `upstream_addr` IPv4,
+    `upstream_port` UInt32,
+    `upstream_bytes_received` UInt64,
+    `upstream_bytes_sent` UInt64,
+    `upstream_cache_status` String,
+    `upstream_connect_time` Float32,
+    `upstream_header_time` Float32,
+    `upstream_response_length` UInt64,
+    `upstream_response_time` Float32,
+    `upstream_status` UInt16,
+    `upstream_content_type` String,
+    INDEX idx_http_host request_http_host TYPE set(0) GRANULARITY 1
+)
+ENGINE = MergeTree()
+PARTITION BY toYYYYMMDD(timestamp)
+ORDER BY timestamp
+TTL timestamp + toIntervalMonth(1)
+SETTINGS index_granularity = 8192;
+```
+
+Создаем таблицу vector.data_domain_traffic.
+
+```
+/* Например мы хотим сделать статистику по кол-ву трафика в разрезе домена с шагом в час */
+/* Это таблица в которой будет хранится статистика */
+
+CREATE TABLE vector.data_domain_traffic
+(
+    `timestamp` DateTime,
+    `domain` String,
+    `cached` UInt64,
+    `uncached` UInt64,
+    `total` UInt64
+)
+ENGINE = SummingMergeTree()
+PARTITION BY toYYYYMMDD(timestamp)
+ORDER BY (domain, timestamp)
+TTL timestamp + toIntervalMonth(3)
+SETTINGS index_granularity = 8192;
+```
+
+Создаем MATERIALIZED VIEW vector.view_domain_traffic. Запускаем `clickhouse-client -m` и делаем запрос.
+
+```shell script
+/* А это Materialized view который считает статистику и отправляет ее в нужную таблицу */
+/* В моем случаи так как это проксирование всех запросов то кеш или не кеш я определяю адресом upstream (если он 127.0.0.1 то нода отдала из кэша) */
+/* В вашем случаи надо смотреть на значения upstream_cache_status “MISS”, “BYPASS”, “EXPIRED”, “STALE”, “UPDATING”, “REVALIDATED” или “HIT” */
+/* Например так */
+
+CREATE MATERIALIZED VIEW vector.view_domain_traffic TO vector.data_domain_traffic
+(
+    `timestamp` DateTime('Etc/UTC'),
+    `domain` String,
+    `cached` UInt64,
+    `uncached` UInt64,
+    `total` UInt64
+) AS
+SELECT
+    toStartOfHour(timestamp) AS timestamp,
+    domainWithoutWWW(domain(lowerUTF8(request_http_host))) AS domain,
+    sumIf(response_body_bytes_sent, upstream_cache_status == 'HIT') AS cached,
+    sumIf(response_body_bytes_sent, upstream_cache_status != 'HIT') AS uncached,
+    sum(response_body_bytes_sent) AS total
+FROM vector.logs
+WHERE (IPv4StringToNum(domain) = 0) AND (domain != '')
+GROUP BY (domain, timestamp)
+ORDER BY (domain, timestamp) ASC;
+
+/* Остальные примеры смотрите в repo: clickhouse-sql/schemes.txt */
+```
+
+Проверяем что создались таблицы. Запускаем `clickhouse-client` и делаем запрос.
+
+Переходим в бд vector.
+
+```
+use vector;
+
+Ok.
+
+0 rows in set. Elapsed: 0.001 sec.
+```
+
+Смотрим таблицы.
+
+```
+show tables;
+
+┌─name────────────────┐
+│ data_domain_traffic │
+│ logs                │
+│ view_domain_traffic │
+└─────────────────────┘
+```
+
+### Установка elasticsearch на 4-ом сервере для отправки тех же данных в Elasticsearch для сравнения с Clickhouse
+
+Добавим публичный rpm ключ
+
+```
+rpm --import https://artifacts.elastic.co/GPG-KEY-elasticsearch
+```
+
+Создадим 2 репо:
+
+/etc/yum.repos.d/elasticsearch.repo
+
+```
+[elasticsearch]
+name=Elasticsearch repository for 7.x packages
+baseurl=https://artifacts.elastic.co/packages/7.x/yum
+gpgcheck=1
+gpgkey=https://artifacts.elastic.co/GPG-KEY-elasticsearch
+enabled=0
+autorefresh=1
+type=rpm-md
+```
+
+/etc/yum.repos.d/kibana.repo
+
+```
+[kibana-7.x]
+name=Kibana repository for 7.x packages
+baseurl=https://artifacts.elastic.co/packages/7.x/yum
+gpgcheck=1
+gpgkey=https://artifacts.elastic.co/GPG-KEY-elasticsearch
+enabled=1
+autorefresh=1
+type=rpm-md
+```
+
+Установим elasticsearch и kibana
+
+```
+yum install -y kibana elasticsearch mc
+```
+
+Так как  будет в 1 экземпляре, то в файл /etc/elasticsearch/elasticsearch.yml нужно добавить:
+
+```
+discovery.type: single-node
+```
+
+Чтобы vector смог отправлять данные в elasticsearch с другого сервера изменим network.host.
+
+```
+network.host: 0.0.0.0
+```
+
+Чтобы подключится к kibana изменим параметр server.host в файл /etc/kibana/kibana.yml
+
+```
+server.host: "0.0.0.0"
+```
+
+Старуем и включаем в автозапуск elasticsearch
+
+```
+systemctl enable elasticsearch
+systemctl start elasticsearch
+```
+
+ и kibana
+
+```
+systemctl enable kibana
+systemctl start kibana
+```
+
+Настройка Elasticsearch для single-node режима 1 shard, 0 replica.
+
+Для будущих индексов обновляем шаблон по умолчанию:
+
+```sh
+curl -X PUT http://localhost:9200/_template/default -H 'Content-Type: application/json' -d '{"index_patterns": ["*"],"order": -1,"settings": {"number_of_shards": "1","number_of_replicas": "0"}}' 
+```
+
+#### Установка [Vector](https://vector.dev/docs/setup/installation/) как замену Logstash на 2 сервере
 
 ```text
 yum install -y https://packages.timber.io/vector/0.9.X/vector-x86_64.rpm mc
@@ -214,6 +437,14 @@ data_dir = "/var/lib/vector"
     buffer.when_full = "block"
 
     request.in_flight_limit = 20
+
+[sinks.elasticsearch]
+  type = "elasticsearch"
+  inputs   = ["nginx_parse_coercer"]
+  compression = "none"
+  healthcheck = true
+  host = "http://172.26.10.116:9200" # 172.26.10.116 - сервер где установен elasticsearch
+  index = "vector-%Y-%m-%d"
 ```
 
 Вы можете откорректировать секцию transforms.nginx_parse_add_defaults.
@@ -252,149 +483,6 @@ SyslogIdentifier=vector
 WantedBy=multi-user.target
 ```
 
-Теперь перейдем к настройке Clickhouse   
-
-Заходим в Clickhouse
-
-```
-clickhouse-client -h 172.26.10.109 -m
-```
-
-172.26.10.109 - IP сервера где установилен Clickhouse.
-
-Создадим БД vector
-
-```
-CREATE DATABASE vector;
-```
-
-Проверим что бд есть.
-
-```
-show databases;
-```
-
-Создаем таблицу vector.logs.
-
-```sql
-/* Это таблица где хранятся логи как есть */
-
-CREATE TABLE vector.logs
-(
-    `node_name` String,
-    `timestamp` DateTime,
-    `server_name` String,
-    `user_id` String,
-    `request_full` String,
-    `request_user_agent` String,
-    `request_http_host` String,
-    `request_uri` String,
-    `request_scheme` String,
-    `request_method` String,
-    `request_length` UInt64,
-    `request_time` Float32,
-    `request_referrer` String,
-    `response_status` UInt16,
-    `response_body_bytes_sent` UInt64,
-    `response_content_type` String,
-    `remote_addr` IPv4,
-    `remote_port` UInt32,
-    `remote_user` String,
-    `upstream_addr` IPv4,
-    `upstream_port` UInt32,
-    `upstream_bytes_received` UInt64,
-    `upstream_bytes_sent` UInt64,
-    `upstream_cache_status` String,
-    `upstream_connect_time` Float32,
-    `upstream_header_time` Float32,
-    `upstream_response_length` UInt64,
-    `upstream_response_time` Float32,
-    `upstream_status` UInt16,
-    `upstream_content_type` String,
-    INDEX idx_http_host request_http_host TYPE set(0) GRANULARITY 1
-)
-ENGINE = MergeTree()
-PARTITION BY toYYYYMMDD(timestamp)
-ORDER BY timestamp
-TTL timestamp + toIntervalMonth(1)
-SETTINGS index_granularity = 8192;
-```
-
-Создаем таблицу vector.data_domain_traffic.
-
-```
-/* Например мы хотим сделать статистику по кол-ву трафика в разрезе домена с шагом в час */
-/* Это таблица в которой будет хранится статистика */
-
-CREATE TABLE vector.data_domain_traffic
-(
-    `timestamp` DateTime,
-    `domain` String,
-    `cached` UInt64,
-    `uncached` UInt64,
-    `total` UInt64
-)
-ENGINE = SummingMergeTree()
-PARTITION BY toYYYYMMDD(timestamp)
-ORDER BY (domain, timestamp)
-TTL timestamp + toIntervalMonth(3)
-SETTINGS index_granularity = 8192;
-```
-
-Создаем MATERIALIZED VIEW vector.view_domain_traffic. Запускаем `clickhouse-client -m` и делаем запрос.
-
-```shell script
-/* А это Materialized view который считает статистику и отправляет ее в нужную таблицу */
-/* В моем случаи так как это проксирование всех запросов то кеш или не кеш я определяю адресом upstream (если он 127.0.0.1 то нода отдала из кэша) */
-/* В вашем случаи надо смотреть на значения upstream_cache_status “MISS”, “BYPASS”, “EXPIRED”, “STALE”, “UPDATING”, “REVALIDATED” или “HIT” */
-/* Например так */
-
-CREATE MATERIALIZED VIEW vector.view_domain_traffic TO vector.data_domain_traffic
-(
-    `timestamp` DateTime('Etc/UTC'),
-    `domain` String,
-    `cached` UInt64,
-    `uncached` UInt64,
-    `total` UInt64
-) AS
-SELECT
-    toStartOfHour(timestamp) AS timestamp,
-    domainWithoutWWW(domain(lowerUTF8(request_http_host))) AS domain,
-    sumIf(response_body_bytes_sent, upstream_cache_status == 'HIT') AS cached,
-    sumIf(response_body_bytes_sent, upstream_cache_status != 'HIT') AS uncached,
-    sum(response_body_bytes_sent) AS total
-FROM vector.logs
-WHERE (IPv4StringToNum(domain) = 0) AND (domain != '')
-GROUP BY (domain, timestamp)
-ORDER BY (domain, timestamp) ASC;
-
-/* Остальные примеры смотрите в repo: clickhouse-sql/schemes.txt */
-```
-
-Проверяем что создались таблицы. Запускаем `clickhouse-client` и делаем запрос.
-
-Переходим в бд vector.
-
-```
-use vector;
-
-Ok.
-
-0 rows in set. Elapsed: 0.001 sec.
-```
-
-Смотрим таблицы.
-
-```
-show tables;
-
-┌─name────────────────┐
-│ data_domain_traffic │
-│ logs                │
-│ view_domain_traffic │
-└─────────────────────┘
-```
-
 После создания таблиц и вьюшек можно запускать Vector
 
 ```
@@ -408,9 +496,10 @@ systemctl start vector
 journalctl -f -u vector
 ```
 
-В логах должна быть такая запись
+В логах должны быть такие записи
 
 ```
+INFO vector::topology::builder: Healthcheck: Passed.
 INFO vector::topology::builder: Healthcheck: Passed.
 ```
 
@@ -458,7 +547,7 @@ module_hotfixes=true
 yum install -y nginx mc
 ```
 
-Для начала нам надо настроить формат логов в Nginx для этого в /etc/nginx/nginx.conf или в отдельный фаил надо добавить новый формат
+Для начала нам надо настроить формат логов в Nginx в файле /etc/nginx/nginx.conf
 
 ```text
 user  nginx;
@@ -471,6 +560,7 @@ pid        /var/run/nginx.pid;
 events {
     worker_connections  1024;
 }
+
 
 http {
     include       /etc/nginx/mime.types;
@@ -513,8 +603,7 @@ log_format vector escape=json
     '}';
 
 
-    # Что бы не поломать вашу текущую конфигурациию, Nginx позволяет иметь несколько директив access_log
-    access_log  /var/log/nginx/access.log  main;            # Стандартный лог
+    access_log  /var/log/nginx/access.log  main;
     access_log  /var/log/nginx/access.json.log vector;      # Новый лог в формате json
 
     sendfile        on;
@@ -528,7 +617,12 @@ log_format vector escape=json
 }
 ```
 
-Не забудьте поменять node_name c nginx-vector на ваше название сервера в log_format vector
+Что бы не поломать вашу текущую конфигурациию, Nginx позволяет иметь несколько директив access_log
+
+```
+access_log  /var/log/nginx/access.log  main;            # Стандартный лог
+access_log  /var/log/nginx/access.json.log vector;      # Новый лог в формате json
+```
 
 Не забудте добавить правило в logrotate для новых логов (если log фаил не заканчивается на .log)
 
@@ -644,6 +738,18 @@ systemctl enable vector
 systemctl start vector
 ```
 
+Логи vector можно посмотреть так
+
+```
+journalctl -f -u vector
+```
+
+В логах должна быть такая запись
+
+```
+INFO vector::topology::builder: Healthcheck: Passed.
+```
+
 ### Нагрузочное тестирование
 
 Тестирование проводим с помощью Apache benchmark.
@@ -709,79 +815,5 @@ FROM vector.data_domain_traffic WHERE domain = 'vhost1' GROUP BY timestamp ORDER
 │ 2020-07-22 13:00:00 │  34370 │        0 │ 34370 │
 │ 2020-07-22 14:00:00 │  19787 │        0 │ 19787 │
 └─────────────────────┴────────┴──────────┴───────┘
-```
-
-### Отправка тех же данных в Elasticsearch для сравнения с Clickhouse
-
-Добавим публичный rpm ключ
-
-```
-rpm --import https://artifacts.elastic.co/GPG-KEY-elasticsearch
-```
-
-Создадим 2 репо:
-
-/etc/yum.repos.d/elasticsearch.repo
-
-```
-[elasticsearch]
-name=Elasticsearch repository for 7.x packages
-baseurl=https://artifacts.elastic.co/packages/7.x/yum
-gpgcheck=1
-gpgkey=https://artifacts.elastic.co/GPG-KEY-elasticsearch
-enabled=0
-autorefresh=1
-type=rpm-md
-```
-
-/etc/yum.repos.d/kibana.repo
-
-```
-[kibana-7.x]
-name=Kibana repository for 7.x packages
-baseurl=https://artifacts.elastic.co/packages/7.x/yum
-gpgcheck=1
-gpgkey=https://artifacts.elastic.co/GPG-KEY-elasticsearch
-enabled=1
-autorefresh=1
-type=rpm-md
-```
-
-Установим elasticsearch и kibana
-
-```
-yum install -y kibana elasticsearch mc
-```
-
-Так как  будет в 1 экземпляре, то в файл /etc/elasticsearch/elasticsearch.yml нужно добавить:
-
-```
-discovery.type: single-node
-```
-
-Чтобы vector смог отправлять данные в elasticsearch с другого сервера изменим network.host.
-
-```
-network.host: 0.0.0.0
-```
-
-Чтобы подключится к kibana изменим параметр server.host.
-
-```
-server.host: "0.0.0.0"
-```
-
-Старуем и включаем в автозапуск elasticsearch
-
-```
-systemctl enable elasticsearch
-systemctl start elasticsearch
-```
-
- и kibana
-
-```
-systemctl enable kibana
-systemctl start kibana
 ```
 
