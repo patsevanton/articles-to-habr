@@ -836,5 +836,7 @@ order by bytes_size desc;
 
 Размер тех же данных в индексе в Elasticsearch занимае 4,5ГБ.
 
-В итоге, в Clickhouse данные занимает в 4500/857.19 = 5.24 раза меньше чем в Elasticsearch.
+Если в vector в параметрах не указывать в Clickhouse данные занимает в 4500/857.19 = 5.24 раза меньше чем в Elasticsearch.
+
+В vector поле compression используется по умолчанию.
 
