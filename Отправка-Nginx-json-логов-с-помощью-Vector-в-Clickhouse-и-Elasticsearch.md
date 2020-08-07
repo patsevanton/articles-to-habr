@@ -498,14 +498,30 @@ yum install -y nginx mc httpd-tools
 
 ```text
 user  nginx;
-worker_processes  1;
+# you must set worker processes based on your CPU cores, nginx does not benefit from setting more than that
+worker_processes auto; #some last versions calculate it automatically
+
+# number of file descriptors used for nginx
+# the limit for the maximum FDs on the server is usually set by the OS.
+# if you don't set FD's then OS settings will be used which is by default 2000
+worker_rlimit_nofile 100000;
 
 error_log  /var/log/nginx/error.log warn;
 pid        /var/run/nginx.pid;
 
 
+# provides the configuration file context in which the directives that affect connection processing are specified.
 events {
-    worker_connections  1024;
+    # determines how much clients will be served per worker
+    # max clients = worker_connections * worker_processes
+    # max clients is also limited by the number of socket connections available on the system (~64k)
+    worker_connections 4000;
+
+    # optimized to serve many clients with each thread, essential for linux -- for testing environment
+    use epoll;
+
+    # accept as many connections as possible, may flood worker connections if set too low -- for testing environment
+    multi_accept on;
 }
 
 
@@ -648,6 +664,17 @@ Nodejs-stub-server не имеет rpm. Здесь https://github.com/patsevanto
 yum -y install yum-plugin-copr epel-release
 yum copr enable antonpatsev/nodejs-stub-server
 yum -y install stub_http_server
+```
+
+Поправил в файле /var/lib/stub_http_server/stub_http_server.js время ответа stub_http_server чтобы было больше логов.
+
+```
+var max_sleep = 10;
+```
+
+Запустим stub_http_server.
+
+```
 systemctl start stub_http_server
 systemctl enable stub_http_server
 ```
