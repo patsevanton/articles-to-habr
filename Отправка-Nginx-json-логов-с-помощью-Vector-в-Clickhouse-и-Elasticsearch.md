@@ -33,6 +33,38 @@ sed -i 's/^SELINUX=.*/SELINUX=disabled/g' /etc/selinux/config
 reboot
 ```
 
+### На все сервера устанавливаем эмулятор HTTP сервера + утилиты
+
+В качестве эмулятора HTTP сервера будем использовать [nodejs-stub-server](https://github.com/maxiko/nodejs-stub-server) от [Maxim Ignatenko](https://habr.com/users/Anthrax_Beta/)
+
+Nodejs-stub-server не имеет rpm. Здесь https://github.com/patsevanton/nodejs-stub-server создаем ему rpm. Собираться rpm будет с помощью [Fedora Copr](https://copr.fedorainfracloud.org/coprs/antonpatsev/nodejs-stub-server/)
+
+Добавляем репозиторий antonpatsev/nodejs-stub-server
+
+```
+yum -y install yum-plugin-copr epel-release
+yes | yum copr enable antonpatsev/nodejs-stub-server
+```
+
+Устанавливаем nodejs-stub-server, Apache benchmark и терминальный мультиплексор screen на все сервера
+
+```
+yum -y install stub_http_server screen mc httpd-tools screen
+```
+
+Поправил в файле /var/lib/stub_http_server/stub_http_server.js время ответа stub_http_server чтобы было больше логов.
+
+```
+var max_sleep = 10;
+```
+
+Запустим stub_http_server.
+
+```
+systemctl start stub_http_server
+systemctl enable stub_http_server
+```
+
 ### [Установка Clickhouse](https://clickhouse.tech/docs/ru/getting-started/install/) на 3 сервере
 
 ClickHouse используют набор инструкций SSE 4.2, поэтому, если не указано иное, его поддержка в используемом процессоре, становится дополнительным требованием к системе. Вот команда, чтобы проверить, поддерживает ли текущий процессор SSE 4.2:
@@ -44,7 +76,7 @@ grep -q sse4_2 /proc/cpuinfo && echo "SSE 4.2 supported" || echo "SSE 4.2 not su
 Сначала нужно подключить официальный репозиторий:
 
 ```
-sudo yum install -y yum-utils mc
+sudo yum install -y yum-utils
 sudo rpm --import https://repo.clickhouse.tech/CLICKHOUSE-KEY.GPG
 sudo yum-config-manager --add-repo https://repo.clickhouse.tech/rpm/stable/x86_64
 ```
@@ -52,7 +84,7 @@ sudo yum-config-manager --add-repo https://repo.clickhouse.tech/rpm/stable/x86_6
 Для установки пакетов необходимо выполнить следующие команды:
 
 ```
-sudo yum install -y clickhouse-server clickhouse-client httpd-tools
+sudo yum install -y clickhouse-server clickhouse-client
 ```
 
 Разрешаем clickhouse-server слушать сетевую карту в файле /etc/clickhouse-server/config.xml
@@ -200,7 +232,7 @@ type=rpm-md
 Установим elasticsearch и kibana
 
 ```
-yum install -y kibana elasticsearch mc httpd-tools
+yum install -y kibana elasticsearch
 ```
 
 Так как  будет в 1 экземпляре, то в файл /etc/elasticsearch/elasticsearch.yml нужно добавить:
@@ -246,7 +278,7 @@ curl -X PUT http://localhost:9200/_template/default -H 'Content-Type: applicatio
 #### Установка [Vector](https://vector.dev/docs/setup/installation/) как замену Logstash на 2 сервере
 
 ```text
-yum install -y https://packages.timber.io/vector/0.9.X/vector-x86_64.rpm mc httpd-tools
+yum install -y https://packages.timber.io/vector/0.9.X/vector-x86_64.rpm mc httpd-tools screen
 ```
 
 Настроим Vector как замену Logstash. Редактируем файл /etc/vector/vector.toml
@@ -384,19 +416,20 @@ data_dir = "/var/lib/vector"
     buffer.when_full = "block"
 
     request.in_flight_limit = 20
-
+  
 [sinks.elasticsearch]
-  type = "elasticsearch"
-  inputs   = ["nginx_parse_coercer"]
-  compression = "none"
-  healthcheck = true
-  host = "http://172.26.10.116:9200" # 172.26.10.116 - сервер где установен elasticsearch
-  index = "vector-%Y-%m-%d"
+    type = "elasticsearch"
+    inputs   = ["nginx_parse_coercer"]
+    compression = "none"
+    healthcheck = true
+    # 172.26.10.116 - сервер где установен elasticsearch
+    host = "http://172.26.10.116:9200" 
+    index = "vector-%Y-%m-%d"
 ```
 
 Вы можете откорректировать секцию transforms.nginx_parse_add_defaults.
 
-Так как я использую данные конфиги для небольшого CDN и там в upstream_* может прилетать несколько значений   
+Так как [Вячеслав Рахинский](https://git.sys.im/oss/configs/nginx-vector-logs) использует данные конфиги для небольшого CDN и там в upstream_* может прилетать несколько значений   
 
 Например:
 ```text
@@ -430,7 +463,7 @@ SyslogIdentifier=vector
 WantedBy=multi-user.target
 ```
 
-После создания таблиц и вьюшек можно запускать Vector
+После создания таблиц можно запускать Vector
 
 ```
 systemctl enable vector
@@ -491,7 +524,7 @@ module_hotfixes=true
 Установим пакет nginx
 
 ```
-yum install -y nginx mc httpd-tools
+yum install -y nginx
 ```
 
 Для начала нам надо настроить формат логов в Nginx в файле /etc/nginx/nginx.conf
@@ -523,7 +556,6 @@ events {
     # accept as many connections as possible, may flood worker connections if set too low -- for testing environment
     multi_accept on;
 }
-
 
 http {
     include       /etc/nginx/mime.types;
@@ -592,7 +624,7 @@ access_log  /var/log/nginx/access.json.log vector;      # Новый лог в �
 Удаляем default.conf из /etc/nginx/conf.d/
 
 ```
-rm /etc/nginx/conf.d/default.conf
+rm -f /etc/nginx/conf.d/default.conf
 ```
 
 Добавляем виртуальный хост /etc/nginx/conf.d/vhost1.conf
@@ -652,33 +684,6 @@ server {
 172.26.10.106 vhost4
 ```
 
-### Эмулятор HTTP сервера
-
-В качестве эмулятора HTTP сервера будем использовать [nodejs-stub-server](https://github.com/maxiko/nodejs-stub-server) от [Maxim Ignatenko](https://habr.com/users/Anthrax_Beta/)
-
-Nodejs-stub-server не имеет rpm. Здесь https://github.com/patsevanton/nodejs-stub-server создаем ему rpm. Собираться rpm будет с помощью [Fedora Copr](https://copr.fedorainfracloud.org/coprs/antonpatsev/nodejs-stub-server/)
-
-Устанавливаем пакет nodejs-stub-server на все сервера
-
-```
-yum -y install yum-plugin-copr epel-release
-yum copr enable antonpatsev/nodejs-stub-server
-yum -y install stub_http_server
-```
-
-Поправил в файле /var/lib/stub_http_server/stub_http_server.js время ответа stub_http_server чтобы было больше логов.
-
-```
-var max_sleep = 10;
-```
-
-Запустим stub_http_server.
-
-```
-systemctl start stub_http_server
-systemctl enable stub_http_server
-```
-
 И если все готово то 
 
 ```text
@@ -712,7 +717,7 @@ SyslogIdentifier=vector
 WantedBy=multi-user.target
 ```
 
-И настроим замену Filebeat в конфиге /etc/vector/vector.toml где 172.26.10.108 это IP адрес log сервера (Vector-Server)
+И настроим замену Filebeat в конфиге /etc/vector/vector.toml. IP адрес 172.26.10.108 - это IP адрес log сервера (Vector-Server)
 
 ```text
 data_dir = "/var/lib/vector"
@@ -761,30 +766,30 @@ INFO vector::topology::builder: Healthcheck: Passed.
 
 На все сервера был установлен пакет httpd-tools
 
-Запускаем тестирование с помощью Apache benchmark c 4 разных серверов:
+Запускаем тестирование с помощью Apache benchmark c 4 разных серверов в screen. Сначала запускаем терминальный мультиплексор screen, а затем запускаем тестирование с помощью Apache benchmark. Как работать с screen вы можете найти в статье https://help.ubuntu.ru/wiki/screen.
 
 C 1-го сервера
 
 ```
-while true; do ab -H "User-Agent: 1server" -c 10 -n 10 -t 10 http://vhost1/; sleep 1; done
+while true; do ab -H "User-Agent: 1server" -c 100 -n 10 -t 10 http://vhost1/; sleep 1; done
 ```
 
 C 2-го сервера
 
 ```
-while true; do ab -H "User-Agent: 2server" -c 10 -n 10 -t 10 http://vhost2/; sleep 1; done
+while true; do ab -H "User-Agent: 2server" -c 100 -n 10 -t 10 http://vhost2/; sleep 1; done
 ```
 
 C 3-го сервера
 
 ```
-while true; do ab -H "User-Agent: 3server" -c 10 -n 10 -t 10 http://vhost3/; sleep 1; done
+while true; do ab -H "User-Agent: 3server" -c 100 -n 10 -t 10 http://vhost3/; sleep 1; done
 ```
 
 C 4-го сервера
 
 ```
-while true; do ab -H "User-Agent: 4server" -c 10 -n 10 -t 10 http://vhost4/; sleep 1; done
+while true; do ab -H "User-Agent: 4server" -c 100 -n 10 -t 10 http://vhost4/; sleep 1; done
 ```
 
 ### Проверим данные в Clickhouse
@@ -801,7 +806,23 @@ clickhouse-client -h 172.26.10.109 -m
 SELECT * FROM vector.logs;
 
 ┌─node_name────┬───────────timestamp─┬─server_name─┬─user_id─┬─request_full───┬─request_user_agent─┬─request_http_host─┬─request_uri─┬─request_scheme─┬─request_method─┬─request_length─┬─request_time─┬─request_referrer─┬─response_status─┬─response_body_bytes_sent─┬─response_content_type─┬───remote_addr─┬─remote_port─┬─remote_user─┬─upstream_addr─┬─upstream_port─┬─upstream_bytes_received─┬─upstream_bytes_sent─┬─upstream_cache_status─┬─upstream_connect_time─┬─upstream_header_time─┬─upstream_response_length─┬─upstream_response_time─┬─upstream_status─┬─upstream_content_type─┐
-│ nginx-vector │ 2020-08-06 06:00:29 │ vhost1      │         │ GET / HTTP/1.0 │ 2server            │ vhost2            │ /           │ http           │ GET            │             66 │        7.604 │                  │             404 │                       27 │                       │ 172.26.10.108 │       49158 │             │     127.0.0.1 │             0 │                     109 │                  86 │ DISABLED              │                     0 │                7.604 │                       27 │                  7.604 │             404 │                       │
-└──────────────┴─────────────────────┴─────────────┴─────────┴────────────────┴────────────────────┴───────────────────┴─────────────┴────────────────┴────────────────┴────────────────┴──────────────┴──────────────────┴─────────────────┴──────────────────────────┴───────────────────────┴───────────────┴─────────────┴─────────────┴───────────────┴───────────────┴─────────────────────────┴─────────────────────┴───────────────────────┴───────────────────────┴──────────────────────┴──────────────────────────┴────────────────────────┴─────────────────┴───────────────────────┘
+│ nginx-vector │ 2020-08-07 04:32:42 │ vhost1      │         │ GET / HTTP/1.0 │ 1server            │ vhost1            │ /           │ http           │ GET            │             66 │        0.028 │                  │             404 │                       27 │                       │ 172.26.10.106 │       45886 │             │ 172.26.10.106 │             0 │                     109 │                  97 │ DISABLED              │                     0 │                0.025 │                       27 │                  0.029 │             404 │                       │
+└──────────────┴─────────────────────┴─────────────┴─────────┴────────────────┴────────────────────┴───────────────────┴─────────────┴────────────────┴────────────────┴────────────────┴──────────────┴──────────────────┴─────────────────┴──────────────────────────┴───────────────────────┴───────────────┴─────────────┴─────────────┴───────────────┴───────────────┴─────────────────────────┴─────────────────────┴───────────────────────┴───────────────────────┴──────────────────────┴──────────────────────────┴────────────────────────┴─────────────────┴───────────────────────
+```
+
+Узнаем размер таблиц в Clickhouse
+
+```sql
+select concat(database, '.', table)                         as table,
+       formatReadableSize(sum(bytes))                       as size,
+       sum(rows)                                            as rows,
+       max(modification_time)                               as latest_modification,
+       sum(bytes)                                           as bytes_size,
+       any(engine)                                          as engine,
+       formatReadableSize(sum(primary_key_bytes_in_memory)) as primary_keys_size
+from system.parts
+where active
+group by database, table
+order by bytes_size desc;
 ```
 
