@@ -826,3 +826,15 @@ group by database, table
 order by bytes_size desc;
 ```
 
+Узнаем сколько в Clickhouse заняли логи.
+
+![](https://habrastorage.org/webt/gx/st/qj/gxstqjfh6jhgefaqg2lu0xeifpg.png)
+
+Размер таблицы logs занимает 857.19 МБ.
+
+![](https://habrastorage.org/webt/gr/it/_n/grit_noqwrmxpup7_n9cdm9pylm.png)
+
+Размер тех же данных в индексе в Elasticsearch занимае 4,5ГБ.
+
+В итоге, в Clickhouse данные занимает в 4500/857.19 = 5.24 раза меньше чем в Elasticsearch.
+
