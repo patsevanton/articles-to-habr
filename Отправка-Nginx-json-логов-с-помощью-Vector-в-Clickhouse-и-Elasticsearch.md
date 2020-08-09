@@ -840,3 +840,5 @@ order by bytes_size desc;
 
 В vector поле compression используется по умолчанию.
 
+Телеграм чат по Clickhouse: https://t.me/clickhouse_ru
+Телеграм чат по Elasticsearch: https://t.me/elasticsearch_ru
