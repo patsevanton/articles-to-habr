@@ -63,8 +63,8 @@ cd upsource-2020.1.1802/bin/
 yum install -y mc unzip
 wget https://download-cf.jetbrains.com/hub/hub-2020.1.12375.zip
 unzip hub-2020.1.12375.zip
-cd youtrack-2020.3.1402/bin/
-./youtrack.sh start
+cd hub-2020.1.12375/bin/
+./hub.sh start
 ```
 
 
