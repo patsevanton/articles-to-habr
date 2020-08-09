@@ -81,12 +81,37 @@ cd hub-2020.1.12375/bin/
 
 ![](https://habrastorage.org/webt/xz/wo/wy/xzwowynvdhk-pxzagnqacpgtv-8.png)
 
+**Настройка внешнего Hub для Teamcity**
+
+Сначала нужно установить [TeamCity Hub Plugin](https://confluence.jetbrains.com/display/TW/TeamCity+Hub+Plugin).
+
+![](https://habrastorage.org/webt/k9/ay/sk/k9ayskteseuff3dv_aed_7wijp0.png)
+
+После установки  [TeamCity Hub Plugin](https://confluence.jetbrains.com/display/TW/TeamCity+Hub+Plugin) идем в **Administration | Hub Settings** и включаем Hub инеграцию.
+
+![](https://habrastorage.org/webt/zy/yz/vt/zyyzvtrfpa4k-vv7kqplirkgeja.png)
+
+**Синхронизация между teamcity и hub идет только по гостевому пользователю.**
+
+![](https://habrastorage.org/webt/vv/ot/um/vvotum1-g8p1p1qt-dxm5zasqau.png)
+
+Проверяем, нажимаем на Trust и нажимаем на возврат настроек в Teamcity.
+
+![](https://habrastorage.org/webt/ws/bp/mc/wsbpmc6toqvqyheybwxrthpd2lm.png)
+
+Интеграция Teamcity с Hub настроена
+
+![](https://habrastorage.org/webt/ft/o0/mc/fto0mc6tvwh1ru-ljsnox5h1yke.png)
+
+В Teamcity включаем синхронизацию пользователей.
+
 После установки имеется возможность сделать следующие интеграции:
 
 - YouTrack c TeamCity - Build Server Integration
+- YouTrack c Upsource - Upsource Integration
 - YouTrack с Gitlab - VCS Integrations
 
-![](https://habrastorage.org/webt/vr/v5/x2/vrv5x28ehfkx5obctlxb_09chpy.png)
+![](https://habrastorage.org/webt/wt/p4/3i/wtp43iinlxs7uxuamjahncqeebi.png)
 
 #### Интеграция YouTrack c TeamCity - Build Server Integration
 
