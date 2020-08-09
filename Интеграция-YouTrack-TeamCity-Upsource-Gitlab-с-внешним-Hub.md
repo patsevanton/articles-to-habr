@@ -77,9 +77,9 @@ cd hub-2020.1.12375/bin/
 ./hub.sh start
 ```
 
-Настраиваем пароль админа для Hub и после этого указываем URL до Hub в настройке YouTrack и Upsource.
+Настраиваем пароль админа для Hub и после этого указываем URL до Hub в настройке YouTrack и Upsource. Вводим пароль админа Hub и получаем сообщение: "Hub is verified and available".
 
-
+![](https://habrastorage.org/webt/xz/wo/wy/xzwowynvdhk-pxzagnqacpgtv-8.png)
 
 После установки имеется возможность сделать следующие интеграции:
 
