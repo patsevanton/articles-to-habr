@@ -6,9 +6,11 @@
 
 **[TeamCity](https://www.jetbrains.com/ru-ru/teamcity/)** — интеллектуальный сервер непрерывной интеграции.
 
-[**GitLab**](https://about.gitlab.com/) — веб-инструмент жизненного цикла DevOps с открытым исходным кодом, представляющий систему управления репозиториями кода для Git с собственной вики, системой отслеживания ошибок, CI/CD пайплайном и другими функциями.
-
 **[Upsource](https://www.jetbrains.com/ru-ru/upsource/)** – это решение для обзора исходного кода и просмотра его репозиториев, позволяющее анализировать код, делиться им с коллегами и обсуждать результаты совместной работы. 
+
+**[Hub](https://www.jetbrains.com/ru-ru/hub/)** — это система управления пользовательскими аккаунтами, группами и правами доступа, а также лицензиями для командных инструментов JetBrains: YouTrack, Upsource и TeamCity. Hub также является единой точкой входа (single sign-on) во все наши командные инструменты. Hub абсолютно бесплатен для неограниченного количества пользователей.
+
+[**GitLab**](https://about.gitlab.com/) — веб-инструмент жизненного цикла DevOps с открытым исходным кодом, представляющий систему управления репозиториями кода для Git с собственной вики, системой отслеживания ошибок, CI/CD пайплайном и другими функциями.
 
 ![](https://habrastorage.org/webt/yh/w0/yx/yhw0yxkaa1mbl77wzi3t9eirjfy.png)
 
@@ -44,6 +46,28 @@ tar zxvf TeamCity-2020.1.2.tar.gz
 cd TeamCity/bin
 ./runAll.sh start
 ```
+
+**Upsource**
+
+```
+yum install -y mc unzip
+wget https://download-cf.jetbrains.com/upsource/upsource-2020.1.1802.zip
+unzip upsource-2020.1.1802.zip
+cd upsource-2020.1.1802/bin/
+./upsource.sh start
+```
+
+**Hub**
+
+```
+yum install -y mc unzip
+wget https://download-cf.jetbrains.com/hub/hub-2020.1.12375.zip
+unzip hub-2020.1.12375.zip
+cd youtrack-2020.3.1402/bin/
+./youtrack.sh start
+```
+
+
 
 После установки YouTrack со встроенным (embedded) Hub, Teamcity, Gitlab имеется возможность сделать следующие интеграции:
 
