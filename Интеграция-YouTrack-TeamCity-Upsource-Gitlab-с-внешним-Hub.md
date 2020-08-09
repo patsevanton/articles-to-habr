@@ -18,6 +18,16 @@
 
 **Необходимо чтобы все инструменты резолвились по DNS. Если инструменты не будут резолвиться по DNS, то у вас часть функционала не будет работать.**
 
+Если у вас нет DNS, то добавляем сервера в hosts на всех серверах:
+
+```
+172.26.10.92 gitlab.example.com
+172.26.10.117 youtrack.novalocal
+172.26.10.118 teamcity.novalocal
+172.26.10.119 upsource.novalocal
+172.26.10.120 hub.novalocal
+```
+
 Выключаем Selinux на всех ваших серверах
 
 ```
@@ -67,9 +77,9 @@ cd hub-2020.1.12375/bin/
 ./hub.sh start
 ```
 
+На все
 
-
-После установки YouTrack со встроенным (embedded) Hub, Teamcity, Gitlab имеется возможность сделать следующие интеграции:
+После установки имеется возможность сделать следующие интеграции:
 
 - YouTrack c TeamCity - Build Server Integration
 - YouTrack с Gitlab - VCS Integrations
