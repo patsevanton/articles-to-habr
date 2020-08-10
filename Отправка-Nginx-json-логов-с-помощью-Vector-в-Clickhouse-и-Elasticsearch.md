@@ -97,6 +97,21 @@ sudo yum install -y clickhouse-server clickhouse-client
 
 <level>debug</level>
 
+Настройки сжатия стандартные:
+
+```
+min_compress_block_size  65536
+max_compress_block_size  1048576
+```
+
+Для активации Zstd сждатия конфиг посоветовали не трогать, а лучше применять DDL.
+
+![](https://habrastorage.org/webt/1w/fq/e6/1wfqe6qgu-yqcepvpxjfsplco7u.png)
+
+Как применить zstd сжатие через DDL в гугле я не нашел. Поэтому оставил как есть.
+
+Коллеги, кто использет zstd сжатие в Clickhouse - поделить, пожалуйста, инструкциями.
+
 Для запуска сервера в качестве демона, выполните:
 
 ```
