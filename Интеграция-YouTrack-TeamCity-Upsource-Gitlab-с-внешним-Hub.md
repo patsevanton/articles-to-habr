@@ -115,7 +115,22 @@ cd hub-2020.1.12375/bin/
 
 #### Интеграция YouTrack c TeamCity - Build Server Integration
 
-Создадим одинаковый проект в  Youtrack, Teamcity и Gitlab.
+Создадим проект в Hub и Gitlab.
+
+![](https://habrastorage.org/webt/bk/zv/z4/bkzvz4o_lgtsvt0yrvuv_vszyq0.png)
+
+Создали проект projects1 в Hub.
+
+Смотрим проекты в Youtrack.
+
+![](https://habrastorage.org/webt/mz/tl/au/mztlaug-ml0njasche5kjg-i3uk.png)
+
+В Youtrack при попытке создать Issue появляетя ошибка: "Create a new project first".
+
+![](https://habrastorage.org/webt/i0/8r/sv/i08rsvlgxtfdji2zoouhzkkjxqi.png)
+
+Хот я в Hub Integration при нажатии на sync выводится сообщение: "1 project teams synchronized with Hub".
+
 ![](https://habrastorage.org/webt/1b/se/fl/1bseflarn7nw7ehpy3slr2mmffk.png)
 
 В Teamcity подключен VCS, который отображается на скриншоте с Gitlab.
