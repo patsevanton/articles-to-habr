@@ -857,3 +857,5 @@ order by bytes_size desc;
 
 Телеграм чат по Clickhouse: https://t.me/clickhouse_ru
 Телеграм чат по Elasticsearch: https://t.me/elasticsearch_ru
+
+Телеграм чат по "*Сбор и аналитика системных* сообщений": https://t.me/ru_logs
