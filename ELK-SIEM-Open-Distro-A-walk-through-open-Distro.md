@@ -1,6 +1,18 @@
-**Прогулка по open Distro**
+**ELK SIEM Open Distro: Прогулка по open Distro**
 
-Добро пожаловать в нашу третью статью из этой серии. Я призываю вас всех изучить первую статью, чтобы лучше понять, что мы собираемся здесь обсуждать.
+Оглавление всех постов.
+
+- Введение. Развертывание инфраструктуры и технологий для SOC как Service (SOCasS)
+
+- ELK stack: данные по установке и доставке
+- Open Distro для Elasticsearch
+- Визуализация Dashboards и ELK SIEM
+- Интеграция с WAZUH
+- Оповещение (Alerting)
+- Отчетность
+- Case Management
+
+
 
 В open Distro доступны следующие плагины являются :
 
@@ -11,8 +23,6 @@
 - Анализатор производительности (Performance Analyzer )
 
 В нашем проекте мы установили только плагины безопасности и оповещений.
-
-
 
 ### 1-Функция Оповещения :
 
@@ -218,7 +228,7 @@ chmod +x install_demo_configuration.sh
 
 Отключение  **x-pack security** для Kibana: Также для Кибаны мы должны отключить функцию xpack.security и игнорировать проверку ssl в /etc/kibana/kibana.yml
 
-ПРИМЕЧАНИЕ. Убедитесь, что ваш протокол - https, а не http.
+**ПРИМЕЧАНИЕ**. Убедитесь, что ваш протокол - https, а не http.
 
 ![](https://habrastorage.org/webt/iz/8s/pj/iz8spjbymumnjtcql8ft0fgfews.png)
 

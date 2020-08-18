@@ -1,6 +1,18 @@
-ELK stack: данные по установке и настройке. Ibrahim Ayadhi
+ELK SIEM Open Distro: ELK stack - данные по установке и настройке.
 
-Добро пожаловать в нашу вторую статью из этой серии. Я призываю вас всех проверить [предыдущую статью](https://medium.com/@ibrahim.ayadhi97/deploying-of-infrastructure-and-technologies-for-a-soc-as-a-service-socass-8e1bbb885149), чтобы лучше понять, что мы собираемся здесь обсудить.
+Оглавление всех постов.
+
+- Введение. Развертывание инфраструктуры и технологий для SOC как Service (SOCasS)
+
+- ELK stack: данные по установке и доставке
+- Open Distro для Elasticsearch
+- Визуализация Dashboards и ELK SIEM
+- Интеграция с WAZUH
+- Оповещение (Alerting)
+- Отчетность
+- Case Management
+
+
 
 **1- Установка и настройка ELK STACK**
 
