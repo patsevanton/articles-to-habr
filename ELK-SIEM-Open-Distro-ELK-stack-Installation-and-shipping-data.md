@@ -1,9 +1,8 @@
-ELK SIEM Open Distro: ELK stack - данные по установке и настройке.
+ELK SIEM Open Distro: ELK stack - установка и настройка.
 
 Оглавление всех постов.
 
 - Введение. Развертывание инфраструктуры и технологий для SOC как Service (SOCasS)
-
 - ELK stack: данные по установке и доставке
 - Open Distro для Elasticsearch
 - Визуализация Dashboards и ELK SIEM
