@@ -1,5 +1,7 @@
 ELK SIEM Open Distro: ELK stack - установка и настройка.
 
+<cut />
+
 Оглавление всех постов.
 
 - Введение. Развертывание инфраструктуры и технологий для SOC как Service (SOCasS)
@@ -10,8 +12,6 @@ ELK SIEM Open Distro: ELK stack - установка и настройка.
 - Оповещение (Alerting)
 - Отчетность
 - Case Management
-
-
 
 **1- Установка и настройка ELK STACK**
 
@@ -37,8 +37,6 @@ https://www.elastic.co/guide/en/elastic-stack/current/installing-elastic-stack.h
 
 ![](https://habrastorage.org/webt/qt/l0/vu/qtl0vuu--5zwlyppddlx6iwk3p8.png)
 
-
-
 **1.3- Конфигурация ELK**
 
 В этом разделе мы предоставим вам конфигурацию, которую мы сделали для стека ELK.
@@ -61,7 +59,9 @@ https://www.elastic.co/guide/en/elastic-stack/current/installing-elastic-stack.h
 
 Как только это будет установлено, нам нужно перезапустить службу ElasticSearch с помощью этой команды:
 
-**sudo systemctl restart elasticsearch**
+```
+sudo systemctl restart elasticsearch
+```
 
 **Предупреждение**: *установка network.bind_host to 0.0.0.0 не рекомендуется из-за проблем с безопасностью и не должна использоваться на производственном уровне. Мы пока находимся на этапе создания прототипа.*
 
@@ -69,7 +69,9 @@ https://www.elastic.co/guide/en/elastic-stack/current/installing-elastic-stack.h
 
 Все настройки были внесены в файл kibana.yml, расположенный в **/etc/kibana/kibana.yml**. Чтобы открыть его, используйте следующую команду:
 
-**sudo nano /etc/kibana/kibana.yml**
+```
+sudo nano /etc/kibana/kibana.yml
+```
 
 ![](https://habrastorage.org/webt/f6/ht/ry/f6htrykkoofo9bhm9nwmjzryixw.png)
 
@@ -89,7 +91,9 @@ https://www.elastic.co/guide/en/elastic-stack/current/installing-elastic-stack.h
 
 Теперь займемся настройкой logstash:
 
-**sudo cat /etc/logstash/logstash-sample.conf**
+```
+sudo cat /etc/logstash/logstash-sample.conf
+```
 
 Этот файл содержит необходимую конфигурацию для Logstash. Итак, нам нужно скопировать его в каталог **/etc/logstash/conf.d/** и изменить его имя на logstash.conf
 
@@ -143,7 +147,7 @@ https://www.elastic.co/guide/en/beats/winlogbeat/current/configuration-winlogbea
 
 **Разбираемся в нужном количестве шардов и количестве реплик:**
 
-**\- index.number_of_shards:**
+**- index.number_of_shards:**
 
 Индекс потенциально может хранить большой объем данных, который может превышать аппаратные ограничения одного узла. Чтобы решить эту проблему, Elasticsearch предоставляет возможность разбить ваш индекс на несколько частей, называемых осколками, каждая из которых сохраняется на разных машинах.
 
@@ -158,7 +162,6 @@ https://www.elastic.co/guide/en/beats/winlogbeat/current/configuration-winlogbea
 ![](https://habrastorage.org/webt/2p/-g/e5/2p-ge5s55-ijz-vunqkgarvzj-8.png)
 
 ![](https://habrastorage.org/webt/vu/5e/iv/vu5eivrztoyeg_2ovorf1-d7ogk.png)
-
 
 Для вывода Elasticsearch и вывода Logstash **только один из них должен быть включен** при запуске службы или проверке конфигурации.
 
@@ -190,11 +193,15 @@ https://docs.microsoft.com/en-us/sysinternals/downloads/sysmon
 
 **II.** Загрузите xml-конфигурацию для sysmon, содержащую ссылки MITER ATT и CK: https://raw.githubusercontent.com/ion-storm/sysmon-config/master/sysmonconfig-export.xml
 
-**III.** Установите Sysmon с соответствующим файлом конфигурации: **sysmon64 -accepteula -i sysmonconfig-export.xml**
+**III.** Установите Sysmon с соответствующим файлом конфигурации:
+```
+sysmon64 -accepteula -i sysmonconfig-export.xml
+```
 
-IV. Проверьте текущую конфигурацию: **sysmon64 –c**
-
-
+IV. Проверьте текущую конфигурацию: 
+```
+sysmon64 –c
+```
 
 **Настройте шаблон индекса, информационные панели и шаблон индекса:**
 
@@ -242,7 +249,6 @@ https://www.elastic.co/guide/en/beats/winlogbeat/current/load-kibana-dashboards.
 
 ![](https://habrastorage.org/webt/3h/ww/tt/3hwwttzkfbhoaoqthat36ehkg5s.png)
 
-
 В остальном биты не сильно отличаются от winlogbeat ни по настройке, ни по установке.
 
 Биты, которые мы использовали:
@@ -279,12 +285,9 @@ https://www.alibabacloud.com/blog/594941
 
 ![](https://habrastorage.org/webt/3k/20/uy/3k20uy4wziycvo1ufw9t1-bae3i.png)
 
-
-
 Также можно интегрировать интерфейс Suricata в стек ELK, для чего вы можете проверить эту ссылку ниже:
 
 https://www.howtoforge.com/tutorial/suricata-with-elk-and-web-front-ends-on-ubuntu-bionic-beaver-1804-lts/
-
 
 
 Телеграм чат по Elasticsearch: https://t.me/elasticsearch_ru
