@@ -2,9 +2,8 @@ ELK SIEM Open Distro: Визуализация информационных па
 
 Оглавление всех постов.
 
-- Введение. Развертывание инфраструктуры и технологий для SOC как Service (SOCasS)
-
-- ELK stack: данные по установке и доставке
+- [Введение. Развертывание инфраструктуры и технологий для SOC как Service (SOCasS)](https://habr.com/ru/post/515576/)
+- [ELK stack — установка и настройка](https://habr.com/ru/post/515722/)
 - Open Distro для Elasticsearch
 - Визуализация Dashboards и ELK SIEM
 - Интеграция с WAZUH
