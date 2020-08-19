@@ -287,3 +287,5 @@ https://www.alibabacloud.com/blog/594941
 https://www.howtoforge.com/tutorial/suricata-with-elk-and-web-front-ends-on-ubuntu-bionic-beaver-1804-lts/
 
 
+
+Телеграм чат по Elasticsearch: https://t.me/elasticsearch_ru

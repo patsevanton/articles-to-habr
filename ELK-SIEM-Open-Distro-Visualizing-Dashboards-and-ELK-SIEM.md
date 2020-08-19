@@ -184,3 +184,7 @@ winlog.event_data.RuleName
 Спасибо за уделенное время. Надеюсь, эта статья была вам полезна. Если вы хотите получить более подробную информацию по теме, мы рекомендуем вам посетить официальный сайт.
 
 https://www.elastic.co/guide/en/kibana/current/tutorial-visualizing.html
+
+
+
+Телеграм чат по Elasticsearch: https://t.me/elasticsearch_ru

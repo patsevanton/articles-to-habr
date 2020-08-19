@@ -229,3 +229,7 @@ service wazuh-manager restart
 Чтобы узнать больше об активном респоне Wazuh, вы можете проверить:
 
 https://documentation.wazuh.com/3.7/user-manual/capabilities/active-response/how-it-works.html
+
+
+
+Телеграм чат по Elasticsearch: https://t.me/elasticsearch_ru

@@ -287,3 +287,7 @@ systemctl restart kibana
 ![](https://habrastorage.org/webt/7q/s9/5u/7qs95ulnaomeu2pkvtlec8hlmae.png)
 
 ![](https://habrastorage.org/webt/ak/ls/hc/aklshcud37b7nfx8k9mnys2xyug.png)
+
+
+
+Телеграм чат по Elasticsearch: https://t.me/elasticsearch_ru
