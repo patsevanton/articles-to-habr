@@ -315,44 +315,45 @@ nano User_creation.yml
 
 Наше оповещение было успешно отправлено в Hive
 
-К сожалению, как мы упоминали ранее, правило не будет редактироваться с помощью интерфейса Praeco, вам придется отредактировать его вручную в / etc / elastalert / rules:
+К сожалению, как мы упоминали ранее, правило не будет редактироваться с помощью интерфейса Praeco, вам придется отредактировать его вручную в `/etc/elastalert/rules`:
 
+![](https://habrastorage.org/webt/n2/yj/81/n2yj81gshbzjcpd-hhiurkop67q.png)
 
+**D- Проверка предупреждений в интерфейсе TheHive:**
 
+![](https://habrastorage.org/webt/gu/xu/nn/guxunnudcosoyw8b1pp3a-zfupk.png)
 
-D- Проверка предупреждений в интерфейсе TheHive:
-
-
-
-
-2.3- Получите помощь с инструментом Sigma для создания правил:
+**2.3- Получите помощь с инструментом Sigma для создания правил:**
 
 Как упоминалось ранее, инструмент Sigma помог нам преобразовать правила сигмы в несколько форматов, включая Elastalert.
 
 URL проекта с подробными инструкциями: https://github.com/Neo23x0/sigma.git
 
+![](https://habrastorage.org/webt/_x/av/lc/_xavlc01dkngngbyw6smm2-ohas.png)
 
+**A- Загрузить инструмент Sigma**
 
-
-A- Загрузить инструмент Sigma
-
+```
 cd ~
-
 git clone https://github.com/Neo23x0/sigma.git
+```
 
-B- Создайте свое оповещение с помощью инструмента сигма
+**B- Создайте свое оповещение с помощью инструмента сигма**
 
-cd ~ / сигма / инструменты
-
+```
+cd ~/sigma/tools
 pip3 install -r requirements.txt
+```
 
-Выполнить (пример правила):
+Выполнить (пример правила) (это одна команда):
 
-./sigmac -t elastalert -c winlogbeat 
+```
+./sigmac -t elastalert -c winlogbeat ../rules/windows/builtin/win_user_creation.yml
+```
 
-../rules/windows/builtin/win_user_creation.yml
+![](https://habrastorage.org/webt/bp/9d/vi/bp9dviw0_bwguwbnhsozrzwvk_y.png)
 
-
+![](https://habrastorage.org/webt/vd/zs/zg/vdzszg2jkdnudglo_vg1108yxqe.png)
 
 
 К сожалению, это правило не может напрямую использоваться (Praeco / Elastalert-Server) из-за отсутствия нескольких полей.
@@ -361,58 +362,36 @@ pip3 install -r requirements.txt
 
 Этот инструмент очень важен, поскольку помогает собирать информацию о многих правилах и их строках запроса.
 
-Примечание: Иногда вам нужно проверить свои журналы (Kibana → Интерфейс обнаружения) и их поля, чтобы убедиться, что поля имен в ваших журналах совпадают с полями имен в правилах сигмы. Если в ваших полях отображается желтая ошибка, перейдите к шаблону индекса, выберите соответствующий индекс и нажмите кнопку «Обновить поля».
+Примечание: Иногда вам нужно проверить свои журналы (Kibana → Discover Interface) и их поля, чтобы убедиться, что поля имен в ваших журналах совпадают с полями имен в правилах сигмы. Если в ваших полях отображается желтая ошибка, перейдите к шаблону индекса, выберите соответствующий индекс и нажмите кнопку «Обновить поля».
 
-2.4- Отправка предупреждений Wazuh в theHive:
+**2.4- Отправка предупреждений Wazuh в theHive:**
 
 Мы будем использовать тот же обходной путь, упомянутый ранее, для предупреждений wazuh, сначала мы создадим предупреждения wazuh с помощью интерфейса praeco, затем мы вручную отредактируем файл правил, чтобы добавить вывод Hive:
 
-1. 
-2. Создайте правило wazuh и сохраните его:
-
-Мы использовали для фильтрации правила с помощью rule.id (вы можете выбрать любое другое поле)
-
-Вы можете получить идентификатор правил в wazuh → Overview → Security events
-
-
-
-
-B-Отредактируйте правило и перезапустите elastalert-server:
-
-нано /etc/elastalert/wazuh-alert-TEST.yaml
-
-
-
-
-1. 
-2. Проверка предупреждений:
-
-Спасибо за уделенное время. Мы надеемся, что вам понравилась эта статья и вы лучше поняли систему оповещений, используемую в нашем проекте. Увидимся в следующей статье.
-
-
-
-
-
-
-
-
-
-![](https://habrastorage.org/webt/n2/yj/81/n2yj81gshbzjcpd-hhiurkop67q.png)
-
-![](https://habrastorage.org/webt/gu/xu/nn/guxunnudcosoyw8b1pp3a-zfupk.png)
-
-![](https://habrastorage.org/webt/_x/av/lc/_xavlc01dkngngbyw6smm2-ohas.png)
-
-![](https://habrastorage.org/webt/bp/9d/vi/bp9dviw0_bwguwbnhsozrzwvk_y.png)
-
-![](https://habrastorage.org/webt/vd/zs/zg/vdzszg2jkdnudglo_vg1108yxqe.png)
+**A. Создайте правило wazuh и сохраните его:**
 
 ![](https://habrastorage.org/webt/gn/tl/7e/gntl7enjah9t4b0nqhseq3mlct8.png)
 
+Мы использовали для фильтрации правила с помощью rule.id (вы можете выбрать любое другое поле).
+
+Вы можете получить идентификатор правил в wazuh → Overview → Security events.
+
 ![](https://habrastorage.org/webt/7c/qd/a4/7cqda4y_4ad377qzzecwjkx8hjg.png)
 
+**B-Отредактируйте правило и перезапустите elastalert-server:**
+
+```
+nano /etc/elastalert/wazuh-alert-TEST.yaml
+```
+
 ![](https://habrastorage.org/webt/mx/-d/kj/mx-dkjj84om4vvyfbrnsnllktim.png)
+
+
+
+**C- Проверка оповещенний:**
 
 ![](https://habrastorage.org/webt/lz/pr/k-/lzprk-pbnz2geirr3ql1n1vcm0i.png)
 
 ![](https://habrastorage.org/webt/hp/d8/_b/hpd8_buzaizd_-l-z5ausvl4cyq.png)
+
+Спасибо за уделенное время. Мы надеемся, что вам понравилась эта статья и вы лучше поняли систему оповещений, используемую в нашем проекте. Увидимся в следующей статье.
