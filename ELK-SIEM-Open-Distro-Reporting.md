@@ -8,25 +8,18 @@
 
 Эта статья разделена на следующие разделы:
 
-- 
 - Введение
-
-- 
 - Установка Nessus Essentials
-
-- 
 - Установка VulnWhisperer
 
 \1. Введение :
 
 Инструменты, которые мы будем использовать:
 
-- 
 - VulnWhisperer: VulnWhisperer - это инструмент управления уязвимостями и агрегатор отчетов. VulnWhisperer извлечет все отчеты из различных сканеров уязвимостей и создаст файл с уникальным именем для каждого из них.
 
 URL проекта: https://github.com/HASecuritySolutions/VulnWhisperer
 
-- 
 - Основы Nessus: Nessus Essentials (ранее Nessus Home) - это бесплатная версия сканера уязвимостей Nessus.
 
 \2. Установка необходимых компонентов Nessus:
@@ -34,7 +27,7 @@ URL проекта: https://github.com/HASecuritySolutions/VulnWhisperer
 2.1- Скачать с официального сайта (www.tenable.com), в нашем проекте мы использовали эту версию:
 
 
- 
+
 
 2.2 - Установка Nessus:
 
@@ -47,12 +40,12 @@ URL проекта: https://github.com/HASecuritySolutions/VulnWhisperer
 Перейдите по адресу https: // YourServerIp: 8834 и выберите Nessus Essentials.
 
 
- 
+
 
 2.3- Начните с Nessus
 
 
- 
+
 
 Скопируйте код активации, создайте учетную запись и подождите, пока Nessus подготовит файлы.
 
@@ -61,12 +54,12 @@ URL проекта: https://github.com/HASecuritySolutions/VulnWhisperer
 Перейдите в New Scan и выберите Basic Network Scan.
 
 
- 
+
 
 Выберите цель, сохраните и запустите:
 
 
- 
+
 
 3.Установка VulnWhisperer:
 
@@ -75,7 +68,7 @@ URL проекта: https://github.com/HASecuritySolutions/VulnWhisperer
 ПРИМЕЧАНИЕ: VulnWhisperer требует Python2.7, поэтому мы изменим нашу версию Python по умолчанию.
 
 
- 
+
 
 3.2- Настроить VulnWhisperer:
 
@@ -96,7 +89,7 @@ URL проекта: https://github.com/HASecuritySolutions/VulnWhisperer
 Выберите модули, которые вы хотите включить (в нашем случае мы просто включим Nessus), и напишите данные своей учетной записи Nessus:
 
 
- 
+
 
 3.3 - Проверьте соединение Nessus и загрузите отчет:
 
@@ -105,12 +98,12 @@ URL проекта: https://github.com/HASecuritySolutions/VulnWhisperer
 *Reports will be saved with csv extension.Check them under: /opt/VulnWhisperer/data/nessus/My\ Scans/*
 
 
- 
+
 
 Если нового отчета нет, вы увидите
 
 
- 
+
 
 3.4- Cronjob с Vulnwhisperer:
 
@@ -125,26 +118,26 @@ URL проекта: https://github.com/HASecuritySolutions/VulnWhisperer
 **** \* \* \* \* /usr/local/bin/vuln_whisperer -c /etc/VulnWhisperer/configs/frameworks_example.ini >/dev/null 2>&1***
 
 
- 
+
 
 3.5-Импорт шаблонов Elasticsearch:
 
 Зайдите в kibana Dev Tools и добавьте шаблон:
 
 
- 
+
 
 **Ссылка на файл****:**
 
 https://github.com/HASecuritySolutions/VulnWhisperer/blob/master/resources/elk6/logstash-vulnwhisperer-template_elk7.json
 
 
- 
+
 
 Теперь у вас будет шаблон индекса
 
 
- 
+
 
 3.6- Импорт визуализаций Кибаны
 
@@ -161,7 +154,7 @@ https://github.com/HASecuritySolutions/VulnWhisperer/blob/master/resources/elk6/
 Теперь под панелями мониторинга у вас есть:
 
 
- 
+
 
 3.7 -Добавление файла конфигурации Nessus Logstash
 
@@ -178,7 +171,7 @@ https://github.com/HASecuritySolutions/VulnWhisperer/blob/master/resources/elk6/
 Изменить вывод
 
 
- 
+
 
 3.8- Перезапустите свои службы и проверьте отчеты:
 
@@ -187,20 +180,20 @@ https://github.com/HASecuritySolutions/VulnWhisperer/blob/master/resources/elk6/
 **Т**еперь у вас должен быть создан новый индекс для Vulnwhisperer.
 
 
- 
+
 
 Перейдите к шаблону индекса и проверьте количество ваших полей:
 
 ПРИМЕЧАНИЕ: обновите шаблон индекса, чтобы распознать все поля.
 
 
- 
+
 
 Наконец, перейдите на панели мониторинга и проверьте свои отчеты
 
 У вас не должно быть ошибок в визуализации.
 
 
- 
+
 
 Теперь все отчеты, созданные nessus с расширениями csv, будут автоматически отправляться в ваш стек ELK, чтобы вы могли визуализировать их на панелях мониторинга kibana.
