@@ -241,7 +241,7 @@ foreach ($users_with_items as $user) {
 }
 ```
 
-Обратите внимание, что мы перебираем массив `$users_with_items` и `$user ['personal_directories']` для каждого пользователя.
+Обратите внимание, что мы перебираем массив `$users_with_items` и `$user['personal_directories']` для каждого пользователя.
 
  
 
