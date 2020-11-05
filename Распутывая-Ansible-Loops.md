@@ -229,6 +229,8 @@ common_directories:
 
 #### ЦИКЛ 3: СОЗДАВАЙТЕ ЛИЧНЫЕ КАТАЛОГИ ПОЛЬЗОВАТЕЛЕЙ, ИСПОЛЬЗУЯ [WITH_SUBELEMENTS](http://docs.ansible.com/ansible/2.4/playbooks_loops.html#looping-over-subelements)
 
+Примечание: Цикл 3 без цикла 1 у меня выдавал ошибку `chown failed: failed to look up user`
+
 В этом примере мы используем другой вид вложенного цикла `with_subelements` для создания каталогов, перечисленных в переменной `users_with_items` из цикла 1. В PHP цикл может выглядеть примерно так:
 
 ```
