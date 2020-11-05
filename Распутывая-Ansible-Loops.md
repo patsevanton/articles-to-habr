@@ -154,7 +154,7 @@ foreach ($users_with_items as $user) {
 
 #### ЦИКЛ 2: СОЗДАВАЙТЕ КАТАЛОГИ ОБЩИХ ПОЛЬЗОВАТЕЛЕЙ, ИСПОЛЬЗУЯ [WITH_NESTED](http://docs.ansible.com/ansible/2.4/playbooks_loops.html#nested-loops)
 
-Примечание: Цикл 2 без цикла 1 у меня выдавал ошибку `chown failed: failed to look up user`
+Примечание: Для цикла 2 нужны созданные юзеры, например с помощью цикла 1. Иначе будет ошибка `chown failed: failed to look up user`
 
 В этом примере мы используем две переменные, `users_with_items` из цикла 1, и новую, `common_directories`, которая представляет собой список всех каталогов, которые должны присутствовать в каталоге каждого пользователя. Это означает, что (снова возвращаясь к PHP), нам нужно что-то, что работает примерно так:
 
@@ -229,7 +229,7 @@ common_directories:
 
 #### ЦИКЛ 3: СОЗДАВАЙТЕ ЛИЧНЫЕ КАТАЛОГИ ПОЛЬЗОВАТЕЛЕЙ, ИСПОЛЬЗУЯ [WITH_SUBELEMENTS](http://docs.ansible.com/ansible/2.4/playbooks_loops.html#looping-over-subelements)
 
-Примечание: Цикл 3 без цикла 1 у меня выдавал ошибку `chown failed: failed to look up user`
+Примечание: Для цикла 3 нужны созданные юзеры, например с помощью цикла 1. Иначе будет ошибка `chown failed: failed to look up user`
 
 В этом примере мы используем другой вид вложенного цикла `with_subelements` для создания каталогов, перечисленных в переменной `users_with_items` из цикла 1. В PHP цикл может выглядеть примерно так:
 
