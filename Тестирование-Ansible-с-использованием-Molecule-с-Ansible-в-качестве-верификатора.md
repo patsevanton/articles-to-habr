@@ -1,4 +1,5 @@
 Тестирование Ansible с использованием Molecule с Ansible в качестве верификатора
+https://www.adictosaltrabajo.com/2020/05/08/ansible-testing-using-molecule-with-ansible-as-verifier/
 
 ![](https://habrastorage.org/webt/ut/eu/ai/uteuaip-uwrawuyyrc98peuhoqo.jpeg)
 
