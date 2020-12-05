@@ -1,4 +1,5 @@
 Практическое руководство по HashiCorp Consul — Часть 1
+https://medium.com/velotio-perspectives/a-practical-guide-to-hashicorp-consul-part-1-5ee778a7fcf4
 
 ![](https://habrastorage.org/webt/r-/-d/a0/r--da0gbyafieifqbiwxezr48a4.jpeg)
 
