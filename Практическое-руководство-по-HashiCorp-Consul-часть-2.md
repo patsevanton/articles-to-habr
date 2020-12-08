@@ -123,33 +123,89 @@ mongod --bind_ip_all --port 27017 --dbpath /data/db --replSet "consuldemo"
 
 [Создание приложения Django с нуля](https://docs.djangoproject.com/en/2.1/intro/tutorial01/) выходит за рамки этого руководства, мы рекомендуем вам обратиться к [официальной документации Django](https://docs.djangoproject.com/en/2.1/), чтобы начать работу с проектом Django. Но мы все же рассмотрим некоторые важные аспекты.
 
-Поскольку нам нужно, чтобы наше приложение Django взаимодействовало с MongoDB, мы будем использовать коннектор MongoDB для Django ORM, Djongo. Мы настроим наши настройки Django для использования Djongo и подключения к нашей MongoDB. Djongo довольно прост в настройке.
+Поскольку нам нужно, чтобы наше приложение Django взаимодействовало с MongoDB, мы будем использовать коннектор MongoDB для Django ORM, [Djongo](https://nesdis.github.io/djongo/). Мы настроим наши настройки Django для использования Djongo и подключения к нашей MongoDB. Djongo довольно прост в настройке.
 
 Для локальной установки MongoDB потребуется всего две строки кода:
 
- 
+```
+...
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'djongo',
+        'NAME': 'db',
+    }
+}
+
+...
+```
 
 В нашем случае, поскольку нам понадобится доступ к MongoDB через другой контейнер, наша конфигурация будет выглядеть так:
 
- 
+ ```
+...
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'djongo',
+        'NAME': 'db',
+        'HOST': 'mongodb://mongo-primary.service.consul',
+        'PORT': 27017,
+    }
+}
+
+...
+@velotiotech
+ ```
+
+
 
 Детали:
 
-·    ENGINE: соединитель базы данных для использования в Django ORM.
+·    ENGINE: Коннектор базы данных для использования в Django ORM.
 
 ·    NAME: Имя базы данных.
 
 ·    HOST: адрес хоста, на котором работает MongoDB.
 
-·    PORT: какой порт ваш MongoDB прослушивает запросы.
+·    PORT: какой порт MongoDB прослушивает запросы.
 
-Djongo внутренне общается с PyMongo и использует MongoClient для выполнения запросов в Mongo. Мы также можем использовать другие коннекторы MongoDB, доступные для Django, чтобы достичь этого, например, django-mongodb-engine или pymongo напрямую, в зависимости от наших потребностей.
+Djongo внутренне общается с [PyMongo](https://api.mongodb.com/python/current/) и использует [MongoClient](http://api.mongodb.com/python/current/api/pymongo/mongo_client.html) для выполнения запросов в Mongo. Мы также можем использовать другие коннекторы MongoDB, доступные для Django, чтобы достичь этого, например, [django-mongodb-engine](https://django-mongodb-engine.readthedocs.io/) или [pymongo](https://github.com/mongodb/mongo-python-driver) напрямую, в зависимости от наших потребностей.
 
-Примечание. В настоящее время мы читаем и записываем через Django на один хост MongoDB, основной, но мы можем настроить Djongo так, чтобы он также разговаривал со второстепенными хостами для операций только для чтения. Это не входит в рамки нашего обсуждения. Вы можете обратиться к официальной документации Djongo, чтобы добиться именно этого.
+*Примечание. В настоящее время мы читаем и записываем через Django на один хост MongoDB, основной, но мы можем настроить Djongo так, чтобы он также разговаривал со второстепенными хостами для операций только для чтения. Это не входит в рамки нашего обсуждения. Вы можете обратиться к официальной документации Djongo, чтобы добиться именно этого.*
 
 Продолжая процесс создания приложения Django, нам нужно определить наши модели. Поскольку мы создаем приложение, похожее на блог, наши модели будут выглядеть следующим образом:
 
+```
+from djongo import models
+
+class Blog(models.Model):
+    name = models.CharField(max_length=100)
+    tagline = models.TextField()
+
+    class Meta:
+        abstract = True
+
+class Entry(models.Model):
+    blog = models.EmbeddedModelField(
+        model_container=Blog,
+    )
+    
+    headline = models.CharField(max_length=255)
+```
+
+
+
 Мы можем запустить локальный экземпляр MongoDB и создать миграции для этих моделей. Кроме того, можем зарегистрировать эти модели в вашем администраторе Django, например:
+
+```
+from django.contrib import admin
+from.models import Entry
+
+admin.site.register(Entry)
+```
+
+
 
 В этом примере мы можем поиграть с CRUD-операциями модели Entry через Django Admin.
 
@@ -157,19 +213,143 @@ Djongo внутренне общается с PyMongo и использует Mo
 
 Наши настройки Django выглядят так:
 
+```
+from django.shortcuts import render
+from pymongo import MongoClient
+
+def home(request):
+    client = MongoClient("mongo-primary.service.consul")
+    replica_set = client.admin.command('ismaster')
+
+    return render(request, 'home.html', { 
+        'mongo_hosts': replica_set['hosts'],
+        'mongo_primary_host': replica_set['primary'],
+        'mongo_connected_host': replica_set['me'],
+        'mongo_is_primary': replica_set['ismaster'],
+        'mongo_is_secondary': replica_set['secondary'],
+    })
+```
+
+
+
 Наша конфигурация URL-адресов или маршрутов для приложения выглядит так:
+
+```
+from django.urls import path
+from tweetapp import views
+
+urlpatterns = [
+    path('', views.home, name='home'),
+]
+```
+
+
 
 А для проекта - URL-адреса приложений включены так:
 
-Наш шаблон Django, «templates / home.html», выглядит так:
+```
+from django.contrib import admin
+from django.urls import path, include
+from django.conf import settings
+from django.conf.urls.static import static
 
- 
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path('web', include('tweetapp.urls')),
+] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+```
+
+
+
+Наш шаблон Django, `templates/home.html`, выглядит так:
+
+ ```
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link href="https://fonts.googleapis.com/css?family=Armata" rel="stylesheet">
+
+    <title>Django-Mongo-Consul</title>
+</head>
+<body class="bg-dark text-white p-5" style="font-family: Armata">
+    <div class="p-4 border">
+        <div class="m-2">
+            <b>Django Database Connection</b>
+        </div>
+        <table class="table table-dark">
+            <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Property</th>
+                    <th scope="col">Value</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>1</td>
+                    <td>Mongo Hosts</td>
+                    <td>{% for host in mongo_hosts %}{{ host }}<br/>{% endfor %}</td>
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td>Mongo Primary Address</td>
+                    <td>{{ mongo_primary_host }}</td>
+                </tr>
+                <tr>
+                    <td>3</td>
+                    <td>Mongo Connected Address</td>
+                    <td>{{ mongo_connected_host }}</td>
+                </tr>
+                <tr>
+                    <td>4</td>
+                    <td>Mongo - Is Primary?</td>
+                    <td>{{ mongo_is_primary }}</td>
+                </tr>
+                <tr>
+                    <td>5</td>
+                    <td>Mongo - Is Secondary?</td>
+                    <td>{{ mongo_is_secondary }}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+</body>
+</html>
+ ```
+
+
 
 Чтобы запустить приложение, нам нужно сначала перенести базу данных, используя следующую команду:
 
+```
+python ./manage.py migrate
+```
+
+
+
 А также собрать все статические активы в статический каталог:
 
+```
+python ./manage.py collectstatic --noinput
+```
+
+
+
 Теперь запустите приложение Django с Gunicorn, HTTP-сервером WSGI, как показано ниже:
+
+```
+gunicorn --bind 0.0.0.0:8000 --access-logfile - tweeter.wsgi:application
+```
+
+
 
 Это дает нам базовое приложение Django, подобное блогу, которое подключается к бэкэнду MongoDB.
 
@@ -177,15 +357,15 @@ Djongo внутренне общается с PyMongo и использует Mo
 
  
 
-Consul
+#### Consul
 
-Мы размещаем агента Consul для каждой службы в рамках нашей установки Consul.
+Мы размещаем [агент Consul](https://www.consul.io/docs/agent/basics.html) для каждой службы в рамках нашей установки Consul.
 
-Агент Consul отвечает за обнаружение службы путем регистрации службы в кластере Consul, а также контролирует работоспособность каждого экземпляра службы.
+Агент Consul отвечает за обнаружение службы путем [регистрации службы в кластере Consul](https://velotio.com/blog/2019/3/11/hashicorp-consul-guide-1), а также контролирует работоспособность каждого экземпляра службы.
 
  
 
-Consul на узлах, на которых работает MongoDB Replica Set
+### Consul на узлах, на которых работает MongoDB Replica Set
 
 Сначала мы обсудим настройку Consul в контексте MongoDB Replica Set, поскольку она решает интересную проблему. В любой момент времени один из экземпляров MongoDB может быть первичным или вторичным.
 
@@ -193,11 +373,31 @@ Consul на узлах, на которых работает MongoDB Replica Set
 
 Мы достигаем этого динамизма путем написания и запуска сценария оболочки после интервала, который переключает определение службы Consul для MongoDB Primary и MongoDB Secondary на Consul Agent узла экземпляра.
 
-Определения сервисов для сервисов MongoDB хранятся в виде файлов JSON в каталоге конфигурации Consul ‘/etc/config.d’.
+Определения сервисов для сервисов MongoDB хранятся в виде файлов JSON в каталоге конфигурации Consul `/etc/config.d`.
 
 Определение службы для первичного экземпляра MongoDB:
 
- 
+ ```
+{
+    "service": {
+        "name": "mongo-primary",
+        "port": 27017,
+        "tags": [
+            "nosql",
+            "database"
+        ],
+        "check": {
+            "id": "mongo_primary_status",
+            "name": "Mongo Primary Status",
+            "args": ["/etc/consul.d/check_scripts/mongo_primary_check.sh"],
+            "interval": "30s",
+            "timeout": "20s"
+        }
+    }
+}
+ ```
+
+
 
 Если вы присмотритесь, определение службы позволяет нам получить запись DNS, специфичную для MongoDB Primary, а не общий экземпляр MongoDB. Это позволяет нам отправлять записи базы данных в конкретный экземпляр MongoDB. В случае набора реплик записи поддерживаются MongoDB Primary.
 
@@ -205,161 +405,651 @@ Consul на узлах, на которых работает MongoDB Replica Set
 
 Точно так же с небольшим изменением определение службы для вторичного экземпляра MongoDB выглядит следующим образом:
 
- 
+ ```
+{
+    "service": {
+        "name": "mongo-secondary",
+        "port": 27017,
+        "tags": [
+            "nosql",
+            "database"
+        ],
+        "check": {
+            "id": "mongo_secondary_status",
+            "name": "Mongo Secondary Status",
+            "args": ["/etc/consul.d/check_scripts/mongo_secondary_check.sh"],
+            "interval": "30s",
+            "timeout": "20s"
+        }
+    }
+}
+ ```
+
+
 
 Учитывая весь этот контекст, можете ли вы представить, как мы можем динамически переключать эти определения сервисов?
 
-Мы можем определить, является ли данный экземпляр MongoDB основным или нет, запустив команду db.isMaster () в оболочке MongoDB.
+Мы можем определить, является ли данный экземпляр MongoDB основным или нет, запустив команду `db.isMaster()` в MongoDB shell.
 
-Можно оформить проверку в виде сценария оболочки следующим образом:
+Можно оформить проверку в виде скрипта оболочки следующим образом:
 
- 
+ ```
+#!/bin/bash
 
-Точно так же неосновные экземпляры MongoDB также могут быть проверены на соответствие той же команде, путем проверки «вторичного» значения:
+mongo_primary=$(mongo --quiet --eval 'JSON.stringify(db.isMaster())' | jq -r .ismaster 2> /dev/null)
+if [[ $mongo_primary == false ]]; then
+    exit 1
+fi
 
- 
+echo "Mongo primary healthy and reachable"
+ ```
 
-Примечание. Мы используем jq - легкий и гибкий процессор JSON командной строки - для обработки выходных данных команд оболочки MongoDB в кодировке JSON.
+
+
+Точно так же неосновные экземпляры MongoDB также могут быть проверены на соответствие той же команде, путем проверки `вторичного` значения:
+
+ ```
+#!/bin/bash
+
+mongo_secondary=$(mongo --quiet --eval 'JSON.stringify(db.isMaster())' | jq -r .secondary 2> /dev/null)
+if [[ $mongo_secondary == false ]]; then
+    exit 1
+fi
+
+echo "Mongo secondary healthy and reachable"
+ ```
+
+
+
+Примечание. Мы используем `jq` - легкий и гибкий процессор JSON командной строки - для обработки выходных данных команд оболочки MongoDB в кодировке JSON.
 
 Один из способов написания сценария, выполняющего этот динамический переключатель, выглядит так:
 
- 
+ ```
+#!/bin/bash
+
+# Wait until Mongo starts
+while [[ $(ps aux | grep [m]ongod | wc -l) -ne 1 ]]; do
+    sleep 5
+done
+
+REGISTER_MASTER=0
+REGISTER_SECONDARY=0
+
+mongo_primary=$(mongo --quiet --eval 'JSON.stringify(db.isMaster())' | jq -r .ismaster 2> /dev/null)
+mongo_secondary=$(mongo --quiet --eval 'JSON.stringify(db.isMaster())' | jq -r .secondary 2> /dev/null)  
+
+if [[ $mongo_primary == false && $mongo_secondary == true ]]; then
+
+  # Deregister as Mongo Master
+  if [[ -a /etc/consul.d/check_scripts/mongo_primary_check.sh && -a /etc/consul.d/mongo_primary.json ]]; then
+    rm -f /etc/consul.d/check_scripts/mongo_primary_check.sh
+    rm -f /etc/consul.d/mongo_primary.json
+
+    REGISTER_MASTER=1
+  fi
+
+  # Register as Mongo Secondary
+  if [[ ! -a /etc/consul.d/check_scripts/mongo_secondary_check.sh && ! -a /etc/consul.d/mongo_secondary.json ]]; then
+    cp -u /opt/checks/check_scripts/mongo_secondary_check.sh /etc/consul.d/check_scripts/
+    cp -u /opt/checks/mongo_secondary.json /etc/consul.d/
+
+    REGISTER_SECONDARY=1
+  fi
+
+else
+
+  # Register as Mongo Master
+  if [[ ! -a /etc/consul.d/check_scripts/mongo_primary_check.sh && ! -a /etc/consul.d/mongo_primary.json ]]; then
+    cp -u /opt/checks/check_scripts/mongo_primary_check.sh /etc/consul.d/check_scripts/
+    cp -u /opt/checks/mongo_primary.json /etc/consul.d/
+
+    REGISTER_MASTER=2
+  fi
+
+  # Deregister as Mongo Secondary
+  if [[ -a /etc/consul.d/check_scripts/mongo_secondary_check.sh && -a /etc/consul.d/mongo_secondary.json ]]; then
+    rm -f /etc/consul.d/check_scripts/mongo_secondary_check.sh
+    rm -f /etc/consul.d/mongo_secondary.json
+
+    REGISTER_SECONDARY=2
+  fi
+
+fi
+
+if [[ $REGISTER_MASTER -ne 0 && $REGISTER_SECONDARY -ne 0 ]]; then
+  consul reload
+fi
+ ```
+
+
 
 Примечание. Это пример сценария. Но мы можем проявить более творческий подход и оптимизировать сценарий.
 
 Когда мы закончим с определениями наших сервисов, мы можем запустить агент Consul на каждом узле MongoDB. Для запуска агента мы будем использовать следующую команду:
 
- 
+ ```
+consul agent -bind 33.10.0.3 \
+    -advertise 33.10.0.3 \
+    -join consul_server \
+    -node mongo_1 \
+    -dns-port 53 \
+    -data-dir /data \
+    -config-dir /etc/consul.d \
+    -enable-local-script-checks
+ ```
 
-Здесь consul_server представляет хост, на котором работает Consul Server. Точно так же мы можем запускать такие агенты на каждом из других узлов экземпляра MongoDB.
+
+
+Здесь `consul_server` представляет хост, на котором работает Consul Server. Точно так же мы можем запускать такие агенты на каждом из других узлов экземпляра MongoDB.
 
 Примечание. Если у нас есть несколько экземпляров MongoDB, работающих на одном хосте, определение службы изменится, чтобы отразить разные порты, используемые каждым экземпляром для уникальной идентификации, обнаружения и мониторинга отдельного экземпляра MongoDB.
 
  
 
-Consul на узлах, на которых запущено приложение Django
+### Consul на узлах, на которых запущено приложение Django
 
 Для приложения Django настройка Consul будет очень простой. Нам нужно только отслеживать порт приложения Django, на котором Gunicorn прослушивает запросы.
 
 Определение службы Consul будет выглядеть так:
 
- 
+ ```
+{
+    "service": {
+        "name": "web",
+        "port": 8000,
+        "tags": [
+            "web",
+            "application",
+            "urlprefix-/web"
+        ],
+        "check": {
+            "id": "web_app_status",
+            "name": "Web Application Status",
+            "tcp": "localhost:8000",
+            "interval": "30s",
+            "timeout": "20s"
+        }
+    }
+}
+ ```
 
 Когда у нас есть определение службы Consul для приложения Django, мы можем запустить агента Consul, сидящего на узле, в котором приложение Django работает как служба. Чтобы запустить агента Consul, мы должны запустить следующую команду:
 
- 
+```
+consul agent -bind 33.10.0.10 \
+    -advertise 33.10.0.10 \
+    -join consul_server \
+    -node web_1 \
+    -dns-port 53 \
+    -data-dir /data \
+    -config-dir /etc/consul.d \
+    -enable-local-script-checks
+```
 
- 
 
-Consul Сервер
+
+### Consul Сервер
 
 Мы запускаем кластер Consul с выделенным серверным узлом Consul. Узел сервера Consul может легко размещать, обнаруживать и отслеживать работающие на нем службы точно так же, как мы делали это в приведенных выше разделах для приложений MongoDB и Django.
 
 Чтобы запустить Consul в режиме сервера и разрешить агентам подключаться к нему, мы запустим следующую команду на узле, на котором мы хотим запустить наш сервер Consul:
 
+```
+consul agent -server \
+    -bind 33.10.0.2 \
+    -advertise 33.10.0.2 \
+    -node consul_server \
+    -client 0.0.0.0 \
+    -dns-port 53 \
+    -data-dir /data \
+    -ui -bootstrap
+```
+
 На данный момент на нашем узле сервера Consul нет служб, поэтому нет определений служб, связанных с этой конфигурацией агента Consul.
 
- 
+### Fabio
 
-Fabio
-
-Мы используем возможности Fabio для автоконфигурации и поддержки Consul.
+Мы используем возможности Fabio для [автоконфигурации](https://github.com/fabiolb/fabio) и поддержки Consul.
 
 Это очень упрощает нашу задачу по балансировке нагрузки трафика для наших экземпляров приложения Django.
 
-Чтобы позволить Fabio автоматически определять службы через Consul, одним из способов является добавление тега или обновление тега в определении службы с помощью префикса и идентификатора службы `urlprefix- / <service>`. Определение службы нашего Consul для приложения Django теперь будет выглядеть так:
+Чтобы позволить Fabio автоматически определять службы через Consul, одним из способов является добавление тега или обновление тега в **определении** сервиса с помощью префикса и идентификатора службы `urlprefix-/<service>`. Определение службы нашего Consul для приложения Django теперь будет выглядеть так:
 
- 
+```
+{
+    "service": {
+        "name": "web",
+        "port": 8000,
+        "tags": [
+            "web",
+            "application",
+            "urlprefix-/web"
+        ],
+        "check": {
+            "id": "web_app_status",
+            "name": "Web Application Status",
+            "tcp": "localhost:8000",
+            "interval": "30s",
+            "timeout": "20s"
+        }
+    }
+}
+```
+
+
 
 В нашем случае приложение или служба Django - единственная служба, которая нуждается в балансировке нагрузки, поэтому это изменение определения службы Consul выполняет требования по настройке Fabio.
 
  
 
-Докеризация
+### Докеризация
 
 Все наше приложение будет развернуто как набор контейнеров Docker. Давайте поговорим о том, как мы этого достигаем в контексте Consul.
 
  
 
-Докеризация набора реплик MongoDB вместе с агентом Consul
+### Докеризация набора реплик MongoDB вместе с агентом Consul
 
 Нам нужно запустить агент Consul, как описано выше, вместе с MongoDB в том же контейнере Docker, поэтому нам нужно будет запустить настраиваемый ENTRYPOINT в контейнере, чтобы разрешить запуск двух процессов.
 
 Примечание. Этого также можно добиться с помощью проверок уровня контейнера Docker в Consul. Таким образом, вы сможете запустить агент Consul на хосте и проверить сервис, работающий в контейнере Docker. Что, по сути, будет запускаться в контейнер для мониторинга службы.
 
-Для этого мы будем использовать инструмент, похожий на Foreman. Это инструмент управления жизненным циклом физических и виртуальных серверов, включая выделение ресурсов, мониторинг и настройку.
+Для этого мы будем использовать инструмент, похожий на [Foreman](https://www.theforeman.org/). Это инструмент управления жизненным циклом физических и виртуальных серверов, включая выделение ресурсов, мониторинг и настройку.
 
-Чтобы быть точным, мы будем использовать Golang, заимствованный у Формана, Горемана. Он принимает конфигурацию в форме Procfile Heroku, чтобы понимать, какие процессы должны оставаться активными на хосте.
+Чтобы быть точным, мы будем использовать Golang, заимствованный у Foreman, [Goreman](https://github.com/mattn/goreman). Он принимает конфигурацию в форме [Procfile Heroku](https://devcenter.heroku.com/articles/procfile), чтобы понимать, какие процессы должны оставаться активными на хосте.
 
 В нашем случае Procfile выглядит так:
 
- 
+```
+# Mongo
+mongo: /opt/mongo.sh
 
-«Consul_check» в конце профиля поддерживает динамизм между проверками как первичного, так и вторичного узла MongoDB в зависимости от того, за какую роль в наборе реплик MongoDB проголосовали.
+# Consul Client Agent
+consul: /opt/consul.sh
+
+# Consul Client Health Checks
+consul_check: while true; do /opt/checks_toggler.sh && sleep 10; done
+```
+
+
+
+`consul_check` в конце профиля поддерживает динамизм между проверками как первичного, так и вторичного узла MongoDB в зависимости от того, за какую роль в наборе реплик MongoDB проголосовали.
 
 Сценарии оболочки, которые выполняются соответствующими клавишами в файле Procfile, определены ранее в этом обсуждении.
 
-Наш Dockerfile с некоторыми дополнительными инструментами для отладки и диагностики будет выглядеть так:
+Наш [Dockerfile](https://docs.docker.com/engine/reference/builder/) с некоторыми дополнительными инструментами для отладки и диагностики будет выглядеть так:
+
+```
+FROM ubuntu:18.04
+
+RUN apt-get update && \
+    apt-get install -y \
+    bash curl nano net-tools zip unzip \
+    jq dnsutils iputils-ping
+
+# Install MongoDB
+RUN apt-get install -y mongodb
+
+RUN mkdir -p /data/db
+VOLUME data:/data/db
+
+# Setup Consul and Goreman
+ADD https://releases.hashicorp.com/consul/1.4.4/consul_1.4.4_linux_amd64.zip /tmp/consul.zip
+RUN cd /bin && unzip /tmp/consul.zip && chmod +x /bin/consul && rm /tmp/consul.zip
+
+ADD https://github.com/mattn/goreman/releases/download/v0.0.10/goreman_linux_amd64.zip /tmp/goreman.zip
+RUN cd /bin && unzip /tmp/goreman.zip && chmod +x /bin/goreman && rm /tmp/goreman.zip
+
+RUN mkdir -p /etc/consul.d/check_scripts
+ADD ./config/mongod /etc
+
+RUN mkdir -p /etc/checks
+ADD ./config/checks /opt/checks
+
+ADD checks_toggler.sh /opt
+ADD mongo.sh /opt
+ADD consul.sh /opt
+
+ADD Procfile /root/Procfile
+
+EXPOSE 27017
+
+# Launch both MongoDB server and Consul
+ENTRYPOINT [ "goreman" ]
+CMD [ "-f", "/root/Procfile", "start" ]
+```
+
+
+
+*Примечание. Мы использовали здесь чистый образ Ubuntu 18.04 для наших целей, но вы можете использовать [официальный образ MongoDB](https://hub.docker.com/_/mongo) и адаптировать его для запуска Consul вместе с MongoDB или даже выполнять проверки Consul на уровне контейнера Docker, как указано в официальной документации.*
 
  
 
-Примечание. Мы использовали здесь чистый образ Ubuntu 18.04 для наших целей, но вы можете использовать официальный образ MongoDB и адаптировать его для запуска Consul вместе с MongoDB или даже выполнять проверки Consul на уровне контейнера Docker, как указано в официальной документации.
-
- 
-
-Докеризация веб-приложения Django вместе с Consul Agent
+### Докеризация веб-приложения Django вместе с Consul Agent
 
 Нам также необходимо запустить агент Consul вместе с нашим приложением Django в том же контейнере Docker, что и у нас с контейнером MongoDB.
 
+```
+# Django
+django: /web/tweeter.sh
+
+# Consul Client Agent
+consul: /opt/consul.sh
+```
+
 Точно так же у нас будет Dockerfile для веб-приложения Django, как и для наших контейнеров MongoDB.
 
- 
+```
+FROM python:3.7
 
-Докеризация Consul Server
+RUN apt-get update && \
+    apt-get install -y \
+    bash curl nano net-tools zip unzip \
+    jq dnsutils iputils-ping
+
+# Python Environment Setup
+ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONUNBUFFERED 1
+
+# Setup Consul and Goreman
+RUN mkdir -p /data/db /etc/consul.d
+
+ADD https://releases.hashicorp.com/consul/1.4.4/consul_1.4.4_linux_amd64.zip /tmp/consul.zip
+RUN cd /bin && unzip /tmp/consul.zip && chmod +x /bin/consul && rm /tmp/consul.zip
+
+ADD https://github.com/mattn/goreman/releases/download/v0.0.10/goreman_linux_amd64.zip /tmp/goreman.zip
+RUN cd /bin && unzip /tmp/goreman.zip && chmod +x /bin/goreman && rm /tmp/goreman.zip
+
+ADD ./consul /etc/consul.d
+ADD Procfile /root/Procfile
+
+# Install pipenv
+RUN pip3 install --upgrade pip
+RUN pip3 install pipenv
+
+# Setting workdir
+ADD consul.sh /opt
+ADD . /web
+WORKDIR /web/tweeter
+
+# Exposing appropriate ports
+EXPOSE 8000/tcp
+
+# Install dependencies
+RUN pipenv install --system --deploy --ignore-pipfile
+
+# Migrates the database, uploads staticfiles, run API server and background tasks
+ENTRYPOINT [ "goreman" ]
+CMD [ "-f", "/root/Procfile", "start" ]
+```
+
+
+
+#### Докеризация Consul Server
 
 Мы поддерживаем тот же поток с серверным узлом Consul, чтобы запустить его с пользовательским ENTRYPOINT. Это не является обязательным требованием, но мы поддерживаем единообразное представление различных файлов запуска Consul.
 
-Кроме того, для демонстрации мы используем образ Ubuntu 18.04. Для этого вы можете использовать официальное изображение Consul, которое принимает все пользовательские параметры, указанные здесь.
+Кроме того, для демонстрации мы используем образ Ubuntu 18.04. Для этого вы можете использовать [официальный образ Consul](https://hub.docker.com/_/consul), которое принимает все пользовательские параметры, указанные здесь.
 
- 
+```
+FROM ubuntu:18.04
 
-Docker Compose
+RUN apt-get update && \
+    apt-get install -y \
+    bash curl nano net-tools zip unzip \
+    jq dnsutils iputils-ping
 
-Мы используем Compose для запуска всех наших контейнеров Docker в желаемой, повторяемой форме.
+ADD https://releases.hashicorp.com/consul/1.4.4/consul_1.4.4_linux_amd64.zip /tmp/consul.zip
+RUN cd /bin && unzip /tmp/consul.zip && chmod +x /bin/consul && rm /tmp/consul.zip
 
-Наш файл Compose написан для обозначения всех аспектов, о которых мы упомянули выше, и использует возможности инструмента Docker Compose для их беспрепятственного выполнения.
+# Consul ports
+EXPOSE 8300 8301 8302 8400 8500
+
+ADD consul_server.sh /opt
+RUN mkdir -p /data
+VOLUME /data
+
+CMD ["/opt/consul_server.sh"]
+```
+
+
+
+### Docker Compose
+
+Мы используем [Compose](https://github.com/docker/compose) для запуска всех наших контейнеров Docker в желаемой, повторяемой форме.
+
+Наш [файл Compose](https://docs.docker.com/compose/compose-file/) написан для обозначения всех аспектов, о которых мы упомянули выше, и использует возможности инструмента Docker Compose для их беспрепятственного выполнения.
 
 Файл Docker Compose будет выглядеть так, как показано ниже:
 
- 
+```
+version: "3.6"
+
+services:
+
+  consul_server:
+    build:
+      context: consul_server
+      dockerfile: Dockerfile
+    image: consul_server
+    ports:
+      - 8300:8300
+      - 8301:8301
+      - 8302:8302
+      - 8400:8400
+      - 8500:8500
+    environment:
+      - NODE=consul_server
+      - PRIVATE_IP_ADDRESS=33.10.0.2
+    networks:
+      consul_network:
+        ipv4_address: 33.10.0.2
+
+  load_balancer:
+    image: fabiolb/fabio
+    ports:
+      - 9998:9998
+      - 9999:9999
+    command: -registry.consul.addr="33.10.0.2:8500"
+    networks:
+      consul_network:
+        ipv4_address: 33.10.0.100
+
+  mongo_1:
+    build:
+      context: mongo
+      dockerfile: Dockerfile
+    image: mongo_consul
+    dns:
+      - 127.0.0.1
+      - 8.8.8.8
+      - 8.8.4.4
+    environment:
+      - NODE=mongo_1
+      - MONGO_PORT=27017
+      - PRIMARY_MONGO=33.10.0.3
+      - PRIVATE_IP_ADDRESS=33.10.0.3
+    restart: always
+    ports:
+      - 27017:27017
+      - 28017:28017
+    depends_on:
+      - consul_server
+      - mongo_2
+      - mongo_3
+    networks:
+      consul_network:
+        ipv4_address: 33.10.0.3
+
+  mongo_2:
+    build:
+      context: mongo
+      dockerfile: Dockerfile
+    image: mongo_consul
+    dns:
+      - 127.0.0.1
+      - 8.8.8.8
+      - 8.8.4.4
+    environment:
+      - NODE=mongo_2
+      - MONGO_PORT=27017
+      - PRIMARY_MONGO=33.10.0.3
+      - PRIVATE_IP_ADDRESS=33.10.0.4
+    restart: always
+    ports:
+      - 27018:27017
+      - 28018:28017
+    depends_on:
+      - consul_server
+    networks:
+      consul_network:
+        ipv4_address: 33.10.0.4
+
+  mongo_3:
+    build:
+      context: mongo
+      dockerfile: Dockerfile
+    image: mongo_consul
+    dns:
+      - 127.0.0.1
+      - 8.8.8.8
+      - 8.8.4.4
+    environment:
+      - NODE=mongo_3
+      - MONGO_PORT=27017
+      - PRIMARY_MONGO=33.10.0.3
+      - PRIVATE_IP_ADDRESS=33.10.0.5
+    restart: always
+    ports:
+      - 27019:27017
+      - 28019:28017
+    depends_on:
+      - consul_server
+    networks:
+      consul_network:
+        ipv4_address: 33.10.0.5
+
+  web_1:
+    build:
+      context: django
+      dockerfile: Dockerfile
+    image: web_consul
+    ports:
+      - 8080:8000
+    environment:
+      - NODE=web_1
+      - PRIMARY=1
+      - LOAD_BALANCER=33.10.0.100
+      - PRIVATE_IP_ADDRESS=33.10.0.10
+    dns:
+      - 127.0.0.1
+      - 8.8.8.8
+      - 8.8.4.4
+    depends_on:
+      - consul_server
+      - mongo_1
+    volumes:
+      - ./django:/web
+    cap_add:
+      - NET_ADMIN
+    networks:
+      consul_network:
+        ipv4_address: 33.10.0.10
+
+  web_2:
+    build:
+      context: django
+      dockerfile: Dockerfile
+    image: web_consul
+    ports:
+      - 8081:8000
+    environment:
+      - NODE=web_2
+      - LOAD_BALANCER=33.10.0.100
+      - PRIVATE_IP_ADDRESS=33.10.0.11
+    dns:
+      - 127.0.0.1
+      - 8.8.8.8
+      - 8.8.4.4
+    depends_on:
+      - consul_server
+      - mongo_1
+    volumes:
+      - ./django:/web
+    cap_add:
+      - NET_ADMIN
+    networks:
+      consul_network:
+        ipv4_address: 33.10.0.11
+
+networks:
+  consul_network:
+    driver: bridge
+    ipam:
+     config:
+       - subnet: 33.10.0.0/16
+```
+
+
 
 На этом мы подошли к концу настройки всей среды. Теперь мы можем запустить Docker Compose для сборки и запуска контейнеров.
 
  
 
-Обнаружение услуг с использованием Consul
+### Обнаружение сервисов с использованием Consul
 
 Когда все службы запущены и работают, пользовательский интерфейс Consul Web дает нам хороший обзор нашей общей настройки.
 
- 
+![](https://habrastorage.org/webt/72/vj/_k/72vj_k_n7thle30ldz6pn44rrck.png)
 
 Сервис MongoDB доступен для приложения Django для обнаружения с помощью интерфейса Consul DNS.
 
- 
+```
+root@82857c424b15:/web/tweeter# dig @127.0.0.1 mongo-primary.service.consul
+
+; <<>> DiG 9.10.3-P4-Debian <<>> @127.0.0.1 mongo-primary.service.consul
+; (1 server found)
+;; global options: +cmd
+;; Got answer:
+;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 8369
+;; flags: qr aa rd; QUERY: 1, ANSWER: 1, AUTHORITY: 0, ADDITIONAL: 2
+;; WARNING: recursion requested but not available
+
+;; OPT PSEUDOSECTION:
+; EDNS: version: 0, flags:; udp: 4096
+;; QUESTION SECTION:
+;mongo-primary.service.consul.	IN	A
+
+;; ANSWER SECTION:
+mongo-primary.service.consul. 0	IN	A	33.10.0.3
+
+;; ADDITIONAL SECTION:
+mongo-primary.service.consul. 0	IN	TXT	"consul-network-segment="
+
+;; Query time: 139 msec
+;; SERVER: 127.0.0.1#53(127.0.0.1)
+;; WHEN: Mon Apr 01 11:50:45 UTC 2019
+;; MSG SIZE  rcvd: 109
+```
+
+
 
 Приложение Django теперь может подключить первичный экземпляр MongoDB и начать записывать в него данные.
 
-Мы можем использовать балансировщик нагрузки Fabio для подключения к экземпляру приложения Django, автоматически обнаруживая его через реестр Consul с использованием специализированных сервисных тегов и отображая страницу со всей информацией о подключении к базе данных, о которой мы говорим.
+Мы можем использовать [балансировщик](https://velotio.com/blog/2017/7/5/http-load-balancing-in-kubernetes-with-ingress) нагрузки Fabio для подключения к экземпляру приложения Django, автоматически обнаруживая его через реестр Consul с использованием специализированных сервисных тегов и отображая страницу со всей информацией о подключении к базе данных, о которой мы говорим.
 
-Наш балансировщик нагрузки находится на «33 .10.0.100», а «/ web» настроен для перенаправления на один из наших экземпляров приложения Django, работающий за балансировщиком нагрузки.
+Наш балансировщик нагрузки находится на `33 .10.0.100`, а `/web` настроен для перенаправления на один из наших экземпляров приложения Django, работающий за балансировщиком нагрузки.
 
- 
+ ![](https://habrastorage.org/webt/tt/59/oi/tt59oi-jm7kmm40vdqvaravdzpo.png)
+
+*Fabio автоматически определяет конечные точки веб-приложения Django*
 
 Как вы можете видеть из автоматического определения и настройки балансировщика нагрузки Fabio из его пользовательского интерфейса выше, он одинаково взвешивал конечные точки веб-приложения Django. Это поможет сбалансировать нагрузку запроса или трафика на экземпляры приложения Django.
 
-Когда мы посещаем наш URL-адрес Fabio «33 .10.0.100: 9999» и используем исходный маршрут как «/ web», мы перенаправляемся на один из экземпляров Django. Итак, посещение «33 .10.0.100: 9999 / web» дает нам следующий результат.
+Когда мы посещаем наш URL-адрес Fabio `33.10.0.100:9999` и используем исходный маршрут как `/web`, мы перенаправляемся на один из экземпляров Django. Итак, посещение `33.10.0.100:9999/web` дает нам следующий результат.
 
- 
+![](https://habrastorage.org/webt/dj/gn/o8/djgno8tjtf-5asfkbdzgf6zvglk.png)
 
 Веб-приложение Django отображает статус подключения MongoDB на домашней странице
 
@@ -369,13 +1059,13 @@ Docker Compose
 
 Можно изучить веб-интерфейс Consul, чтобы увидеть все экземпляры служб веб-приложений Django.
 
- 
+![](https://habrastorage.org/webt/kt/zs/lw/ktzslw35zj7uq56j-ksal3si8w4.png)
 
-Сервисы веб-приложений Django в веб-интерфейсе Consul
+*Сервисы веб-приложений Django в веб-интерфейсе Consul*
 
 Точно так же посмотрите, как устроены экземпляры набора реплик MongoDB.
 
- 
+![](https://habrastorage.org/webt/xg/5j/uo/xg5juovp_7ahtrynrpqvpkljtfq.png)
 
 Давайте посмотрим, как Consul помогает с услугами проверки работоспособности и обнаружением только действующих служб.
 
@@ -500,17 +1190,22 @@ Connect обеспечивает авторизацию и шифрование 
 Мы продолжим изучать различные технологии и предоставим вам наиболее ценную информацию. Сообщите нам, что вы хотели бы услышать от нас в следующий раз, или, если у вас есть какие-либо вопросы по этой теме, мы будем очень рады на них ответить.
 
 
-![](https://habrastorage.org/webt/72/vj/_k/72vj_k_n7thle30ldz6pn44rrck.png)
+
+
 
 ![](https://habrastorage.org/webt/77/bz/2z/77bz2z7cr-3vbq_orajymfujn7m.png)
 
 ![](https://habrastorage.org/webt/83/oy/38/83oy38ag475voobbycc5mos7jhk.png)
 
-![](https://habrastorage.org/webt/tt/59/oi/tt59oi-jm7kmm40vdqvaravdzpo.png)
+
 
 ![](https://habrastorage.org/webt/hy/le/if/hyleifzakuglm745rz_pybppwwc.png)
 
-![](https://habrastorage.org/webt/kt/zs/lw/ktzslw35zj7uq56j-ksal3si8w4.png)
+
+
+
+
+
 
 ![](https://habrastorage.org/webt/cd/5g/i6/cd5gi6bnn7gnunoien3gym6zrfw.png)
 
@@ -520,10 +1215,10 @@ Connect обеспечивает авторизацию и шифрование 
 
 ![](https://habrastorage.org/webt/_q/km/nl/_qkmnlrjyqua8oi_9emofpdx2aw.png)
 
-![](https://habrastorage.org/webt/dj/gn/o8/djgno8tjtf-5asfkbdzgf6zvglk.png)
+
 
 ![](https://habrastorage.org/webt/z2/xb/ut/z2xbut_xm9mkhpzv_ne9emanu5m.png)
 
-![](https://habrastorage.org/webt/xg/5j/uo/xg5juovp_7ahtrynrpqvpkljtfq.png)
+
 
 ![](https://habrastorage.org/webt/hx/ge/oz/hxgeozzkdi2ewdktqbigjqjmwmq.png)
