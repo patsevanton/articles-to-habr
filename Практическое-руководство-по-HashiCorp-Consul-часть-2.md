@@ -1204,48 +1204,124 @@ INSTALLED_APPS += (bytes(apps.get('Value')).decode('utf-8'),)
  ![](https://habrastorage.org/webt/83/oy/38/83oy38ag475voobbycc5mos7jhk.png)
 
 *Consul KV store в интерфейсе Consul Web с параметрами конфигурации приложения Django*
- 
 
-Код, используемый как часть этого руководства для раздела конфигурации службы Consul, доступен в ветви «service-configuration» проекта pranavcode / consul-demo.
+
+Код, используемый как часть этого руководства для раздела конфигурации службы Consul, доступен в ветви «service-configuration» проекта [pranavcode/consul-demo](pranavcode/consul-demo).
 
 Вот как можно использовать Consul KV и легко настраивать отдельные службы в их архитектуре.
 
-Сегментация услуг с использованием Consul
+### Сегментация услуг с использованием Consul
 
-В рамках сегментации услуг Consul мы рассмотрим намерения Consul Connect и распределение центров обработки данных.
+В рамках [сегментации сервисов](https://www.consul.io/segmentation.html) Consul мы рассмотрим [идею Consul Connect](https://www.consul.io/docs/connect/intentions.html) и распределенный дата-центр.
 
-Connect обеспечивает авторизацию и шифрование соединений между сервисами с использованием взаимного TLS.
+Connect обеспечивает авторизацию и шифрование соединений между сервисами с использованием [взаимного TLS](https://en.wikipedia.org/wiki/Mutual_authentication).
 
 Чтобы использовать Consul, вам необходимо включить его в конфигурации сервера. Для правильного функционирования кластера необходимо включить подключение в кластере Consul.
 
+```
+{
+    "connect": {
+        "enabled": true
+    }
+}
+```
+
 В нашем контексте мы можем определить, что связь должна быть идентифицирована и защищена TLS, мы определим восходящую сопутствующую службу с прокси в приложении Django для ее связи с первичным экземпляром MongoDB.
- 
+
+```
+{
+    "service": {
+        "name": "web",
+        "port": 8000,
+        "tags": [
+            "web",
+            "application",
+            "urlprefix-/web"
+        ],
+        "connect": {
+            "sidecar_service": {
+                "proxy": {
+                    "upstreams": [{
+                        "destination_name": "mongo-primary",
+                        "local_bind_port": 5501
+                    }]
+                }
+            }
+        },
+        "check": {
+            "id": "web_app_status",
+            "name": "Web Application Status",
+            "tcp": "localhost:8000",
+            "interval": "30s",
+            "timeout": "20s"
+        }
+    }
+}
+```
 
 Наряду с настройкой Connect для бокового прокси нам также потребуется запустить прокси-сервер Connect для приложения Django. Этого можно добиться, выполнив следующую команду.
 
-Мы можем добавить Consul Connect Intentions для создания графа сервисов для всех сервисов и определения шаблонов трафика. Мы можем создавать намерения, как показано ниже:
+```
+{
+    "service": {
+        "name": "web",
+        "port": 8000,
+        "tags": [
+            "web",
+            "application",
+            "urlprefix-/web"
+        ],
+        "connect": {
+            "sidecar_service": {
+                "proxy": {
+                    "upstreams": [{
+                        "destination_name": "mongo-primary",
+                        "local_bind_port": 5501
+                    }]
+                }
+            }
+        },
+        "check": {
+            "id": "web_app_status",
+            "name": "Web Application Status",
+            "tcp": "localhost:8000",
+            "interval": "30s",
+            "timeout": "20s"
+        }
+    }
+}
+```
 
+Мы можем добавить Consul Connect Intentions для создания [графа сервисов](https://velotio.com/blog/2019/3/11/hashicorp-consul-guide-1) для всех сервисов и определения шаблонов трафика. Мы можем создавать намерения, как показано ниже:
+
+```
+$ consul connect proxy -sidecar-for web
+```
 
 Намерениями для графа услуг также можно управлять из веб-интерфейса Consul.
- 
+
+![](https://habrastorage.org/webt/cm/hm/ax/cmhmaxjf6psd0zbbe7kmajcvcwm.png)
+
 
 Это определяет ограничения на подключение к службе, чтобы разрешить или запретить им общаться через Connect.
 
 Мы также добавили возможность для агентов Consul указывать, к каким центрам обработки данных они принадлежат, и быть доступными через один или несколько серверов Consul в данном центре обработки данных.
 
-Код, используемый как часть этого руководства для раздела сегментации услуг Consul, доступен в ветви «service-segmentation» проекта velotiotech / consul-demo.
+Код, используемый как часть этого руководства для раздела сегментации услуг Consul, доступен в ветви `service-segmentation` проекта [velotiotech/consul-demo](velotiotech/consul-demo).
 
 Вот как можно использовать функцию сегментации услуг Consul и настроить контроль доступа к подключению на уровне обслуживания.
 
-
-Вывод
+### Вывод
 
 Возможность беспрепятственно контролировать сервисную сеть, которую предоставляет Consul, очень упрощает жизнь оператора. Мы надеемся, что вы узнали, как Consul можно использовать для обнаружения, настройки и сегментации сервисов с его практической реализацией.
 
-Как обычно, мы надеемся, что изучение Консула было познавательным. Это была последняя часть этой серии из двух частей. В этой части делается попытка охватить большинство аспектов архитектуры Consul и то, как она вписывается в ваш текущий проект. Если вы пропустили первую часть, вы сможете найти ее здесь.
+Как обычно, мы надеемся, что изучение Консула было познавательным. Это была последняя часть этой серии из двух частей. В этой части делается попытка охватить большинство аспектов архитектуры Consul и то, как она вписывается в ваш текущий проект. Если вы пропустили первую часть, вы сможете найти ее [здесь](https://velotio.com/blog/2019/3/11/hashicorp-consul-guide-1).
 
 Мы продолжим изучать различные технологии и предоставим вам наиболее ценную информацию. Сообщите нам, что вы хотели бы услышать от нас в следующий раз, или, если у вас есть какие-либо вопросы по этой теме, мы будем очень рады на них ответить.
 
+### Ссылки
 
-![](https://habrastorage.org/webt/cm/hm/ax/cmhmaxjf6psd0zbbe7kmajcvcwm.png)
+- [Consul Demo that complements this guide](https://github.com/pranavcode/consul-demo)
+- [HashiCorp Consul](https://www.consul.io/) and[ its repo on GitHub](https://github.com/hashicorp/consul)
+- [HashiCorp Consul Guides](https://www.consul.io/docs/guides/index.html) and[ Code](https://github.com/hashicorp/consul-guides)
 
