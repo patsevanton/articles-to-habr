@@ -1,5 +1,7 @@
 Проверка ролей Ansible через делегированный драйвер Molecule
 
+https://medium.com/@fabio.marinetti81/validate-ansible-roles-through-molecule-delegated-driver-a2ea2ab395b5
+
 ![](https://habrastorage.org/webt/e9/sx/a0/e9sxa0wfcnay3jxflccoapcdv5o.jpeg)
 
 Molecule - отличный инструмент для тестирования ролей Ansible, он выполняет надежный и гибкий процесс проверки для обеспечения хорошего уровня качества ролей. Почти вся документация Molecule сосредоточена на драйвере докера, где тесты выполняются с контейнерным сервером, но, несмотря на то, что это хороший выбор в большинстве случаев использования, могут быть случаи, в которых полезно переключиться на внешний облачный бэкэнд с использованием [делегированного драйвера](https://molecule.readthedocs.io/en/latest/configuration.html#delegated).
