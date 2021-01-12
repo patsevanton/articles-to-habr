@@ -48,39 +48,125 @@ Instance-config - это факт Ansible, хранящийся в файле YA
 
  
 
-Файл create.yml
+**Файл create.yml**
 
-После того, как мы прояснили, что такое instance-config, мы можем переходить к следующему шагу. К счастью, Molecule также помогает нам сделать дополнительный шаг вперед, предоставляя файлы шаблонов сценариев с помощью команды molecule init, например:
+После того, как мы прояснили, что такое instance-config, мы можем переходить к следующему шагу. К счастью, Molecule также помогает нам сделать дополнительный шаг вперед, предоставляя файлы шаблонов сценариев с помощью команды `molecule init`, например:
 
- 
+ ```
+molecule init scenario -driver-name=delegated
+ ```
+
+
 
 который создает следующую структуру каталогов:
 
- 
+ ```
+.
+├── INSTALL.rst
+├── converge.yml
+├── create.yml
+├── destroy.yml
+├── molecule.yml
+└── verify.yml
+ ```
 
-·    Molle.yml - это файл конфигурации Molecule , который определяет переменные, устанавливает фазовую последовательность и конфигурацию для каждой из них.
 
-·    create.yml - код Ansible для создания экземпляров на облачной платформе и хранения данных в instance-config.
 
-·    destroy.yml код Ansible для уничтожения экземпляров на облачной платформе и удаления их из instance-config
-
-·    Converge.yml исполнение роли
-
-·    verify.yml набор проверочных тестов
-
-·    INSTALL.rst инструкции по установке необходимых зависимостей для запуска тестов Molecule
-
- 
-
-Теперь давайте сосредоточимся на файле create.yml, созданном Molecule:
-
- 
-
-Три задачи: заполнение, преобразование и дамп, создание в конце файла instance-config.yml. Прокомментированный раздел является заполнителем для кода Ansible, который должен создавать облачные ресурсы и возвращать массив серверов (содержащий детали экземпляра) в качестве зарегистрированной переменной или факта. Следующий фрагмент кода, взятый из этой проблемы с github, предоставляет пример того, что указано выше для контекста VMWare:
+- `molecule.yml` - это файл конфигурации Molecule, который определяет переменные, устанавливает фазовую последовательность и конфигурацию для каждой из них.
+- `create.yml` - код Ansible для создания экземпляров на облачной платформе и хранения данных в instance-config.
+- `destroy.yml` код Ansible для уничтожения экземпляров на облачной платформе и удаления их из instance-config
+- `converge.yml` исполнение роли
+- `verify.yml` набор проверочных тестов
+- `INSTALL.rst` инструкции по установке необходимых зависимостей для запуска тестов Molecule
 
  
 
-Код вызывает модуль vmware_guest (строки 7–23) для создания виртуальной машины на сервере VMWare. Это делается для каждого элемента массива платформ, определенного в файле molecule.yml (строка 25). Как видите, переменные, определенные в файле molecule.yml, доступны через факт molecule.yml.
+Теперь давайте сосредоточимся на файле `create.yml`, созданном Molecule:
+
+ ```
+---
+- name: Create
+ hosts: localhost
+ connection: local
+ gather_facts: false
+ no_log: "{{ molecule_no_log }}"
+ tasks:
+ 
+ 
+ # Developer must implement.
+ # Developer must map instance config.
+ # Mandatory configuration for Molecule to function.
+ 
+ 
+ — name: Populate instance config dict
+ set_fact:
+ instance_conf_dict: {
+ 'instance': "{{ }}",
+ 'address': "{{ }}",
+ 'user': "{{ }}",
+ 'port': "{{ }}",
+ 'identity_file': "{{ }}", }
+ with_items: "{{ server.results }}"
+ register: instance_config_dict
+ when: server.changed | bool
+ 
+ — name: Convert instance config dict to a list
+ set_fact:
+ instance_conf: {{ instance_config_dict.results | map(attribute='ansible_facts.instance_conf_dict') | list }}"
+ when: server.changed | bool
+ 
+ — name: Dump instance config
+ copy:
+ content: "{{ instance_conf | to_json | from_json | molecule_to_yaml | molecule_header }}"
+ dest: "{{ molecule_instance_config }}"
+ when: server.changed | bool
+ ```
+
+
+
+Три задачи: заполнение, преобразование и дамп, создание в конце файла `instance-config.yml`. Прокомментированный раздел является заполнителем для кода Ansible, который должен создавать облачные ресурсы и возвращать массив серверов (содержащий детали экземпляра) в качестве зарегистрированной переменной или факта. Следующий фрагмент кода, взятый из этой [проблемы с github](https://github.com/ansible-community/molecule/issues/1292), предоставляет пример того, что указано выше для контекста VMWare:
+
+ ```
+…
+ 7     - name: Create molecule instance(s)
+ 8      vmware_guest:
+ 9        hostname: "{{ molecule_yml.driver.hostname }}"
+10        esxi_hostname: "{{ molecule_yml.driver.esxi_hostname }}"
+11        username: "{{ molecule_yml.driver.username }}"
+12        password: "{{ molecule_yml.driver.password }}"
+13        datacenter: "{{ molecule_yml.driver.datacenter }}"
+14        validate_certs: "{{ molecule_yml.driver.validate_certs }}"
+15        resource_pool: "{{ molecule_yml.driver.resource_pool }}"
+16         folder: "{{ molecule_yml.driver.folder }}"
+17         name: "{{ item.name }}"
+18         template: "{{ item.template }}"
+19         hardware:
+20           memory_mb: "{{ item.memory | default(omit) }}"
+21           num_cpus: "{{ item.cpu | default(omit) }}"
+22         wait_for_ip_address: "yes"
+23         state: poweredon
+24       register: server
+25       with_items: "{{ molecule_yml.platforms }}"
+26     
+27     - name: Populate instance config dict
+28       set_fact:
+29         instance_conf_dict: {
+30           'instance': "{{ item.instance.hw_name }}",
+31           'address': "{{ item.instance.ipv4 }}",
+32           'user': "vagrant",
+33           'port': "22",
+34           'identity_file': 'identity_file': "{{
+                     molecule_yml.driver.ssh_identity_file }}"
+35         }
+36       with_items: "{{ server.results }}"
+37       register: instance_config_dict
+38       when: server is changed
+…
+ ```
+
+
+
+Код вызывает модуль `vmware_guest` (строки 7–23) для создания виртуальной машины на сервере VMWare. Это делается для каждого элемента массива платформ, определенного в файле `molecule.yml` (строка 25). Как видите, переменные, определенные в файле `molecule.yml`, доступны через факт `molecule_yml`.
 
 Значения, возвращаемые каждым вызовом vmware_guest, регистрируются как элементы массива сервера (строка 24), который, в свою очередь, используется для заполнения конфигурации экземпляра (строки 27 и далее). Обратите внимание, что обновление факта конфигурации экземпляра пропускается, если переменная сервера не изменяется.
 
