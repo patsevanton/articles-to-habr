@@ -99,7 +99,7 @@ output "availabiltyzones" {
 
 ![](https://habrastorage.org/webt/5-/du/rd/5-durdplbl9z7osz25syifuitye.png)
 
-Используйте встроенную функцию formatdate (), чтобы расположить дату и время в более удобном формате:
+Используйте встроенную функцию `formatdate()`, чтобы расположить дату и время в более удобном формате:
 
 ![](https://habrastorage.org/webt/j5/e7/9p/j5e79pom5flyi6dexqtfsli-sbs.png)
 
