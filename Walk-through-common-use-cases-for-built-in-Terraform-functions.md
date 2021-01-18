@@ -1,8 +1,6 @@
-Знакомство с типичными примерами использования встроенных функций Terraform.
-
-https://searchitoperations.techtarget.com/tutorial/Walk-through-common-use-cases-for-built-in-Terraform-functions
-
 Следуйте инструкции по использованию Terraform, чтобы изучить и применить различные типы встроенных функций, в том числе Numeric, String, и Date, и Time в инструменте IaC.
+
+<cut />
 
 ИТ-команды могут использовать Terraform от HashiCorp для развертывания облачных и локальных ресурсов и управления ими. Чтобы оптимизировать использование инструмента, изучите и установите функции Terraform. 
 
@@ -133,4 +131,3 @@ length("this is a string")
 
 
 ![](https://habrastorage.org/webt/fu/pa/s2/fupas2v21hhih2u7yvfhg1djrgc.png)
-
