@@ -1,10 +1,6 @@
+https://cloudaffaire.com/terraform-functions/
+
 Функции Terraform
-
-Привет всем
-
-Добро пожаловать в CloudAffaire, с вами Дебджит.
-
-В последнем посте блога мы обсудили реестр модулей terraform.
 
  
 
