@@ -1,3 +1,5 @@
+https://medium.com/@khatri_chetan/how-to-setup-airflow-multi-node-cluster-with-celery-rabbitmq-cfde7756bb6a
+
 Как настроить многоузловой кластер Airflow с помощью Celery и RabbitMQ
 
 Что такое Airflow?
