@@ -6,8 +6,6 @@ https://medium.com/@khatri_chetan/how-to-setup-airflow-multi-node-cluster-with-c
 
 Программно создавайте, планируйте и контролируйте рабочий процесс. Он предоставляет функциональную абстракцию в виде идемпотентного DAG (направленного ациклического графа). Функция как служба абстракции для выполнения задач с заданными интервалами.
 
- 
-
 **Кластер с одним узлом Airflow**
 
 В одноузловом кластере Airflow все компоненты (рабочий, планировщик, веб-сервер) установлены на одном узле, известном как "**Master узел**". Чтобы масштабировать кластер с одним узлом, `Airflow` должен быть настроен в режиме `LocalExecutor`. Worker вытягивает задачу из очереди IPC (межпроцессное взаимодействие), это очень хорошо масштабируется до тех пор, пока количество ресурсов, доступных на главном узле, не будет. Чтобы масштабировать Airflow на мультиузле, необходимо включить `Celery Executor`.
@@ -26,7 +24,6 @@ https://medium.com/@khatri_chetan/how-to-setup-airflow-multi-node-cluster-with-c
 
 Celery - это асинхронная очередь задач, основанная на распределенной передаче сообщений. Он ориентирован на работу в реальном времени, но также поддерживает планирование. Airflow использует его для выполнения нескольких параллельных операций на уровне задач на нескольких рабочих узлах с использованием многопроцессорности и многозадачности. Многоузловая архитектура Airflow позволяет масштабировать Airflow, легко добавляя новых сотрудников.
 
- 
 
 **Многоузловой кластер Airflow с шагами установки и настройки Celery:**
 
@@ -34,23 +31,23 @@ Celery - это асинхронная очередь задач, основан
 
 1. Установка RabbitMQ
 
-   ```
-   yum install epel-release
-   yum install rabbitmq-server
-   ```
+```
+yum install epel-release
+yum install rabbitmq-server
+```
 
 2. Включение и запуск RabbitMQ Server
 
-   ```
-   systemctl enable rabbitmq-server.service
-   systemctl start rabbitmq-server.service
-   ```
+```
+systemctl enable rabbitmq-server.service
+systemctl start rabbitmq-server.service
+```
 
 3. Включение интерфейса веб-консоли управления RabbitMQ
 
-   ```
-   rabbitmq-plugins enable rabbitmq_management
-   ```
+```
+rabbitmq-plugins enable rabbitmq_management
+```
 
 ![](https://habrastorage.org/webt/-m/az/c9/-mazc90wejh6tbhw4i9wkx3ryry.png)
 
@@ -60,17 +57,14 @@ Celery - это асинхронная очередь задач, основан
 
 4. Установка протокола транспорта `pyamqp` для RabbitMQ и PostGreSQL Adapter
 
- ```
+```
 pip install pyamqp
- ```
-
-
+```
 
 `amqp://` - это псевдоним, который использует librabbitmq, если он доступен, или `py-amqp`, если его нет.
 
 Вы должны использовать `pyamqp://` или `librabbitmq://`, если хотите точно указать, какой протокол передачи данных использовать. Протокол `pyamqp://` использует библиотеку `amqp` (http://github.com/celery/py-amqp)
 
- 
 
 **Установка адаптера PostGreSQL Adaptor: psycopg2**
 
@@ -104,7 +98,6 @@ airflow initdb
 
 После установки и настройки вам необходимо инициализировать базу данных, прежде чем вы сможете запустить группы обеспечения доступности баз данных и ее задачу. Поэтому последние изменения будут отражены в метаданных Airflow из конфигурации.
 
- 
 
 7. Установка Celery
 
