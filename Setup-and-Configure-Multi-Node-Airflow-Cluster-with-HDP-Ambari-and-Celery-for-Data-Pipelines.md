@@ -12,7 +12,7 @@ Airflow - идеальный выбор для конвейеров данных
 
 Создавайте конвейеры данных, которые:
 
-1. Идемпотентны. 
+1. Идемпотентны.
 
 2. Детерминированы.
 
@@ -64,14 +64,12 @@ Ref. Как настроить мультинодовый кластер Airflow
 
 1. **Устанавливаем Apache MPack для Airflow**
 
-   ```
-   a. git clone https://github.com/miho120/ambari-mpack.git
-   b. stop ambari server
-   c. install the apache mpack for airflow on ambari server
-   d. start ambari server
-   ```
-
-   
+```
+a. git clone https://github.com/miho120/ambari-mpack.git
+b. stop ambari server
+c. install the apache mpack for airflow on ambari server
+d. start ambari server
+```
 
 2. **Добавляем Airflow Service в Ambari**
 
@@ -149,14 +147,14 @@ sql_alchemy_conn = postgresql+psycopg2://airflow:airflow@{HOSTNAME}/airflow
 
 3. **URL-адрес брокера**
 
-   ```
-   broker_url= pyamqp://guest:guest@{RabbitMQ-HOSTNAME}:5672/
-   celery_result_backend = db+postgresql://airflow:airflow@{HOSTNAME}/airflow
-   ```
+```
+broker_url= pyamqp://guest:guest@{RabbitMQ-HOSTNAME}:5672/
+celery_result_backend = db+postgresql://airflow:airflow@{HOSTNAME}/airflow
+```
 
-   ![](https://habrastorage.org/webt/nb/id/n9/nbidn9dsbkd262yn3wyzaqwmesw.png)
+![](https://habrastorage.org/webt/nb/id/n9/nbidn9dsbkd262yn3wyzaqwmesw.png)
 
-   *URL-адрес брокера и Celery result backend для Airflow*
+*URL-адрес брокера и Celery result backend для Airflow*
 
 4. **Прочие**
 
@@ -181,15 +179,15 @@ load_examples = False
 
 1. Очереди RabbitMQ должны быть запущены:
 
-   ![](https://habrastorage.org/webt/kt/n8/hj/ktn8hjha9gbd6nehpwegscq_k5m.png)
+![](https://habrastorage.org/webt/kt/n8/hj/ktn8hjha9gbd6nehpwegscq_k5m.png)
 
 2. Подключения RabbitMQ должны быть активными:
 
-   ![](https://habrastorage.org/webt/ke/m9/yx/kem9yxmco0j9_qw_k6y6rdjcwro.png)
+![](https://habrastorage.org/webt/ke/m9/yx/kem9yxmco0j9_qw_k6y6rdjcwro.png)
 
 3. Каналы RabbitMQ должны быть запущены:
 
-   ![](https://habrastorage.org/webt/fd/5d/az/fd5dazk_mn28xzpzgabhay0l82i.png)
+![](https://habrastorage.org/webt/fd/5d/az/fd5dazk_mn28xzpzgabhay0l82i.png)
 
 4. Отображение *Celery Flower*
 
