@@ -62,7 +62,7 @@ Airflow - идеальный выбор для конвейеров данных
 
 Ref. Как настроить мультинодовый кластер Airflow с помощью Celery и RabbitMQ
 
-1. Устанавливаем Apache MPack для Airflow
+1. **Устанавливаем Apache MPack для Airflow**
 
    ```
    a. git clone https://github.com/miho120/ambari-mpack.git
@@ -73,7 +73,7 @@ Ref. Как настроить мультинодовый кластер Airflow
 
    
 
-2. Добавляем Airflow Service в Ambari
+2. **Добавляем Airflow Service в Ambari**
 
 После успешного выполнения вышеуказанных шагов вы можете открыть интерфейс Ambari
 
@@ -125,7 +125,7 @@ http://<HOST_NAME>:8080
 
 *Конфигурация Airflow в Ambari*
 
-1. **Смените исполнителя**
+1. **Смените Executor**
 
 ```
 executor = CeleryExecutor
@@ -158,7 +158,7 @@ sql_alchemy_conn = postgresql+psycopg2://airflow:airflow@{HOSTNAME}/airflow
 
    *URL-адрес брокера и Celery result backend для Airflow*
 
-4. Прочие
+4. **Прочие**
 
 ```
 dags_are_paused_at_creation = True
@@ -175,35 +175,38 @@ load_examples = False
 
 *Airflow Initdb из Ambari*
 
-а затем запустите службу airflow. Теперь у вас должно получиться хорошо с мультинодовый кластер Airflow.
+А затем запустите службу airflow. Теперь у вас должен получиться мультинодовый кластер Airflow.
 
-Кое-что из Чек-листа для проверки служб для мультинодовый кластер Airflow:
+**Кое-что из Чек-листа для проверки служб для мультинодового кластера Airflow:**
 
 1. Очереди RabbitMQ должны быть запущены:
 
+   ![](https://habrastorage.org/webt/kt/n8/hj/ktn8hjha9gbd6nehpwegscq_k5m.png)
+
 2. Подключения RabbitMQ должны быть активными:
 
+   ![](https://habrastorage.org/webt/ke/m9/yx/kem9yxmco0j9_qw_k6y6rdjcwro.png)
+
 3. Каналы RabbitMQ должны быть запущены:
+
+   ![](https://habrastorage.org/webt/fd/5d/az/fd5dazk_mn28xzpzgabhay0l82i.png)
 
 4. Отображение *Celery Flower*
 
 Celery Flower - это веб-инструмент для мониторинга и управления кластерами Celery. Номер порта по умолчанию - 5555.
 
+![](https://habrastorage.org/webt/qr/1b/wo/qr1bwoby1zjc8koojffbvzpokee.png)
+
 Вы также можете видеть здесь, что 3 рабочих находятся в сети, и вы можете отслеживать одну единицу «задачи» Celery здесь.
 
 Подробнее о Celery Flower: https://flower.readthedocs.io/en/latest/
 
-Обратите внимание, что вы также можете запустить «Celery Flower», веб-интерфейс, созданный поверх Celery, для наблюдения за своими рабочими. Вы можете использовать команду быстрого доступа airflow flower, чтобы запустить веб-сервер Flower.
+Обратите внимание, что вы также можете запустить «Celery Flower», веб-интерфейс, созданный поверх Celery, для наблюдения за своими рабочими. Вы можете использовать команду быстрого доступа `airflow flower`, чтобы запустить веб-сервер Flower.
 
-Мы закончили установку и настройку мультинодовый кластер Airflow на \ Ambari HDP Hadoop / Spark Cluster.
+```
+nohup airflow flower >> /var/local/airflow/logs/flower.logs &
+```
+
+Мы закончили установку и настройку мультинодовый кластер Airflow на Ambari HDP Hadoop / Spark Cluster.
 
 Я столкнулся с некоторыми проблемами, о которых я расскажу в следующей статье в блоге.
-
-![](https://habrastorage.org/webt/qr/1b/wo/qr1bwoby1zjc8koojffbvzpokee.png)
-
-![](https://habrastorage.org/webt/fd/5d/az/fd5dazk_mn28xzpzgabhay0l82i.png)
-
-
-![](https://habrastorage.org/webt/ke/m9/yx/kem9yxmco0j9_qw_k6y6rdjcwro.png)
-
-![](https://habrastorage.org/webt/kt/n8/hj/ktn8hjha9gbd6nehpwegscq_k5m.png)
