@@ -1,4 +1,4 @@
-https://medium.com/@khatri_chetan/how-to-setup-airflow-multi-node-cluster-with-celery-rabbitmq-cfde7756bb6a
+https://habr.com/ru/post/539006/
 
 Как настроить мультинодовый кластер Airflow с помощью Celery и RabbitMQ
 
