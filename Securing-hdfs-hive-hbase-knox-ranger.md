@@ -16,9 +16,9 @@ Apache Ranger расширяет базовые функции для скоор
 
  
 
-Предпосылка
+Предпосылки
 
-Единственное предварительное условие для этого урока - наличие Hortonworks Sandbox.
+Единственное предварительное условие для этого урока - наличие [Hortonworks Sandbox](http://hortonworks.com/sandbox).
 
 Как только у вас появится Hortonworks Sandbox, войдите через SSH:
 
@@ -247,3 +247,81 @@ curl -i --user admin:admin -X GET http://127.0.0.1:6080/service/public/api/polic
 Мы создали политику и получили ее детали с помощью REST API. Теперь пользователи могут управлять своими политиками с помощью инструментов API или приложений, интегрированных с REST API Ranger.
 
 Надеюсь, во время этого головокружительного тура по Ranger вы познакомились с простотой и мощью Ranger для управления безопасностью.
+
+
+
+
+
+![](https://habrastorage.org/webt/ja/u8/78/jau878k6obge_uanolwox1b_mzo.png)
+
+![](https://habrastorage.org/webt/r0/ae/hm/r0aehmkmksmufx2y7etq3g9rzgc.png)
+
+![](https://habrastorage.org/webt/sb/8i/yy/sb8iyybegmp8juwrzji-gv7rkxo.png)
+
+![](https://habrastorage.org/webt/kf/ey/3j/kfey3j4wqnkel9oguja3twxlyfc.png)
+
+![](https://habrastorage.org/webt/2z/rr/i1/2zrri1auat8aoye4vzlyojxsby4.png)
+
+![](https://habrastorage.org/webt/mc/0g/yr/mc0gyrnq9vtr1dy8vrsvkwldyaq.png)
+
+![](https://habrastorage.org/webt/q_/ou/6-/q_ou6-tfbb7qgvfmdd8m-erhhye.png)
+
+![](https://habrastorage.org/webt/qk/ji/xt/qkjixtrzfstw8pzdb-9ictgl92m.png)
+
+![](https://habrastorage.org/webt/ts/3q/7t/ts3q7tv3qgpbj7aqrxam-dtzyom.png)
+
+![](https://habrastorage.org/webt/bj/kq/0q/bjkq0qi6ejh4bu5baj9fwkn0xrk.png)
+
+![](https://habrastorage.org/webt/up/_n/03/up_n03goncsrcgbkwqf8jqaa0vq.png)
+
+![](https://habrastorage.org/webt/ib/xm/ii/ibxmiiwqz4uwsrxmddmfk0h27fg.png)
+
+![](https://habrastorage.org/webt/5h/ne/--/5hne--3cz4eu5e92_zd_jzcaxb8.png)
+
+![](https://habrastorage.org/webt/hz/ew/k0/hzewk0m3izxa79_cto3-e1kzmou.png)
+
+![](https://habrastorage.org/webt/dq/sn/mj/dqsnmjyva_hcbqqvgxpkrdjouxo.png)
+
+![](https://habrastorage.org/webt/ld/w9/7s/ldw97stv8ndpjitozm08x4fuwru.png)
+
+![](https://habrastorage.org/webt/vt/sg/z-/vtsgz-fpaapkgctkwqzm2ydj9dq.png)
+
+![](https://habrastorage.org/webt/_b/lh/p-/_blhp-7826ifhrahzl4rmsyaslu.png)
+
+![](https://habrastorage.org/webt/xh/nh/c3/xhnhc3i0-36tib6oot9_lwktwks.png)
+
+![](https://habrastorage.org/webt/94/3f/at/943fatz35xaxgapfenqfyy6bsjg.png)
+
+![](https://habrastorage.org/webt/q9/hs/tv/q9hstvxvb5iq_wd5nuqpe8qum4m.png)
+
+![](https://habrastorage.org/webt/jd/es/ed/jdesed3qhwjnyc0wkmyzmskdojm.png)
+
+![](https://habrastorage.org/webt/q1/2b/po/q12bpov9kpvgy9vaeib4afcxz68.png)
+
+![](https://habrastorage.org/webt/xm/vv/ew/xmvvewxnkbmmwxtu0snx1qbkuoq.png)
+
+![](https://habrastorage.org/webt/m9/uq/4b/m9uq4bwhm-yw83enxkdpd7oyjpw.png)
+
+![](https://habrastorage.org/webt/7n/ag/w9/7nagw9pdafyrerb0-0krvci8eqk.png)
+
+![](https://habrastorage.org/webt/hc/kl/wa/hcklwabfxohgowiibjsqk_ogfre.png)
+
+![](https://habrastorage.org/webt/hl/qf/pf/hlqfpfhmsdf8ohwhdkwk2azglp8.png)
+
+![](https://habrastorage.org/webt/y8/qq/ak/y8qqak31og2e6h-9hp40hj57u-s.png)
+
+![](https://habrastorage.org/webt/hi/iq/2c/hiiq2csabtxms294cdf5emqo88u.png)
+
+![](https://habrastorage.org/webt/fj/vu/pa/fjvupamf-kkyh9yhwr0bxy9x0ni.png)
+
+![](https://habrastorage.org/webt/mk/9p/si/mk9psiz6ofyuq6svydltc86gwqy.png)
+
+![](https://habrastorage.org/webt/kp/br/jn/kpbrjnsbe22yyznniok-pvl6mme.png)
+
+![](https://habrastorage.org/webt/u4/do/gw/u4dogw6cf9dyx-2iswwzjjjbdqs.png)
+
+![](https://habrastorage.org/webt/co/vm/5e/covm5emwmmgbzlvrhpw7htdbzys.png)
+
+![](https://habrastorage.org/webt/yp/fz/9k/ypfz9kn0qtl7fvgctjyazey2e-i.png)
+
+![](https://habrastorage.org/webt/x_/9u/xz/x_9uxzjjm-imo92qojs3bk4cuio.png)
