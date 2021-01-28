@@ -17,7 +17,7 @@ Apache Ranger расширяет базовые функции для скоор
 
 4. API REST для диспетчера политик
 
-Предпосылки
+**Предпосылки**
 
 Единственное предварительное условие для этого урока - наличие [Hortonworks Sandbox](http://hortonworks.com/sandbox).
 
@@ -25,13 +25,13 @@ Apache Ranger расширяет базовые функции для скоор
 
 ![](https://habrastorage.org/webt/x_/9u/xz/x_9uxzjjm-imo92qojs3bk4cuio.png)
 
-Запуск службы Knox и демонстрационной службы LDAP
+**Запуск службы Knox и демонстрационной службы LDAP**
 
 В консоли Ambari по адресу http://localhost:8080/ (имя пользователя и пароль - admin и admin соответственно) выберите Knox из списка служб в левой части страницы.
 
 ![](https://habrastorage.org/webt/u4/do/gw/u4dogw6cf9dyx-2iswwzjjjbdqs.png)
 
-Затем нажмите «Service Actions» в верхнем правом углу страницы и нажмите «Start».
+Затем нажмите `Service Actions` в верхнем правом углу страницы и нажмите `Start`.
 
 ![](https://habrastorage.org/webt/mk/9p/si/mk9psiz6ofyuq6svydltc86gwqy.png)
 
@@ -39,7 +39,7 @@ Apache Ranger расширяет базовые функции для скоор
 
 ![](https://habrastorage.org/webt/kp/br/jn/kpbrjnsbe22yyznniok-pvl6mme.png)
 
-Затем вернитесь к кнопке «Service Actions» в службе Knox и нажмите «Start Demo LDAP».
+Затем вернитесь к кнопке `Service Actions` в службе `Knox` и нажмите `Start Demo LDAP`.
 
 ![](https://habrastorage.org/webt/hl/qf/pf/hlqfpfhmsdf8ohwhdkwk2azglp8.png)
 
@@ -47,15 +47,17 @@ Apache Ranger расширяет базовые функции для скоор
 
 ![](https://habrastorage.org/webt/hc/kl/wa/hcklwabfxohgowiibjsqk_ogfre.png)
 
-Сценарии доступа Knox
+**Сценарии доступа Knox**
 
-Проверьте, запущена ли консоль администратора Ranger по адресу http: // localhost: 6080 / с вашего хост-компьютера. Имя пользователя - admin, пароль - admin.
+Проверьте, запущена ли консоль администратора Ranger по адресу http://localhost:6080/ с вашего хост-компьютера. Имя пользователя - `admin`, пароль - `admin`.
 
 ![](https://habrastorage.org/webt/co/vm/5e/covm5emwmmgbzlvrhpw7htdbzys.png)
 
 Если он не запущен, вы можете запустить его из командной строки с помощью команды
 
+```
 sudo service ranger-admin start
+```
 
 ![](https://habrastorage.org/webt/yp/fz/9k/ypfz9kn0qtl7fvgctjyazey2e-i.png)
 
@@ -67,15 +69,15 @@ sudo service ranger-admin start
 
 ![](https://habrastorage.org/webt/hi/iq/2c/hiiq2csabtxms294cdf5emqo88u.png)
 
-Чтобы начать тестирование политик Knox, нам нужно отключить политику «global knox allow».
+Чтобы начать тестирование политик Knox, нам нужно отключить политику `global knox allow`.
 
 ![](https://habrastorage.org/webt/y8/qq/ak/y8qqak31og2e6h-9hp40hj57u-s.png)
 
-Найдите политику Sandbox for Guest в консоли Ranger Admin и отредактируйте политику.
+Найдите политику `Sandbox for Guest` в консоли Ranger Admin и отредактируйте политику.
 
 ![](https://habrastorage.org/webt/7n/ag/w9/7nagw9pdafyrerb0-0krvci8eqk.png)
 
-и включите политику " Sandbox for Guest "
+и включите политику `Sandbox for Guest`
 
 ![](https://habrastorage.org/webt/m9/uq/4b/m9uq4bwhm-yw83enxkdpd7oyjpw.png)
 
@@ -87,13 +89,11 @@ curl -k -u admin:admin-password 'https://127.0.0.1:8443/gateway/knox_sample/webh
 
 ![](https://habrastorage.org/webt/xm/vv/ew/xmvvewxnkbmmwxtu0snx1qbkuoq.png)
 
-
-
 Перейдите в инструмент Ranger Policy Manager → Audit screen и проверьте, проверяется ли доступ (отказ) к Knox.
 
 ![](https://habrastorage.org/webt/q1/2b/po/q12bpov9kpvgy9vaeib4afcxz68.png)
 
-Теперь давайте попробуем ту же команду CURL, используя учетные данные «гостя» из терминала.
+Теперь давайте попробуем ту же команду CURL, используя учетные данные `guest` из терминала.
 
 ```
 curl -k -u guest:guest-password 'https://127.0.0.1:8443/gateway/knox_sample/webhdfs/v1?op=LISTSTATUS'
@@ -115,15 +115,17 @@ curl -k -u guest:guest-password 'https://127.0.0.1:8443/gateway/knox_sample/webh
 
 ![](https://habrastorage.org/webt/94/3f/at/943fatz35xaxgapfenqfyy6bsjg.png)
 
-Разрешения **grant/revoke в** Hive
+**Разрешения grant/revoke в Hive**
 
-Ranger может поддерживать импорт политик grant/revoke, установленных через командную строку или Hue for Hive. Ranger может централизованно хранить эти политики вместе с политиками, созданными на портале администрирования, и применять их в Hive с помощью своего плагина.
+Ranger может поддерживать импорт политик `grant`/`revoke`, установленных через командную строку или `Hue for Hive`. Ranger может централизованно хранить эти политики вместе с политиками, созданными на портале администрирования, и применять их в Hive с помощью своего плагина.
 
 ![](https://habrastorage.org/webt/xh/nh/c3/xhnhc3i0-36tib6oot9_lwktwks.png)
 
 Первым делом отключите глобальную политику доступа для Hive на портале администрирования Ranger.
 
-Давайте попробуем запустить операцию Grant, используя пользовательский Hive из командной строки. Войдите в инструмент beeline, используя следующую команду
+![](https://habrastorage.org/webt/_b/lh/p-/_blhp-7826ifhrahzl4rmsyaslu.png)
+
+Давайте попробуем запустить операцию `Grant`, используя пользовательский `Hive` из командной строки. Войдите в инструмент beeline, используя следующую команду
 
 ```
 beeline -u "jdbc:hive2://sandbox.hortonworks.com:10000/default" -n it1 -p it1-d org.apache.hive.jdbc.HiveDriver
@@ -131,7 +133,7 @@ beeline -u "jdbc:hive2://sandbox.hortonworks.com:10000/default" -n it1 -p it1-d 
 
 ![](https://habrastorage.org/webt/vt/sg/z-/vtsgz-fpaapkgctkwqzm2ydj9dq.png)
 
-Затем введите команду GRANT
+Затем введите команду `GRANT`
 
 ```
 grant select, update on table xademo.customer_details to user network1;
@@ -145,9 +147,9 @@ grant select, update on table xademo.customer_details to user network1;
 
 ![](https://habrastorage.org/webt/dq/sn/mj/dqsnmjyva_hcbqqvgxpkrdjouxo.png)
 
-Вы можете видеть, что доступ был запрещен для операции администратора для пользователя it1.
+Вы можете видеть, что доступ был запрещен для операции администратора для пользователя `it1`.
 
-Мы можем создать политику в Ranger для пользователя it1 в качестве администратора. Создайте новую политику в консоли администратора Ranger и убедитесь, что конфигурация соответствует приведенной ниже иллюстрации.
+Мы можем создать политику в Ranger для пользователя `it1` в качестве администратора. Создайте новую политику в консоли администратора Ranger и убедитесь, что конфигурация соответствует приведенной ниже иллюстрации.
 
 ![](https://habrastorage.org/webt/hz/ew/k0/hzewk0m3izxa79_cto3-e1kzmou.png)
 
@@ -161,27 +163,27 @@ GRANT select, update on table xademo.customer_details to user network1;
 
 Если команда прошла успешно, вы увидите, что политика создана / обновлена в Ranger Admin Portal → Policy Manager. Он проверяет, существует ли существующая соответствующая политика для обновления, в противном случае он создает новую.
 
-![](https://habrastorage.org/webt/_b/lh/p-/_blhp-7826ifhrahzl4rmsyaslu.png)
+![](https://habrastorage.org/webt/ib/xm/ii/ibxmiiwqz4uwsrxmddmfk0h27fg.png)
 
 Что здесь происходит?
 
-Плагин Ranger перехватывает команды GRANT / REVOKE в Hive и создает соответствующие политики на портале администратора. Затем плагин использует эти политики для принудительной авторизации Hive (Hiveserver2).
+Плагин Ranger перехватывает команды `GRANT/REVOKE` в `Hive` и создает соответствующие политики на портале администратора. Затем плагин использует эти политики для принудительной авторизации `Hive` (`Hiveserver2`).
 
-Пользователи могут запускать дополнительные команды GRANT для обновления разрешений и команды REVOKE для отмены разрешений.
+Пользователи могут запускать дополнительные команды `GRANT` для обновления разрешений и команды `REVOKE` для отмены разрешений.
 
-Сценарии **grant/revoke** в HBase
+**Разрешения grant/revoke в HBase**
 
-Ranger может поддерживать импорт политик grant/revoke, установленных через командную строку в Hbase. Подобно Hive, Ranger может хранить эти политики как часть диспетчера политик и применять их в Hbase с помощью своего плагина.
+Ranger может поддерживать импорт политик `grant/revoke`, установленных через командную строку в `Hbase`. Подобно Hive, Ranger может хранить эти политики как часть диспетчера политик и применять их в Hbase с помощью своего плагина.
 
-Прежде чем продолжить, убедитесь, что HBase запущен из Ambari - http://127.0.0.1:8080 (имя пользователя и пароль admin).
+Прежде чем продолжить, убедитесь, что HBase запущен из Ambari - http://127.0.0.1:8080 (имя пользователя и пароль `admin`).
 
-Если это не так, нажмите кнопку «Service Actions» в правом верхнем углу и запустите службу.
+Если это не так, нажмите кнопку `Service Actions` в правом верхнем углу и запустите службу.
 
 ![](https://habrastorage.org/webt/up/_n/03/up_n03goncsrcgbkwqf8jqaa0vq.png)
 
 Сначала давайте попробуем запустить операцию Grant с помощью пользователя Hbase.
 
-Отключите политику общего доступа «HBase Global Allow» на Ranger Administration Portal - диспетчер политик.
+Отключите политику общего доступа `HBase Global Allow` на Ranger Administration Portal - диспетчер политик.
 
 ![](https://habrastorage.org/webt/bj/kq/0q/bjkq0qi6ejh4bu5baj9fwkn0xrk.png)
 
@@ -194,7 +196,7 @@ su - it1
 
 ![](https://habrastorage.org/webt/ts/3q/7t/ts3q7tv3qgpbj7aqrxam-dtzyom.png)
 
-Запустите команду grant, чтобы предоставить пользователю mktg1 доступ на чтение, запись и создание в таблице iemployee.
+Запустите команду grant, чтобы предоставить пользователю `mktg1` доступ на чтение, запись и создание в таблице `iemployee`.
 
 ```
 hbase(main):001:0> grant 'mktg1', 'RWC', 'iemployee'
@@ -204,7 +206,7 @@ hbase(main):001:0> grant 'mktg1', 'RWC', 'iemployee'
 
 ![](https://habrastorage.org/webt/qk/ji/xt/qkjixtrzfstw8pzdb-9ictgl92m.png)
 
-Перейдите в Ranger Administration Portal→ Policy Manager и создайте новую политику, чтобы назначить пользователю права «администратора» it1.
+Перейдите в Ranger Administration Portal→ Policy Manager и создайте новую политику, чтобы назначить права `admin` пользователю `it1`.
 
 ![](https://habrastorage.org/webt/q_/ou/6-/q_ou6-tfbb7qgvfmdd8m-erhhye.png)
 
@@ -218,7 +220,7 @@ hbase(main):006:0> grant 'mktg1', 'RWC', 'iemployee'
 
 ![](https://habrastorage.org/webt/mc/0g/yr/mc0gyrnq9vtr1dy8vrsvkwldyaq.png)
 
-Проверьте политики HBase на портале Ranger Policy Administration. Разрешения на предоставление были добавлены в существующую политику для таблицы iemployee, которую мы создали на предыдущем шаге.
+Проверьте политики HBase на портале Ranger Policy Administration. Разрешения на предоставление были добавлены в существующую политику для таблицы `iemployee`, которую мы создали на предыдущем шаге.
 
 ![](https://habrastorage.org/webt/2z/rr/i1/2zrri1auat8aoye4vzlyojxsby4.png)
 
@@ -236,17 +238,17 @@ hbase(main):007:0> revoke 'mktg1', 'iemployee'
 
 Что здесь происходит?
 
-Плагин Ranger перехватывает команды GRANT / REVOKE в Hbase и создает соответствующие политики на портале администратора. Затем плагин использует эти политики для принудительной авторизации.
+Плагин Ranger перехватывает команды `GRANT/REVOKE` в Hbase и создает соответствующие политики на портале администратора. Затем плагин использует эти политики для принудительной авторизации.
 
-Пользователи могут запускать дополнительные команды GRANT для обновления разрешений и команды REVOKE для отмены разрешений.
+Пользователи могут запускать дополнительные команды `GRANT` для обновления разрешений и команды REVOKE для отмены разрешений.
 
-**REST APIs** для администрирования политик
+**REST APIs для администрирования политик**
 
 Администрированием политик Ranger можно управлять через REST API. Пользователи могут использовать API для создания или обновления политик, вместо того, чтобы заходить на портал администрирования.
 
-\#### Running REST APIs from command line (Запуск REST API из командной строки)
+**Запуск REST API из командной строки**
 
-В локальной оболочке командной строки запустите эту команду CURL. Этот API создаст политику с именем «hadoopdev-testing-policy2» в репозитории HDFS «sandbox_hdfs»
+В локальной оболочке командной строки запустите эту команду CURL. Этот API создаст политику с именем `hadoopdev-testing-policy2` в репозитории HDFS `sandbox_hdfs`
 
 ```
 curl -i --header "Accept:application/json" -H "Content-Type: application/json" --user admin:admin -X POST http://127.0.0.1:6080/service/public/api/policy -d '{ "policyName":"hadoopdev-testing-policy2","resourceName":"/demo/data/test","description":"Testing policy for /demo/data/test","repositoryName":"sandbox_hdfs","repositoryType":"HDFS","permMapList":[{"userList":["mktg1"],"permList":["Read"]},{"groupList":["IT"],"permList":["Read"]}],"isEnabled":true,"isRecursive":true,"isAuditEnabled":true,"version":"0.1.0","replacePerm":false}'
@@ -254,7 +256,7 @@ curl -i --header "Accept:application/json" -H "Content-Type: application/json" -
 
 ![](https://habrastorage.org/webt/sb/8i/yy/sb8iyybegmp8juwrzji-gv7rkxo.png)
 
-И диспетчер политик и просмотрите новую политику с именем «hadoopdev-testing-policy2»
+И диспетчер политик и просмотрите новую политику с именем `hadoopdev-testing-policy2`
 
 ![](https://habrastorage.org/webt/r0/ae/hm/r0aehmkmksmufx2y7etq3g9rzgc.png)
 
@@ -262,7 +264,7 @@ curl -i --header "Accept:application/json" -H "Content-Type: application/json" -
 
 ![](https://habrastorage.org/webt/ja/u8/78/jau878k6obge_uanolwox1b_mzo.png)
 
-Идентификатор политики является частью URL-адреса этой страницы сведений о политике http://127.0.0.1: 6080 / index.html #! / Hdfs / 1 / policy / 26
+Идентификатор политики является частью URL-адреса этой страницы сведений о политике http://127.0.0.1:6080/index.html#!/hdfs/1/policy/26
 
 Мы можем использовать идентификатор политики для получения или изменения политики.
 
@@ -277,9 +279,4 @@ curl -i --user admin:admin -X GET http://127.0.0.1:6080/service/public/api/polic
 Мы создали политику и получили ее детали с помощью REST API. Теперь пользователи могут управлять своими политиками с помощью инструментов API или приложений, интегрированных с REST API Ranger.
 
 Надеюсь, во время этого головокружительного тура по Ranger вы познакомились с простотой и мощью Ranger для управления безопасностью.
-
-![](https://habrastorage.org/webt/ib/xm/ii/ibxmiiwqz4uwsrxmddmfk0h27fg.png)
-
-
-![](https://habrastorage.org/webt/mk/9p/si/mk9psiz6ofyuq6svydltc86gwqy.png)
 
