@@ -1,5 +1,14 @@
-http://saptak.in/writing/2015/09/08/securing-hdfs-hive-hbase-knox-ranger
+https://habr.com/ru/topic/edit/539620/
 
+Apache HDFS (Hadoop Distributed File System) — файловая система, предназначенная для хранения файлов больших размеров, поблочно распределённых между узлами вычислительного кластера.
+Apache Hive — система управления базами данных на основе платформы Hadoop.
+Apache HBase — СУБД класса NoSQL с открытым исходным кодом, проект экосистемы Hadoop.
+Apache KNOX — REST API и шлюз приложений для компонентов экосистемы Apache Hadoop, обеспечивает единую точку доступа для всех HTTP соединений с кластерами Apache Hadoop и систему единой аутентификации Single Sign On (SSO) для сервисов и пользовательского интерфейса компонент Apache Hadoop.
+Apache Ranger – это инфраструктура для обеспечения, мониторинга и управления комплексной безопасностью данных на платформе Hadoop
+
+Перевод поста [Securing hdfs hive hbase knox ranger](http://saptak.in/writing/2015/09/08/securing-hdfs-hive-hbase-knox-ranger) 2015 года. Получше и поновее поста не нашел. 
+
+<cut />
 
 Введение
 
@@ -279,4 +288,3 @@ curl -i --user admin:admin -X GET http://127.0.0.1:6080/service/public/api/polic
 Мы создали политику и получили ее детали с помощью REST API. Теперь пользователи могут управлять своими политиками с помощью инструментов API или приложений, интегрированных с REST API Ranger.
 
 Надеюсь, во время этого головокружительного тура по Ranger вы познакомились с простотой и мощью Ranger для управления безопасностью.
-
