@@ -1,4 +1,4 @@
-### Инструкции для проведения работ в IPA 
+### Инструкции для проведения работ в IPA. Перевод https://github.com/HortonworksUniversity/Security_Labs/blob/master/HDP-3.1-IPA.md
 
 ### Предварительные требования 
 
