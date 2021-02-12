@@ -4,7 +4,6 @@
 
 ![](https://habrastorage.org/webt/e9/fe/c-/e9fec-yf8hqr4cz-nowrvhctv-i.png)
 
-
 На этом этапе все необходимые требования выполнены. Группа участников, управляемая амбари, не требуется, а политики истечения срока действия паролей не влияют на служебные ключевые вкладки, поскольку им не были присвоены пароли. Срок действия пароля пользователей `hadoopadmin` и `ldapbind` истечет, и его необходимо будет изменить через 90 дней (вместе с остальными пользователями). Смотрите документацию для объяснения https://docs.hortonworks.com/HDPDocuments/HDP3/HDP-3.0.1/authentication-with-kerberos/content/kerberos_optional_use_an_existing_ipa.html 
 
 
@@ -233,10 +232,16 @@ exit
 
 1. Вкладка Ranger Admin:
   - Хост Ranger DB = полное доменное имя хоста, на котором работает Mysql (например, ip-172-30-0-242.us-west-2.compute.internal)
+
   - Введите пароль: BadPass#1
+
   - Нажмите кнопку "Test Connection".
-![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/ali/ranger-213-setup/ranger-213-1.png)
-![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/ali/ranger-213-setup/ranger-213-2.png)
+
+  ![](https://habrastorage.org/webt/kj/ct/yu/kjctyuwqvpuycyenurhlpljrmm0.png)
+
+  
+
+  - ![](https://habrastorage.org/webt/hb/ec/sj/hbecsjirs1novfhasazbhh10tqm.png)
 
 2. Вкладка Ranger User info 
   - 'Sync Source' = LDAP/AD 
@@ -253,21 +258,23 @@ exit
 4. Вкладка Ranger User info  
   - Подвкладка Group configs 
     - Убедитесь, что групповая синхронизация (Group sync) отключена
-![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/ali/ranger-213-setup/ranger-213-6.png)
+  ![](https://habrastorage.org/webt/lo/-r/ds/lo-rdsr_2bwe6y91874dur3iqv8.png)
+    
+      
 
 5. Вкладка Ranger plugins 
   - Включите все плагины
-![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/ali/ranger-213-setup/ranger-213-7.png)
+![](https://habrastorage.org/webt/8v/r_/cq/8vr_cq0uzys7dombvcfptclwtns.png)
 
 6. Вкладка Ranger Audits 
   - SolrCloud = ON
-![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/ali/ranger-213-setup/ranger-213-8.png)
-![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/ali/ranger-213-setup/ranger-213-9.png)
+![](https://habrastorage.org/webt/si/ki/jr/sikijrmymuukmnha1yxqg7ulge0.png)
+![](https://habrastorage.org/webt/0z/am/po/0zampovnmeonrhg8m_n-mac6t6g.png)
 
 7. Вкладка Advanced 
 
   - Никаких изменений не требуется (пока не нужно настраивать аутентификацию Ranger в AD)
-![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/ali/ranger-213-setup/ranger-213-10.png)
+![](https://habrastorage.org/webt/w-/vg/uw/w-vguwvp4k_nfotvvatfl2b1kku.png)
 
 - Перейдите по ссылке Next > Proceed Anyway 
   
@@ -275,14 +282,13 @@ exit
   - Главный Admin: `hadoopadmin@LAB.HORTONWORKS.NET`
   - Пароль Admin: BadPass#1
   - Обратите внимание, что теперь вы можете сохранить учетные данные администратора. Отметьте и этот флажок
-  ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ambari-configureidentities.png)
+  ![](https://habrastorage.org/webt/sa/ev/kv/saevkvp5wguhc3s6uzmtr_vuhm4.png)
   
 - Перейдите в Next > Deploy чтобы установить Ranger
 
 - После установки перезапустите компоненты, требующие перезапуска. (например, HDFS, YARN, Hive и.т.д.)
 
 - (Необязательно) В случае сбоя (обычно вызванного неправильным вводом полного доменного имени узлов Mysql в конфигурации выше) удалите службу Ranger из Ambari и повторите попытку.
-
 
 
 8 -(Необязательно) Активация условий запрета в Ranger 
@@ -301,18 +307,18 @@ https://docs.hortonworks.com/HDPDocuments/HDP2/HDP-2.6.1/bk_security/content/abo
 
 - Откройте интерфейс Ranger в http://RANGERHOST_PUBLIC_IP:6080 используя admin/admin
 - Убедитесь, что репозитории для HDFS, YARN, Hive, HBase, Knox отображаются на вкладке Access Manager.'
-![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ranger-AccessManager.png)
+![](https://habrastorage.org/webt/ay/zr/7p/ayzr7pqr3wddnpqi9haos6cogh4.png)
 
 - Убедитесь, что аудит отображается на вкладке 'Audit' > 'Access' 
-![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ranger-audits.png)
+![](https://habrastorage.org/webt/qf/-r/qc/qf-rqcuazbh8swnnalphqc52rfw.png)
 - Если аудит здесь не отображается, возможно, вам потребуется перезапустить Ambari Infra Solr из Ambari
   - В случае, если аудиты все еще не появляются, а Ranger жалуется, что коллекция аудита не найдена: попробуйте [эти шаги](https://community.hortonworks.com/articles/96618/how-to-clean-up-recreate-collections-on-ambari-inf.html)
   
 - Убедитесь, что плагины для HDFS, YARN, Hive и т. д. отображаются на вкладке 'Audit' > 'Plugins'  
-![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ranger-plugins.png)
+![](https://habrastorage.org/webt/kg/dl/et/kgdletub-kmhq8o5_qfttau9tvc.png)
 
 - Убедитесь, что синхронизация пользователей / групп из AD в Ranger работает, щелкнув 'Settings' > 'Users/Groups tab' в пользовательском интерфейсе Ranger и убедитесь, что пользователи / группы AD присутствуют.
-![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ranger-user-groups.png)
+![](https://habrastorage.org/webt/ha/be/xw/habexwklllvgkeslba4lstpffwc.png)
 
 - Подтвердите работу аудита HDFS, запросив каталог аудита в HDFS:
 
@@ -337,7 +343,6 @@ sudo -u hdfs kinit -kt /etc/security/keytabs/hdfs.headless.keytab "hdfs-${cluste
 sudo -u hdfs hdfs dfs -cat /ranger/audit/hdfs/*/*
 ```
 
-
 - Подтвердите работу аудита Solr, запросив Solr REST API *с любого узла solr* - SKIP 
 ```
 curl "http://localhost:6083/solr/ranger_audits/select?q=*%3A*&df=id&wt=csv"
@@ -346,6 +351,5 @@ curl "http://localhost:6083/solr/ranger_audits/select?q=*%3A*&df=id&wt=csv"
 - Подтвердите, что панель управления Banana начала показывать аудит HDFS - SKIP
 http://PUBLIC_IP_OF_SOLRLEADER_NODE:6083/solr/banana/index.html#/dashboard
 
-![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Banana-audits.png)
+![](https://habrastorage.org/webt/f-/hb/yb/f-hbybffhfrlbbp49trxjwzzwsc.png)
 
-------------------
