@@ -1,4 +1,4 @@
-# Лабораторная работа 6a
+Лабораторная работа 6a
 
 ## Настройка шифрования KMS/Data в Ranger 
 
@@ -6,8 +6,9 @@
 - Цель: в этой лабораторной работе мы установим Ranger KMS через Ambari. Затем мы создадим несколько ключей шифрования и будем использовать их для создания зон шифрования (EZ) и копирования в них файлов. Справка: [Документы](http://docs.hortonworks.com/HDPDocuments/HDP2/HDP-2.3.4/bk_Ranger_KMS_Admin_Guide/content/ch_ranger_kms_overview.html)
 
 - В этом разделе нам нужно будет настроить прокси-пользователей. Это сделано для включения *имперсонализации* при котором суперпользователь может отправлять задания или обращаться к hdfs от имени другого пользователя (например, потому что у суперпользователя есть учетные данные Kerberos, а у пользователя joe их нет)
-  - Подробнее об этом см. [документ](https://hadoop.apache.org/docs/stable/hadoop-project-dist/hadoop-common/Superusers.html)
-
+  
+- Подробнее об этом см. [документ](https://hadoop.apache.org/docs/stable/hadoop-project-dist/hadoop-common/Superusers.html)
+  
 - Перед началом установки KMS найдите и запишите приведенную ниже информацию. Данные будут использоваться во время установки KMS.
   - Найдите внутреннее имя хоста, на котором запущен *Mysql* и запишите его.
     - В Ambari> Hive> Mysql> щелкните гиперссылку «Mysql Server». Внутреннее имя хоста должно появиться в верхнем левом углу страницы.
@@ -17,11 +18,17 @@
 - Сохраните конфигурации по умолчанию, кроме 
   - в Ambari > Ranger KMS > вкладка Settings  :
     - Ranger KMS DB host: <FQDN of Mysql>
+    
     - Ranger KMS DB password: `BadPass#1` 
+    
     - DBA password: `BadPass#1`
+    
     - KMS master secret password: `BadPass#1`
-     ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ambari-KMS-enhancedconfig1.png) 
-     ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ambari-KMS-enhancedconfig2.png) 
+     
+    ![](https://habrastorage.org/webt/ff/vq/7v/ffvq7vwuu6cnzp2i2f9mvpp4kcc.png) 
+     
+     
+     ![](https://habrastorage.org/webt/da/lo/sx/dalosx2zkqzzpaj_fiwu7qucqwi.png) 
     
   - - В разделе Advanced> Custom kms-site введите следующие конфигурации (Совет: чтобы не добавлять по одному, вы можете использовать режим массового добавления):
       - hadoop.kms.proxyuser.oozie.users=*
@@ -31,7 +38,7 @@
       - hadoop.kms.proxyuser.keyadmin.groups=*
       - hadoop.kms.proxyuser.keyadmin.hosts=*
       - hadoop.kms.proxyuser.keyadmin.users=*     
-        ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ambari-KMS-proxy.png) 
+        ![](https://habrastorage.org/webt/ye/m6/uv/yem6uvjmndvedb88bpy0dggzxo0.png) 
   
 - Нажмите Next > Proceed Anyway чтобы продолжить работу с мастером.
 
@@ -48,18 +55,18 @@
   - HDFS > Configs > Advanced hdfs-site:
     - dfs.encryption.key.provider.uri  
   
-- ерезапустите службы, которые требуют этого, например HDFS, Mapreduce, YARN через Actions > Restart All Required
+- Перезапустите службы, которые требуют этого, например HDFS, Mapreduce, YARN через Actions > Restart All Required
 
 - Перезапустите сервисы Ranger и RangerKMS.
 
 - (Необязательно) Добавьте еще один KMS:
   - Ambari > Ranger KMS > Service Actions > Add Ranger KMS Server > Pick any host
-  ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ambari-add-KMS.png) 
+  ![](https://habrastorage.org/webt/1d/vt/je/1dvtjelmkohcct2z7v4oapv9psa.png) 
   - После установки вы можете запустить его:
     - Ambari > Ranger KMS > Service Actions > Start
     
   - После запуска вы увидите несколько серверов KMS, работающих в Ambari:  
-  ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ambari-multiple-KMS.png) 
+  ![](https://habrastorage.org/webt/ie/cy/r5/iecyr5i-qezksaydck7yhvcs1ms.png) 
 
 ------------------
 
@@ -121,13 +128,13 @@
 - Добавьте пользователя `hadoopadmin` в политику ключей KMS по умолчанию
   - Нажмите на вкладку Access Manager
   - Перейдите в Service Manager > KMS > (имя кластера)_kms 
-  ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ranger-KMS-policy.png)
+  ![](https://habrastorage.org/webt/j6/nz/qg/j6nzqgdpwgvi90z-oypsm_mbfug.png)
 
   - Измените политику по умолчанию
-  ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ranger-KMS-edit-policy.png)
+  ![](https://habrastorage.org/webt/jv/gj/sl/jvgjsluj0s3nqkyzaulljeog-s0.png)
   
   - В разделе «Select User» добавьте пользователя «hadoopadmin» и нажмите «Save».
-   ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ranger-KMS-policy-add-nn.png)
+   ![](https://habrastorage.org/webt/-o/4k/6s/-o4k6sq-xlcngvwscn_zmpoitao.png)
   - Обратите внимание, что:
       - Пользователю`hdfs` необходимы привилегии `GetMetaData` и `GenerateEEK`- HDP 2.5
       - Пользователю`nn` необходимы привилегии`GetMetaData` и `GenerateEEK`  - HDP 2.4
@@ -204,7 +211,7 @@ sudo -u sales1      hdfs dfs -cat /zone_encr/test1.log
 ```
 
 - Проверьте страницу Ranger> Audit и обратите внимание, что запрос от hadoopadmin был разрешен, но запрос от sales1 был отклонен.
-![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Ranger-KMS-audit.png)
+![](https://habrastorage.org/webt/my/oi/iy/myoiiyph4h5skrst-n3fqd3cwwi.png)
 
 - Теперь давайте протестируем удаление и копирование файлов между EZs- ([справочный документ](https://docs.hortonworks.com/HDPDocuments/HDP2/HDP-2.3.4/bk_hdfs_admin_tools/content/copy-to-from-encr-zone.html))
 ```
