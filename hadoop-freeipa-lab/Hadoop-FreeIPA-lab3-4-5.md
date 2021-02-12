@@ -150,9 +150,7 @@ Ambari Server 'sync-ldap' completed successfully.
 
 Войдите в Ambari как администратор и перейдите в Manage Ambari> Users. Пример пользователя / группы из этой лабораторной работы:
 
-![Ambari-IPA-usersync](./screenshots/Ambari-IPA-usersync.png)
-
-
+![](https://habrastorage.org/webt/zz/bw/mp/zzbwmpmut_-tgzdup6mehwp1e6g.png)
 
 
 ### Включение аутентификации SPNEGO для Hadoop
@@ -351,13 +349,3 @@ http://PUBLIC_IP_OF_SOLRLEADER_NODE:6083/solr/banana/index.html#/dashboard
 ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Banana-audits.png)
 
 ------------------
-
-
-
-![](https://habrastorage.org/webt/zz/bw/mp/zzbwmpmut_-tgzdup6mehwp1e6g.png)
-
-
-
-
-
-
