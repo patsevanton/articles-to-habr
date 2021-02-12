@@ -17,7 +17,7 @@
 - Пароль Admin: `BadPass#1`
 - Сохранить учетные данные администратора: true
 
-![Ambari-IPA-kerberos-2](./screenshots/Ambari-IPA-kerberos-2.png) 
+![](https://habrastorage.org/webt/tt/j0/2r/ttj02rhztb3vfpusevqlomysnqe.png)
 
 ![Ambari-IPA-kerberos-3](./screenshots/Ambari-IPA-kerberos-3.png)
 
@@ -358,6 +358,6 @@ http://PUBLIC_IP_OF_SOLRLEADER_NODE:6083/solr/banana/index.html#/dashboard
 
 ![](https://habrastorage.org/webt/gi/tj/dy/gitjdyspxs0ual1rvkcrb5_rm-o.png)
 
-![](https://habrastorage.org/webt/tt/j0/2r/ttj02rhztb3vfpusevqlomysnqe.png)
+
 
 
