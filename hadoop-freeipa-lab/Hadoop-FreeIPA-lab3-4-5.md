@@ -353,3 +353,13 @@ http://PUBLIC_IP_OF_SOLRLEADER_NODE:6083/solr/banana/index.html#/dashboard
 ![Image](https://raw.githubusercontent.com/HortonworksUniversity/Security_Labs/master/screenshots/Banana-audits.png)
 
 ------------------
+
+
+
+![](https://habrastorage.org/webt/zz/bw/mp/zzbwmpmut_-tgzdup6mehwp1e6g.png)
+
+![](https://habrastorage.org/webt/gi/tj/dy/gitjdyspxs0ual1rvkcrb5_rm-o.png)
+
+![](https://habrastorage.org/webt/tt/j0/2r/ttj02rhztb3vfpusevqlomysnqe.png)
+
+![](https://habrastorage.org/webt/e9/fe/c-/e9fec-yf8hqr4cz-nowrvhctv-i.png)
