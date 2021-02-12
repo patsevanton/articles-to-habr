@@ -2,12 +2,10 @@
 
 Включите Kerberos для служб кластера с помощью мастера в Ambari, расположенного в меню Cluster Admin в нижней левой панели навигации. https://demo.us-west-2.compute.internal:8444/#/main/admin/kerberos
 
- 
+![](https://habrastorage.org/webt/e9/fe/c-/e9fec-yf8hqr4cz-nowrvhctv-i.png)
 
-![Ambari-IPA-kerberos-1](./screenshots/Ambari-IPA-kerberos-1.png)
 
 На этом этапе все необходимые требования выполнены. Группа участников, управляемая амбари, не требуется, а политики истечения срока действия паролей не влияют на служебные ключевые вкладки, поскольку им не были присвоены пароли. Срок действия пароля пользователей `hadoopadmin` и `ldapbind` истечет, и его необходимо будет изменить через 90 дней (вместе с остальными пользователями). Смотрите документацию для объяснения https://docs.hortonworks.com/HDPDocuments/HDP3/HDP-3.0.1/authentication-with-kerberos/content/kerberos_optional_use_an_existing_ipa.html 
-
 
 
 - KDC хост: `ipa.us-west-2.compute.internal`
@@ -362,4 +360,4 @@ http://PUBLIC_IP_OF_SOLRLEADER_NODE:6083/solr/banana/index.html#/dashboard
 
 ![](https://habrastorage.org/webt/tt/j0/2r/ttj02rhztb3vfpusevqlomysnqe.png)
 
-![](https://habrastorage.org/webt/e9/fe/c-/e9fec-yf8hqr4cz-nowrvhctv-i.png)
+
