@@ -19,7 +19,7 @@
 
 ![](https://habrastorage.org/webt/tt/j0/2r/ttj02rhztb3vfpusevqlomysnqe.png)
 
-![Ambari-IPA-kerberos-3](./screenshots/Ambari-IPA-kerberos-3.png)
+![](https://habrastorage.org/webt/gi/tj/dy/gitjdyspxs0ual1rvkcrb5_rm-o.png)
 
 Полезный интерфейс командной строки для проверки вновь созданных Принципов обслуживания:
 
@@ -356,7 +356,7 @@ http://PUBLIC_IP_OF_SOLRLEADER_NODE:6083/solr/banana/index.html#/dashboard
 
 ![](https://habrastorage.org/webt/zz/bw/mp/zzbwmpmut_-tgzdup6mehwp1e6g.png)
 
-![](https://habrastorage.org/webt/gi/tj/dy/gitjdyspxs0ual1rvkcrb5_rm-o.png)
+
 
 
 
