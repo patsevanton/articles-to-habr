@@ -24,10 +24,10 @@
     - DBA password: `BadPass#1`
     
     - KMS master secret password: `BadPass#1`
-     
+    
     ![](https://habrastorage.org/webt/ff/vq/7v/ffvq7vwuu6cnzp2i2f9mvpp4kcc.png) 
-     
-     
+    
+    
      ![](https://habrastorage.org/webt/da/lo/sx/dalosx2zkqzzpaj_fiwu7qucqwi.png) 
     
   - - В разделе Advanced> Custom kms-site введите следующие конфигурации (Совет: чтобы не добавлять по одному, вы можете использовать режим массового добавления):
@@ -82,27 +82,27 @@
   - добавить пользователя hadoopadmin в глобальные политики Ranger HDFS. 
     - Access Manager > HDFS > (имя кластера)_hdfs   
     - Откроется список политик HDFS.
-     ![Image](screenshots/Ranger-KMS-HDFS-list.png) 
+     ![](https://habrastorage.org/webt/-m/yl/c-/-mylc-bqzjadrtpmdxoenzlhx_m.png)
     - Отредактируйте глобальную политику all-path и добавьте hadoopadmin в глобальную политику HDFS и сохраните 
-    ![Image](screenshots/Ranger-KMS-HDFS-add-hadoopadmin.png) 
+    ![](https://habrastorage.org/webt/ea/_x/ib/ea_xibz-e8ezwm1rqpyjlkysq9c.png)
     - Теперь ваша политика включает hadoopadmin
-    ![Image](screenshots/Ranger-KMS-HDFS-list-after.png) 
+    ![](https://habrastorage.org/webt/ci/pt/yg/ciptyg4dc_lod1fwnprwvx_arq0.png)
   - Добавьте пользователя hadoopadmin в глобальные политики Ranger Hive. (У Hive есть две глобальные политики: одна для таблиц Hive и одна для UDF Hive)
     - Access Manager > HIVE > (имя кластера)_hive   
     - Это откроет список политик HIVE.
     [рисунок](screenshots/Ranger-KMS-HIVE-list.png) 
     - Отредактируйте глобальную политику «all - database, table, column» и добавьте hadoopadmin в глобальную политику HIVE и сохраните  
-    ![Image](screenshots/Ranger-KMS-HIVE-add-hadoopadmin-table.png) 
+    ![](https://habrastorage.org/webt/tx/78/7c/tx787cghglgpggv1x1piqevgeog.png)
     - Отредактируйте глобальную политику all - database, udf и добавьте hadoopadmin в глобальную политику HIVE и сохраните 
-    ![Image](screenshots/Ranger-KMS-HIVE-add-hadoopadmin-udf.png) 
+    ![](https://habrastorage.org/webt/u3/la/4y/u3la4ygwsowylf2xsbrfyv-97pm.png)
     - Теперь ваша политика включает hadoopadmin
-     ![Image](screenshots/Ranger-KMS-HIVE-list-after.png) 
+     ![](https://habrastorage.org/webt/uv/jo/zu/uvjozuvm1ivlkcuozlfb9gjk02g.png)
   - Предоставьте ключевому администратору разрешение на просмотр экрана аудита в Ranger:
     - Перейдите в Settings tab > Permissions
-     ![Image](screenshots/Ranger-user-permissions.png)
+     ![](https://habrastorage.org/webt/ch/c2/24/chc22481iswhfdvnaki4qkarsw0.png)
     - Нажмите «Audit», чтобы изменить пользователей, у которых есть доступ к экрану аудита.
     - В разделе 'Select User', добавьте пользователя 'keyadmin' 
-     ![Image](screenshots/Ranger-user-permissions-audits.png)
+     ![](https://habrastorage.org/webt/ij/2t/1a/ij2t1a57gfeochobbn1lta5khca.png)
     - Сохраните
   
 - Выйдите из системы Ranger
@@ -274,4 +274,3 @@ sudo -u sales1 kdestroy
 - Выйдите из системы Ranger как пользователь keyadmin
 
 ------------------
-
