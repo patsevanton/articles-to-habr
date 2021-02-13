@@ -110,7 +110,7 @@
 - Войдите в Ranger как keyadmin/keyadmin
 - Убедитесь, что репозиторий KMS настроен правильно
   - В разделе Service Manager> KMS> щелкните значок Edit (рядом со значком корзины), чтобы изменить репозиторий KMS.
-  ![Image](screenshots/Ranger-KMS-edit-repo.png) 
+  ![](https://habrastorage.org/webt/19/sn/52/19sn52olfzywwadvatoh6shveta.png)
   - Нажмите 'Test connection' и подтвердите изменения
 
 - Создайте ключ под названием testkey - для справки: см. [документ](http://docs.hortonworks.com/HDPDocuments/HDP2/HDP-2.5.0/bk_security/content/use_ranger_kms.html)
@@ -118,7 +118,7 @@
   - Выберите KMS service > выберите свой kms > Add new Key
     - если возникает ошибка, вернитесь и проверьте соединение, как описано в предыдущем шаге
   - Создайте ключ под названием `testkey` > Save
-  ![Image](screenshots/Ranger-KMS-createkey.png)
+  ![](https://habrastorage.org/webt/mk/hl/tb/mkhltbtmkzmmd_nsmad8ousx4oe.png)
 
 - Точно так же создайте еще один ключ с именем `testkey2`
   - Выберите Encryption > Key Management
