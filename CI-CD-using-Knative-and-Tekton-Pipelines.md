@@ -206,11 +206,7 @@ kubectl get pods -n tekton-pipelines
 
 Убедитесь, что раздел «Webhooks» добавлен в вашу панель инструментов Tekton:
 
- 
 
- 
-
- 
 
 Настройка объектов Tekton
 
@@ -280,9 +276,11 @@ kubectl get svc istio-ingressgateway -n istio-system
 
 5) Примените его к своему кластеру:
 
+```
 kubectl apply -f knative-domain-config.yaml
+```
 
- 
+
 
 Теперь все запросы к * .tekton-tutorial.tenst.ml будут перенаправляться на нашу службу istio-ingressgateway, которая направит их на соответствующие службы в нашем кластере Kubernetes.
 
@@ -300,17 +298,23 @@ kubectl apply -f knative-domain-config.yaml
 
 3) Примените его к своему кластеру:
 
+```
 kubectl apply -f gitHubSource.yaml -n tekton-pipelines
+```
 
- 
+
 
 Давайте продолжим и настроим создание новых задач, ресурсов и конвейера Tekton:
 
 1) Примените задачу buildah - она будет использоваться для сборки нашего приложения:
 
+```
 kubectl apply -f https://raw.githubusercontent.com/tektoncd/catalog/master/buildah/buildah.yaml -n tekton-pipelines
+```
 
-2)Создайте файл knctl-role.yaml - он создаст и привяжет необходимые разрешения для уже существующей учетной записи службы:
+
+
+2) Создайте файл knctl-role.yaml - он создаст и привяжет необходимые разрешения для уже существующей учетной записи службы:
 
  
 
@@ -322,9 +326,13 @@ kubectl apply -f https://raw.githubusercontent.com/tektoncd/catalog/master/build
 
 3) Примените его к своему кластеру:
 
-kubectl apply -f knctl-role.yaml -n tekton-pipelines
 
- 
+
+```
+kubectl apply -f knctl-role.yaml -n tekton-pipelines
+```
+
+
 
 4) Создайте файл knctl-task.yaml - он создаст новые таксы с именем knctl-deploy, которые будут использоваться для развертывания нашего приложения на Knative в нашем кластере:
 
@@ -342,9 +350,11 @@ kubectl apply -f knctl-role.yaml -n tekton-pipelines
 
 5) Примените его к своему кластеру:
 
+```
 kubectl apply -f knctl-task.yaml -n tekton-pipelines
+```
 
- 
+
 
 6) Создайте файл build-and-deploy-pipeline.yaml - он создаст новый конвейер с именем build-and-deploy-pipeline, который будет использоваться для развертывания нашего приложения на Knative в нашем кластере:
 
@@ -358,9 +368,11 @@ kubectl apply -f knctl-task.yaml -n tekton-pipelines
 
 7) Примените его к своему кластеру:
 
+```
 kubectl apply -f build-and-deploy-pipeline.yaml -n tekton-pipelines
+```
 
- 
+
 
 После того, как мы применили последние шаги, у нас теперь есть:
 
@@ -452,23 +464,31 @@ o  Нажмите кнопку «Create».
 
 ·    Нажмите кнопку «Create».
 
-3)Убедитесь, что веб-перехватчик был успешно создан.
+3) Убедитесь, что веб-перехватчик был успешно создан.
 
  
 
 Теперь мы можем его протестировать!
 
-1)Внесите некоторые изменения в репозиторий GitHub и зафиксируйте их. Это создаст новое событие push и запустит наш конвейер:
+1) Внесите некоторые изменения в репозиторий GitHub и зафиксируйте их. Это создаст новое событие push и запустит наш конвейер:
 
 2) Дождитесь завершения работы конвейера:
 
 3) Перейдите в cli и выполните следующую команду, чтобы увидеть URL-адрес вашего приложения:
 
+```
 kubectl получить ksvc -n АККАУНТ
+```
+
+
 
 Измените ACCOUNT на имя своей учетной записи GitHub. Для меня это:
 
+```
 kubectl get ksvc -n tenst
+```
+
+
 
  
 
