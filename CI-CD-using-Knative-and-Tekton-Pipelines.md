@@ -2,15 +2,15 @@ CI / CD с использованием Knative и Tekton Pipelines
 
 https://docs.ventuscloud.eu/docs/tutorials/tekton-pipelines
 
-Tekton - это собственный конвейерный ресурс Kubernetes. Проект Tekton Pipelines предоставляет ресурсы в стиле Kubernetes для объявления конвейеров в стиле CI / CD.
+**Tekton** - это собственный конвейерный ресурс Kubernetes. Проект Tekton Pipelines предоставляет ресурсы в стиле Kubernetes для объявления конвейеров в стиле CI / CD.
 
-Knative - это платформа на основе Kubernetes для развертывания современных бессерверных рабочих нагрузок и управления ими. Нативные компоненты строятся на основе Kubernetes, абстрагируясь от сложных деталей и позволяя разработчикам сосредоточиться на том, что важно.
+**Knative** - это платформа на основе Kubernetes для развертывания современных бессерверных рабочих нагрузок и управления ими. Нативные компоненты строятся на основе Kubernetes, абстрагируясь от сложных деталей и позволяя разработчикам сосредоточиться на том, что важно.
 
 В этом руководстве мы будем использовать расширение Kubernetes, Knative, Tekton Pipelines, Dashboard и Webhooks для настройки CI? CD с вашим репозиторием GitHub.
 
  
 
-Оглавление
+### Оглавление
 
 1)   Создание нового кластера Kubernetes
 
@@ -28,77 +28,89 @@ Knative - это платформа на основе Kubernetes для разв
 
  
 
-Создание нового кластера Kubernetes
+### Создание нового кластера Kubernetes
 
-Создайте новый кластер, используя эту статью: Kubernetes Cluster
+Создайте новый кластер, используя эту статью: [Kubernetes Cluster](https://ventuscloud.eu/docs/kubernetes/kubernetes-cluster)
 
 Используйте следующие параметры для вашего кластера:
 
-·    Master count: 1
-
-·    Node count: 1
-
-·    Docker volume size (GB): 100
-
-·    Node flavor: VC-4
-
-·    Master node flavor: VC-2
+- `Master count`: 1
+- `Node count`: 1
+- `Docker volume size (GB)`: 100
+- `Node flavor`: VC-4
+- `Master node flavor`: VC-2
 
  
 
-Получение доступа к вашему кластеру с помощью cli
+### Получение доступа к вашему кластеру с помощью cli
 
-Теперь вы можете получить доступ к своему кластеру с помощью этой статьи: Доступ к кластеру Kubernetes с помощью CLI.
+Теперь вы можете получить доступ к своему кластеру с помощью этой статьи: [Доступ к кластеру Kubernetes с помощью CLI.](https://ventuscloud.eu/docs/kubernetes/access-by-cli)
 
  
 
-Развертывание расширения Tekton Pipelines, Dashboard и Webhooks
+### Развертывание расширения Tekton Pipelines, Dashboard и Webhooks
 
-Примечание:
+**Примечание:**
 
 Все установки выполняются через cli с использованием kubectl. Kubectl - это интерфейс командной строки для запуска команд в кластерах Kubernetes.
 
-Совет: установите kubectl
+**Совет: установите kubectl**
 
 Для установки kubectl используйте официальные документы kubernetes: https://kubernetes.io/docs/tasks/tools/install-kubectl/#install-kubectl-on-linux
 
 1) Установите последнюю версию Tekton Pipelines (на момент написания этого руководства была последней версией 0.5.2):
 
+```
 kubectl apply --filename https://storage.googleapis.com/tekton-releases/latest/release.yaml
+```
+
+
 
  
 
 2) Убедитесь, что все модули Tekton Pipelines работают:
 
+```
 kubectl get pods -n tekton-pipelines
+```
+
+
 
  
 
-Развертывание Tekton Dashboard 
+### Развертывание Tekton Dashboard 
 
 1) Установите Tekton Dashboard (на момент написания этого руководства была последней версией 0.1.1):
 
+```
 kubectl apply --filename https://github.com/tektoncd/dashboard/releases/download/v0.1.1/release.yaml
+```
 
- 
+
 
 2) Убедитесь, что модуль Tekton Dashboard запущен:
 
+```
 kubectl get pods -n tekton-pipelines
+```
 
- 
+
 
 3) Измените тип службы Tekton Dashboard с «ClusterIP» на «LoadBalancer», чтобы получить внешний IP-адрес и сделать его доступным извне:
 
+```
 kubectl patch service tekton-dashboard -n tekton-pipelines -p '{"spec": {"type": "LoadBalancer"}}'
+```
 
- 
+
 
 4) Подождите, пока вашему сервису не будет присвоен внешний IP (обычно меньше минуты):
 
+```
 kubectl get svc -n tekton-pipelines
+```
 
- 
+
 
 5) Получите свой внешний IP-адрес и порт и откройте панель управления в браузере:
 
@@ -106,13 +118,9 @@ http://188.40.161.51:9097
 
  
 
- 
+### Развертывание расширения Tekton Webhooks
 
- 
-
-Развертывание расширения Tekton Webhooks
-
-Важная заметка:
+**Важная заметка:**
 
 На момент написания этого руководства расширение Tekton Webhooks было частью «экспериментального» репозитория и находилось в стадии разработки. Имейте в виду, что некоторые шаги могут измениться в будущем. Вот ссылка на инструкции по установке, которые мы рассмотрим дальше: https://github.com/tektoncd/experimental/blob/master/webhooks-extension/README.md
 
@@ -120,61 +128,81 @@ http://188.40.161.51:9097
 
 ·    Первыми обязательными компонентами являются Tekton Pipelines и Tekton Dashboard, и мы их уже установили.
 
-·    Установите Istio, следуя инструкции https://knative.dev/docs/install/installing-istio/, или вы можете запустить этот скрипт https://raw.githubusercontent.com/tektoncd/experimental/master/webhooks-extension/scripts/install_istio.sh вот так: ./install_istio.sh 1.1.7 (рекомендуется Istio версии 1.1.7).
+·    Установите Istio, следуя инструкции https://knative.dev/docs/install/installing-istio/, или вы можете запустить этот скрипт https://raw.githubusercontent.com/tektoncd/experimental/master/webhooks-extension/scripts/install_istio.sh вот так: `./install_istio.sh 1.1.7` (рекомендуется Istio версии 1.1.7).
 
 o  Если вы выбрали запуск скрипта, вам нужно сначала установить Helm (https://github.com/helm/helm/releases):
 
-§ wget https://raw.githubusercontent.com/helm/helm/master/scripts/get
+```
+wget https://raw.githubusercontent.com/helm/helm/master/scripts/get
 
-§ chmod +x ./get
+chmod +x ./get
 
-§ ./get
+./get
 
-§ helm init
+helm init
+```
 
-o  Продолжите скрипт:
 
-§ wget https://raw.githubusercontent.com/tektoncd/experimental/master/webhooks-extension/scripts/install_istio.sh
 
-§ chmod +x ./install_istio.sh
+**Продолжите скрипт:**
 
-§ ./install_istio.sh 1.1.7
+```
+wget https://raw.githubusercontent.com/tektoncd/experimental/master/webhooks-extension/scripts/install_istio.sh
 
- 
+chmod +x ./install_istio.sh
+
+./install_istio.sh 1.1.7
+```
+
+
 
 ·    Убедитесь, что необходимые компоненты Istio (нам нужны только два: istio-ingressgateway и istio-pilot) работают:
 
+```
 kubectl get pods -n istio-system
+```
 
- 
 
-·    Установите Knative Eventing, Eventing Sources & Serving, следуя инструкции https://knative.dev/docs/install/index.html, или вы можете запустить этот скрипт https://raw.githubusercontent.com/tektoncd/experimental/master/webhooks-extension/ scripts / install_knative.sh, например: ./install_knative.sh v0.6.0 (настоятельно рекомендуется Knative версии 0.6.0).
+
+·    Установите Knative Eventing, Eventing Sources & Serving, следуя инструкции https://knative.dev/docs/install/index.html, или вы можете запустить этот скрипт https://raw.githubusercontent.com/tektoncd/experimental/master/webhooks-extension/ scripts / install_knative.sh, например: `./install_knative.sh v0.6.0` (настоятельно рекомендуется Knative версии 0.6.0).
 
 o  Если вы выбрали запуск сценария, выполните следующие действия:
 
-§ wget https://raw.githubusercontent.com/tektoncd/experimental/master/webhooks-extension/scripts/install_knative.sh
+```
+wget https://raw.githubusercontent.com/tektoncd/experimental/master/webhooks-extension/scripts/install_knative.sh
 
-§ chmod +x ./install_knative.sh
+chmod +x ./install_knative.sh
 
-§ ./install_knative.sh v0.6.0
+./install_knative.sh v0.6.0
 
-§ kubectl apply -f https://github.com/knative/eventing-sources/releases/download/v0.6.0/eventing-sources.yaml
+kubectl apply -f https://github.com/knative/eventing-sources/releases/download/v0.6.0/eventing-sources.yaml
+```
+
+
 
 o  Убедитесь, что необходимые компоненты Knative запущены:
 
+```
 kubectl get pods --all-namespaces | grep knative
+```
 
- 
 
- 
 
 2) Выполните следующую команду, чтобы установить расширение Tekton Webhooks и его зависимости:
 
-·    kubectl apply --filename https://github.com/tektoncd/dashboard/releases/download/v0.1.1/webhooks-extension_release.yaml -n tekton-pipelines
+```
+kubectl apply --filename https://github.com/tektoncd/dashboard/releases/download/v0.1.1/webhooks-extension_release.yaml -n tekton-pipelines
+```
+
+
 
 ·    Убедитесь, что все модули работают:
 
+```
 kubectl get pods -n tekton-pipelines
+```
+
+
 
 Убедитесь, что раздел «Webhooks» добавлен в вашу панель инструментов Tekton:
 
@@ -491,4 +519,3 @@ kubectl get ksvc -n tenst
 ·    Создали новый веб-перехватчик Tekton.
 
 ·    Проверили, что приложение успешно создано и развернуто после того, как новый коммит был отправлен в репозиторий GitHub.
-
