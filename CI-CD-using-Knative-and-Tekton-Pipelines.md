@@ -1,5 +1,7 @@
 CI / CD с использованием Knative и Tekton Pipelines
 
+https://docs.ventuscloud.eu/docs/tutorials/tekton-pipelines
+
 Tekton - это собственный конвейерный ресурс Kubernetes. Проект Tekton Pipelines предоставляет ресурсы в стиле Kubernetes для объявления конвейеров в стиле CI / CD.
 
 Knative - это платформа на основе Kubernetes для развертывания современных бессерверных рабочих нагрузок и управления ими. Нативные компоненты строятся на основе Kubernetes, абстрагируясь от сложных деталей и позволяя разработчикам сосредоточиться на том, что важно.
