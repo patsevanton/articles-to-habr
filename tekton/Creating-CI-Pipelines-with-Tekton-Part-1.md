@@ -62,19 +62,19 @@ Pipeline version: v0.20.1
 
 Tekton предоставляет пользовательские определения ресурсов ([CRD](https://kubernetes.io/docs/concepts/extend-kubernetes/api-extension/custom-resources/)) для Kubernetes, которые можно использовать для определения наших пайплайнов. В этом руководстве мы будем использовать следующие настраиваемые ресурсы:
 
-·    Задача: серия шагов, которые выполняют команды (в CircleCI это называется *Job*).
+- Задача: серия шагов, которые выполняют команды (в CircleCI это называется *Job*).
 
-·    Пайплайн: набор задач (в CircleCI это называется рабочим процессом *Workflow*)
+- Пайплайн: набор задач (в CircleCI это называется рабочим процессом *Workflow*)
 
-·    PipelineResource: ввод или вывод Pipeline (например, репозиторий git или файл tar)
+- PipelineResource: ввод или вывод Pipeline (например, репозиторий git или файл tar)
+
 
 Мы будем использовать следующие два ресурса для определения выполнения наших задач и пайплайна:
 
-·    TaskRun: определяет выполнение задачи
+- `TaskRun`: определяет выполнение задачи
+- `PipelineRun`: определяет выполнение пайплайна
 
-·    PipelineRun: определяет выполнение пайплайна
-
-Например, если мы пишем задачу и хотим ее протестировать, мы можем выполнить ее с помощью TaskRun. То же самое относится и к пайплайну: для выполнения конвейера нам нужно создать PipelineRun.
+Например, если мы пишем задачу и хотим ее протестировать, мы можем выполнить ее с помощью `TaskRun`. То же самое относится и к пайплайну: для выполнения конвейера нам нужно создать `PipelineRun`.
 
 
 
@@ -171,35 +171,62 @@ spec:
 
 
 
-Это примет нашу задачу (taskRef - это ссылка на нашу ранее созданную задачу с именем test) с нашим репозиторием git tekton-example в качестве входных данных (resourceRef - это ссылка на наш PipelineResource с именем arthurk-tekton-example) и выполнит ее.
+Это примет нашу задачу (`taskRef` - это ссылка на нашу ранее созданную задачу с именем test) с нашим репозиторием git [tekton-example](https://github.com/arthurk/tekton-example) в качестве входных данных (`resourceRef` - это ссылка на наш `PipelineResource` с именем `arthurk-tekton-example`) и выполнит ее.
 
-Примените файл с помощью kubectl, а затем проверьте ресурсы Pods и TaskRun. Pod пройдет через статус Init: 0/2 и PodInitializing, а затем успешно:
+Примените файл с помощью kubectl, а затем проверьте ресурсы Pods и TaskRun. Pod пройдет через статус `Init:0/2` и `PodInitializing`, а затем успешно:
 
+```
+$ kubectl apply -f 03-taskrun.yaml
+pipelineresource.tekton.dev/arthurk-tekton-example created
 
+$ kubectl get pods
+NAME                READY   STATUS      RESTARTS   AGE
+testrun-pod-pds5z   0/2     Completed   0          4m27s
 
-Чтобы увидеть вывод контейнеров, мы можем запустить следующую команду. Обязательно замените testrun-pod-pds5z на имя модуля из выходных данных выше (оно будет отличаться для каждого запуска).
+$ kubectl get taskrun
+NAME      SUCCEEDED   REASON      STARTTIME   COMPLETIONTIME
+testrun   True        Succeeded   70s         57s
+```
 
+Чтобы увидеть вывод контейнеров, мы можем запустить следующую команду. Обязательно замените `testrun-pod-pds5z` на имя модуля из выходных данных выше (оно будет отличаться для каждого запуска).
 
+```
+$ kubectl logs testrun-pod-pds5z --all-containers
+{"level":"info","ts":1588477119.3692405,"caller":"git/git.go:136","msg":"Successfully cloned https://github.com/arthurk/tekton-example @ 301aeaa8f7fa6ec01218ba6c5ddf9095b24d5d98 (grafted, HEAD, origin/master) in path /workspace/repo"}
+{"level":"info","ts":1588477119.4230678,"caller":"git/git.go:177","msg":"Successfully initialized and updated submodules in path /workspace/repo"}
+PASS
+ok  	_/workspace/repo/src	0.003s
+```
 
 Наши тесты прошли, и наша задача была выполнена. Затем мы воспользуемся Tekton CLI, чтобы увидеть, как мы можем упростить весь этот процесс.
 
 
 
-Использование Tekton CLI для запуска задачи
+### Использование Tekton CLI для запуска задачи
 
 Tekton CLI обеспечивает более быстрый и удобный способ запуска задач.
 
 Вместо того, чтобы вручную писать манифест TaskRun, мы можем запустить следующую команду, которая берет нашу задачу (с именем test), генерирует TaskRun (со случайным именем) и отображает ее журналы:
 
+```
+$ tkn task start test --inputresource repo=arthurk-tekton-example --showlog
+Taskrun started: test-run-8t46m
+Waiting for logs to be available...
+[git-source-arthurk-tekton-example-dqjfb] {"level":"info","ts":1588477372.740875,"caller":"git/git.go:136","msg":"Successfully cloned https://github.com/arthurk/tekton-example @ 301aeaa8f7fa6ec01218ba6c5ddf9095b24d5d98 (grafted, HEAD, origin/master) in path /workspace/repo"}
+[git-source-arthurk-tekton-example-dqjfb] {"level":"info","ts":1588477372.7954974,"caller":"git/git.go:177","msg":"Successfully initialized and updated submodules in path /workspace/repo"}
+
+[run-test] PASS
+[run-test] ok  	_/workspace/repo/src	0.006s
+```
 
 
-Вывод
+
+### Вывод
 
 Мы успешно установили Tekton в локальном кластере Kubernetes, определили задачу и протестировали ее, создав TaskRun через манифест YAML, а также через Tekton CLI tkn.
 
-Весь пример кода доступен здесь.
+Весь пример кода доступен [здесь](https://github.com/arthurk/tekton-example).
 
-В следующей части мы собираемся создать задачу, которая будет использовать Kaniko для создания образа Docker для нашего приложения, а затем будет отправлять его в DockerHub. Затем мы создадим пайплайн, который последовательно будет запускать обе наши задачи (запускать тесты приложения, сборку и отправку).
+В следующей части мы собираемся создать задачу, которая будет использовать [Kaniko](https://github.com/GoogleContainerTools/kaniko) для создания образа Docker для нашего приложения, а затем будет отправлять его в DockerHub. Затем мы создадим пайплайн, который последовательно будет запускать обе наши задачи (запускать тесты приложения, сборку и отправку).
 
-Часть 2 доступна здесь.
-
+Часть 2 доступна [здесь](https://www.arthurkoziel.com/creating-ci-pipelines-with-tekton-part-2/).
