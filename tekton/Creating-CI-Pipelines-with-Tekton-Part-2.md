@@ -134,41 +134,108 @@ spec:
           name: arthurk-tekton-example
 ```
 
+Примените задачу и проверьте журнал модуля, перечислив все модули, которые начинаются с имени задачи `build-and-push`:
 
+```
+$ kubectl apply -f taskrun-build-push.yaml
+taskrun.tekton.dev/build-and-push created
 
-Примените задачу и проверьте журнал модуля, перечислив все модули, которые начинаются с имени задачи build-and-push:
+$ kubectl get pods | grep build-and-push
+build-and-push-pod-c698q   2/2     Running     0          4s
 
-
+$ kubectl logs --all-containers build-and-push-pod-c698q --follow
+{"level":"info","ts":1588478267.3476844,"caller":"creds-init/main.go:44", "msg":"Credentials initialized."}
+{"level":"info","ts":1588478279.2681644,"caller":"git/git.go:136","msg":"Successfully cloned https://github.com/arthurk/tekton-example @ 301aeaa8f7fa6ec01218ba6c5ddf9095b24d5d98 (grafted, HEAD, origin/master) in path /workspace/repo"}
+{"level":"info","ts":1588478279.3249557,"caller":"git/git.go:177","msg":"Successfully initialized and updated submodules in path /workspace/repo"}
+INFO[0004] Resolved base name golang:1.14-alpine to golang:1.14-alpine
+INFO[0004] Retrieving image manifest golang:1.14-alpine
+INFO[0012] Built cross stage deps: map[]
+...
+INFO[0048] Taking snapshot of full filesystem...
+INFO[0048] Resolving paths
+INFO[0050] CMD ["app"]
+```
 
 Задача выполнена без проблем, и теперь мы можем вытащить / запустить наш образ Docker:
 
+```
+$ docker run arthurk/tekton-test:latest
+hello world
+```
 
 
-Запустите задачу с помощью Tekton CLI
+
+### Запустите задачу с помощью Tekton CLI
 
 Запуск задачи с помощью Tekton CLI удобнее. С помощью одной команды он генерирует манифест TaskRun из определения задачи, применяет его и отслеживает журналы.
 
+```
+$ tkn task start build-and-push --inputresource repo=arthurk-tekton-example --serviceaccount build-bot --showlog
+Taskrun started: build-and-push-run-ctjvv
+Waiting for logs to be available...
+[git-source-arthurk-tekton-example-p9zxz] {"level":"info","ts":1588479279.271127,"caller":"git/git.go:136","msg":"Successfully cloned https://github.com/arthurk/tekton-example @ 301aeaa8f7fa6ec01218ba6c5ddf9095b24d5d98 (grafted, HEAD, origin/master) in path /workspace/repo"}
+[git-source-arthurk-tekton-example-p9zxz] {"level":"info","ts":1588479279.329212,"caller":"git/git.go:177","msg":"Successfully initialized and updated submodules in path /workspace/repo"}
 
+[build-and-push] INFO[0004] Resolved base name golang:1.14-alpine to golang:1.14-alpine
+[build-and-push] INFO[0008] Retrieving image manifest golang:1.14-alpine
+[build-and-push] INFO[0012] Built cross stage deps: map[]
+...
+[build-and-push] INFO[0049] Taking snapshot of full filesystem...
+[build-and-push] INFO[0049] Resolving paths
+[build-and-push] INFO[0051] CMD ["app"]
+```
 
 То, что происходит в фоновом режиме, аналогично тому, что мы делали с kubectl в предыдущем разделе, но на этот раз нам нужно выполнить только одну команду.
 
 
 
-Создание конвейера
+### Создание конвейера
 
 Теперь, когда у нас есть наши Задачи (тестирование, сборка и отправка), мы можем создать пайплайн, который будет запускать их последовательно: сначала он запустит тесты приложения, и если они пройдут, он создаст образ Docker и отправит его в DockerHub.
 
-Создайте файл с именем pipeline.yaml со следующим содержимым:
+Создайте файл с именем [pipeline.yaml](https://github.com/arthurk/tekton-example/blob/master/08-pipeline.yaml) со следующим содержимым:
 
+```
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: test-build-push
+spec:
+  resources:
+    - name: repo
+      type: git
+  tasks:
+    # Run application tests
+    - name: test
+      taskRef:
+        name: test
+      resources:
+        inputs:
+          - name: repo      # name of the Task input (see Task definition)
+            resource: repo  # name of the Pipeline resource
 
+    # Build docker image and push to registry
+    - name: build-and-push
+      taskRef:
+        name: build-and-push
+      runAfter:
+        - test
+      resources:
+        inputs:
+          - name: repo      # name of the Task input (see Task definition)
+            resource: repo  # name of the Pipeline resource
+```
 
 Первое, что нам нужно определить, это то, какие ресурсы требуются нашему конвейеру. Ресурс может быть входом или выходом. В нашем случае у нас есть только ввод: репозиторий git с исходным кодом нашего приложения. Мы называем ресурс репо.
 
-Далее мы определяем наши задачи. Каждая задача имеет taskRef (ссылку на задачу) и передает требуемые входные данные.
+Далее мы определяем наши задачи. Каждая задача имеет `taskRef` (ссылку на задачу) и передает требуемые входные данные.
 
 Примените файл с помощью kubectl:
 
-
+```
+$ kubectl apply -f pipeline.yaml
+pipeline.tekton.dev/test-build-push created
+```
 
 Подобно тому, как мы можем работать как Task, создав TaskRun, мы можем запустить Pipeline, создав PipelineRun.
 
@@ -176,31 +243,78 @@ spec:
 
 
 
-Запустите конвейер с помощью kubectl
+### Запустите конвейер с помощью kubectl
 
-Чтобы запустить файл с помощью kubectl, мы должны создать PipelineRun. Создайте файл с именем pipelinerun.yaml со следующим содержимым:
+Чтобы запустить файл с помощью kubectl, мы должны создать PipelineRun. Создайте файл с именем [pipelinerun.yaml](https://github.com/arthurk/tekton-example/blob/master/09-pipelinerun.yaml) со следующим содержимым:
 
-
+```
+apiVersion: tekton.dev/v1beta1
+kind: PipelineRun
+metadata:
+  name: test-build-push-pr
+spec:
+  serviceAccountName: build-bot
+  pipelineRef:
+    name: test-build-push
+  resources:
+  - name: repo
+    resourceRef:
+      name: arthurk-tekton-example
+```
 
 Примените файл, получите Pod'ы с префиксом PiplelineRun и просмотрите журналы, чтобы получить вывод контейнера:
 
+```
+$ kubectl apply -f pipelinerun.yaml
+pipelinerun.tekton.dev/test-build-push-pr created
 
+$ kubectl get pods | grep test-build-push-pr
+test-build-push-pr-build-and-push-gh4f4-pod-nn7k7   0/2     Completed   0          2m39s
+test-build-push-pr-test-d2tck-pod-zh5hn             0/2     Completed   0          2m51s
+
+$ kubectl logs test-build-push-pr-build-and-push-gh4f4-pod-nn7k7 --all-containers --follow
+INFO[0005] Resolved base name golang:1.14-alpine to golang:1.14-alpine
+INFO[0005] Retrieving image manifest golang:1.14-alpine
+...
+INFO[0048] Taking snapshot of full filesystem...
+INFO[0048] Resolving paths
+INFO[0050] CMD ["app"]
+```
 
 Затем мы запустим тот же пайплайн, но вместо этого мы будем использовать Tekton CLI.
 
 
 
-Запуск конвейера с помощью Tekton CLI
+### Запуск конвейера с помощью Tekton CLI
 
-При использовании CLI нам не нужно писать PipelineRun, он будет сгенерирован из манифеста Pipeline. Используя аргумент --showlog, он также отображает журналы задач (контейнеров):
+При использовании CLI нам не нужно писать PipelineRun, он будет сгенерирован из манифеста Pipeline. Используя аргумент `--showlog`, он также отображает журналы задач (контейнеров):
+
+```
+$ tkn pipeline start test-build-push --resource repo=arthurk-tekton-example --serviceaccount build-bot --showlog
+
+Pipelinerun started: test-build-push-run-9lmfj
+Waiting for logs to be available...
+[test : git-source-arthurk-tekton-example-k98k8] {"level":"info","ts":1588483940.4913514,"caller":"git/git.go:136","msg":"Successfully cloned https://github.com/arthurk/tekton-example @ 301aeaa8f7fa6ec01218ba6c5ddf9095b24d5d98 (grafted, HEAD, origin/master) in path /workspace/repo"}
+[test : git-source-arthurk-tekton-example-k98k8] {"level":"info","ts":1588483940.5485842,"caller":"git/git.go:177","msg":"Successfully initialized and updated submodules in path /workspace/repo"}
+
+[test : run-test] PASS
+[test : run-test] ok  	_/workspace/repo/src	0.006s
+
+[build-and-push : git-source-arthurk-tekton-example-2vqls] {"level":"info","ts":1588483950.2051432,"caller":"git/git.go:136","msg":"Successfully cloned https://github.com/arthurk/tekton-example @ 301aeaa8f7fa6ec01218ba6c5ddf9095b24d5d98 (grafted, HEAD, origin/master) in path /workspace/repo"}
+[build-and-push : git-source-arthurk-tekton-example-2vqls] {"level":"info","ts":1588483950.2610846,"caller":"git/git.go:177","msg":"Successfully initialized and updated submodules in path /workspace/repo"}
+
+[build-and-push : build-and-push] INFO[0003] Resolved base name golang:1.14-alpine to golang:1.14-alpine
+[build-and-push : build-and-push] INFO[0003] Resolved base name golang:1.14-alpine to golang:1.14-alpine
+[build-and-push : build-and-push] INFO[0003] Retrieving image manifest golang:1.14-alpine
+...
+```
 
 
 
-Резюме
+### Резюме
 
-В первой части мы установили Tekton в локальном кластере Kubernetes, определили задачу и протестировали ее, создав TaskRun через манифест YAML, а также через Tekton CLI tkn.
+В [первой](https://www.arthurkoziel.com/creating-ci-pipelines-with-tekton-part-1/) части мы установили Tekton в локальном кластере Kubernetes, определили задачу и протестировали ее, создав TaskRun через манифест YAML, а также через Tekton CLI tkn.
 
 В этой части мы создали наш первый Tektok Pipeline, который состоит из двух задач. Первый клонирует репо с GitHub и запускает тесты приложений. Второй создает образ Docker и отправляет его в DockerHub.
 
-Все примеры кода доступны здесь.
-
+Все примеры кода доступны [здесь](https://github.com/arthurk/tekton-example).
