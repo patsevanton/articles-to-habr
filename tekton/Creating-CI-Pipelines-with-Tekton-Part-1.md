@@ -1,6 +1,6 @@
 Создание пайплайнов CI с помощью Tekton (Часть 1/2)
 
-https://www.arthurkoziel.com/creating-ci-pipelines-with-tekton-part-1/
+https://habr.com/ru/post/543366/
 
 В этой статье мы собираемся создать пайплайн непрерывной интеграции (CI) с [Tekton](https://tekton.dev/), фреймворком с открытым исходным кодом для создания конвейеров CI / CD в Kubernetes.
 
