@@ -1,4 +1,3 @@
-
 Устанавливаем Snapd, git
 ```
 sudo apt-get update && sudo apt-get install -y snapd git
@@ -15,9 +14,9 @@ sudo microk8s.start
 ```
 
 Добавляем текущего пользователя в группу microk8s
+```
 sudo usermod -a -G microk8s $USER
 ```
-
 Меняем права директории .kube в домашней директории текущего пользователя
 ```
 sudo chown -f -R $USER ~/.kube
@@ -80,7 +79,5 @@ helm install --set persistence.enabled=true,service.type=LoadBalancer,ingress.en
 
 ```
 microk8s reset --destroy-storage
+
 ```
-
-
-
