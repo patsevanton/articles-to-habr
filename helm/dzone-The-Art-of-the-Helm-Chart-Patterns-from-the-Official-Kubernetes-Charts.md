@@ -1,6 +1,6 @@
 https://dzone.com/articles/the-art-of-the-helm-chart-patterns-from-the-offici
 
-The Art of the Helm Chart: паттерны из официальных чартов Kubernetes
+Искусство Helm Chart: паттерны из официальных чартов Kubernetes
 
 Установка и управление Helm Charts может вызвать у вас некоторые сложности, с которыми вы, возможно, не сталкиались раньше.
 
