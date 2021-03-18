@@ -165,23 +165,216 @@ release "loopy-otter" deleted
 
 ### helmignore NOTES.txt
 
-Теперь отредактируйте файл .helmignore и добавьте NOTES.txt внизу.
-.helmignore содержит список имен файлов и шаблонов имен файлов, которые Helm должен игнорировать.
+Теперь отредактируйте файл `.helmignore` и добавьте `NOTES.txt` внизу.
 
-Если вы снова запустите установку, вы увидите, что эти примечания больше не отображаются. (Позже мы будем использовать такие заметки, но здесь и сейчас этот файл нам не нужен.)
+`.helmignore` содержит список имен файлов и шаблонов имен файлов, которые Helm должен игнорировать.
 
-Удалите наш тестовый выпуск 1.
+```
+nano ./myhelm1/.helmignore
 
---dry-run --debug
-Мы используем --dry-run и --debug, чтобы исследовать, как Helm интерпретирует наш шаблон и файлы YAML в наших чартах.
+NOTES.txt
+```
+
+Если вы снова запустите установку, вы увидите, что эти примечания больше не отображаются. 
+
+```
+helm install .\myhelm1\ --name test1
+NAME:   test1
+LAST DEPLOYED: Thu Feb 14 08:56:10 2019
+NAMESPACE: default
+STATUS: DEPLOYED
+
+RESOURCES:
+==> v1/Service
+NAME           TYPE       CLUSTER-IP     EXTERNAL-IP  PORT(S)  AGE
+test1-myhelm1  ClusterIP  10.96.102.116  <none>       80/TCP   0s
+
+==> v1/Deployment
+NAME           DESIRED  CURRENT  UP-TO-DATE  AVAILABLE  AGE
+test1-myhelm1  1        0        0           0          0s
+
+==> v1/Pod(related)
+NAME                            READY  STATUS             RESTARTS  AGE
+test1-myhelm1-6f77bf4459-9nxpz  0/1    ContainerCreating  0         0s
+```
+
+(Позже мы будем использовать такие заметки, но здесь и сейчас этот файл нам не нужен.)
+
+Удалите наш тестовый релиз test1.
+
+```
+helm delete test1
+release "test1" deleted
+```
+
+### --dry-run --debug
+
+Мы используем `--dry-run` и `--debug`, чтобы исследовать, как Helm интерпретирует наш шаблон и файлы YAML в наших чартах.
+
 Таким образом мы не засоряем наш узел Kubernetes несколькими ненужными объектами.
+
 Давайте попробуем.
 
+```
+helm install .\myhelm1\ --name test1 --dry-run --debug
+[debug] Created tunnel using local port: '49958'
+
+[debug] SERVER: "127.0.0.1:49958"
+
+[debug] Original chart version: ""
+[debug] CHART PATH: C:\k8\myhelm1
+
+Error: a release named test1 already exists.
+Run: helm ls --all test1; to check the status of the release
+Or run: helm del --purge test1; to delete it
+```
+
 Как видите, релиз может существовать только один раз.
-Проверить статус выпуска 
+
+Проверим статус release
+
+```
+helm ls --all test1
+NAME    REVISION        UPDATED                         STATUS  CHART           APP VERSION     NAMESPACE
+test1   1               Thu Feb 14 08:56:10 2019        DELETED myhelm1-0.1.0   1.0             default
+```
 
 Мы просто удалили его.
-Для тестирования отладки нам понадобится другое название выпуска: мы используем test2:
+Для тестирования отладки (`debug`) нам понадобится другое название релиза: мы используем test2:
+
+```
+helm install .\myhelm1\ --name test2 --dry-run --debug
+
+[debug] Created tunnel using local port: '49970'
+
+[debug] SERVER: "127.0.0.1:49970"
+
+[debug] Original chart version: ""
+[debug] CHART PATH: C:\k8\myhelm1
+
+NAME:   test2
+REVISION: 1
+RELEASED: Thu Feb 14 08:59:22 2019
+CHART: myhelm1-0.1.0
+USER-SUPPLIED VALUES:
+{}
+
+COMPUTED VALUES:
+affinity: {}
+fullnameOverride: ""
+image:
+  pullPolicy: IfNotPresent
+  repository: radial/busyboxplus
+  tag: base
+ingress:
+  annotations: {}
+  enabled: false
+  hosts:
+  - chart-example.local
+  paths: []
+  tls: []
+nameOverride: ""
+nodeSelector: {}
+replicaCount: 1
+resources: {}
+service:
+  port: 80
+  type: ClusterIP
+tolerations: []
+
+
+HOOKS:
+---
+# test2-myhelm1-test-connection
+apiVersion: v1
+kind: Pod
+metadata:
+  name: "test2-myhelm1-test-connection"
+  labels:
+    app.kubernetes.io/name: myhelm1
+    helm.sh/chart: myhelm1-0.1.0
+    app.kubernetes.io/instance: test2
+    app.kubernetes.io/managed-by: Tiller
+  annotations:
+    "helm.sh/hook": test-success
+spec:
+  containers:
+    - name: wget
+      image: busybox
+      command: ['wget']
+      args:  ['test2-myhelm1:80']
+  restartPolicy: Never
+
+
+MANIFEST:
+---
+# Source: myhelm1/templates/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: test2-myhelm1
+  labels:
+    app.kubernetes.io/name: myhelm1
+    helm.sh/chart: myhelm1-0.1.0
+    app.kubernetes.io/instance: test2
+    app.kubernetes.io/managed-by: Tiller
+spec:
+  type: ClusterIP
+  ports:
+    - port: 80
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    app.kubernetes.io/name: myhelm1
+    app.kubernetes.io/instance: test2
+
+
+---
+# Source: myhelm1/templates/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: test2-myhelm1
+  labels:
+    app.kubernetes.io/name: myhelm1
+    helm.sh/chart: myhelm1-0.1.0
+    app.kubernetes.io/instance: test2
+    app.kubernetes.io/managed-by: Tiller
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: myhelm1
+      app.kubernetes.io/instance: test2
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: myhelm1
+        app.kubernetes.io/instance: test2
+    spec:
+      containers:
+        - name: myhelm1
+          image: "radial/busyboxplus:base"
+          imagePullPolicy: IfNotPresent
+
+          command: ['sh', '-c', 'sleep 60']
+
+          ports:
+            - name: http
+              containerPort: 80
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+          resources:
+            {}
+```
 
 Очень полезно, но слишком много информации, если мы хотим постоянно редактировать и устанавливать наш чарт.
 Прямо сейчас я не буду пытаться все это разобрать, давайте сначала уменьшим вывод.
