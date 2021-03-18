@@ -377,24 +377,135 @@ spec:
 ```
 
 Очень полезно, но слишком много информации, если мы хотим постоянно редактировать и устанавливать наш чарт.
+
 Прямо сейчас я не буду пытаться все это разобрать, давайте сначала уменьшим вывод.
+
 Под Хуками есть тестовое соединение. Это было полезно для тестирования исходного nginx. Нам это не нужно.
-Примерно через 20 строк мы находим # Source: myhelm1 / templates / service.yaml ... вид: Service - нам это не нужно - нам нужен только работающий Pod.
+
+Примерно через 20 строк мы находим `# Source: myhelm1 / templates / service.yaml ... kind: Service` - нам это не нужно - нам нужен только работающий Pod.
+
 Его легко исправить, просто отредактируйте .helmignore и добавьте эти два имени файла внизу.
 
-Нашему модулю busybox не нужны порты или датчики liveness.
-Удалите строки с 29 по 42 из deployment.yaml
+```
+nano ./myhelm1/.helmignore
 
-Эти ярлыки ниже не добавляют ценности этому руководству, поэтому они удаляются из вывода всех приведенных ниже команд установки helm.
+test-connection.yaml
+service.yaml
+```
 
-Давайте переделаем нашу установку. 
+Нашему поду busybox не нужны порты или livenessProbes.
+
+Удалите строки с 29 по 42 из `deployment.yaml`
+
+```
+nano ./myhelm1/templates/deployment.yaml
+
+          ports:
+            - name: http
+              containerPort: 80
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+          resources:
+            {}
+```
+
+Эти ярлыки ниже не добавляют ценности этому руководству, поэтому они удаляются из вывода всех приведенных ниже команд `helm install`.
+
+```
+  labels:
+    app.kubernetes.io/name: myhelm1
+    helm.sh/chart: myhelm1-0.1.0
+    app.kubernetes.io/instance: test4
+    app.kubernetes.io/managed-by: Tiller
+
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: myhelm1
+      app.kubernetes.io/instance: test4
+
+    metadata:
+      labels:
+        app.kubernetes.io/name: myhelm1
+        app.kubernetes.io/instance: test4
+```
+
+Давайте запустим снова нашу установку. 
+
+```
+helm install .\myhelm1\ --name test2 --dry-run --debug
+[debug] Created tunnel using local port: '49976'
+
+[debug] SERVER: "127.0.0.1:49976"
+
+[debug] Original chart version: ""
+[debug] CHART PATH: C:\k8\myhelm1
+
+NAME:   test2
+REVISION: 1
+RELEASED: Thu Feb 14 09:09:55 2019
+CHART: myhelm1-0.1.0
+USER-SUPPLIED VALUES:
+{}
+
+COMPUTED VALUES:
+affinity: {}
+fullnameOverride: ""
+image:
+  pullPolicy: IfNotPresent
+  repository: radial/busyboxplus
+  tag: base
+ingress:
+  annotations: {}
+  enabled: false
+  hosts:
+  - chart-example.local
+  paths: []
+  tls: []
+nameOverride: ""
+nodeSelector: {}
+replicaCount: 1
+resources: {}
+service:
+  port: 80
+  type: ClusterIP
+tolerations: []
+
+HOOKS:
+MANIFEST:
+
+---
+# Source: myhelm1/templates/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: test2-myhelm1
+spec:
+  replicas: 1
+  template:
+    spec:
+      containers:
+        - name: myhelm1
+          image: "radial/busyboxplus:base"
+          imagePullPolicy: IfNotPresent
+
+          command: ['sh', '-c', 'sleep 60']
+```
 
 Давайте разберемся  данных командах:
-•	USER-SUPPLIED VALUES: мы их не предоставляли, поэтому здесь ничего не указано. Мы воспользуемся этим через минуту.
-•	COMPUTED VALUES: показывает рассчитанные значения из values.yaml. Он отображается в алфавитном порядке, в то время как наш файл находится в случайном порядке.
-•	HOOKS: не используются в этом рукоодстве для начинающих.
-•	Внизу мы видим наш deployment.yaml. Он показывает шаблон со значениями, взятыми из файла values.yaml.
-Вы можете неоднократно вносить изменения в свои значения и шаблоны и тестировать их с помощью --dry-run --debug. Он только показывает, что произойдет, не делая этого. Очень полезно: отладить установку Helm ДО того, как это будет сделано.
+
+- USER-SUPPLIED VALUES: мы их не предоставляли, поэтому здесь ничего не указано. Мы воспользуемся этим через минуту.
+- COMPUTED VALUES: показывает рассчитанные значения из `values.yaml`. Он отображается в алфавитном порядке, в то время как наш файл находится в случайном порядке.
+- HOOKS: не используются в этом руководстве для начинающих.
+- Внизу мы видим наш `deployment.yaml`. Он показывает шаблон со значениями, взятыми из файла `values.yaml`.
+
+Вы можете неоднократно вносить изменения в свои значения и шаблоны и тестировать их с помощью `--dry-run --debug`. Он только показывает, что произойдет, не делая этого. Очень полезно: отладить установку Helm ДО того, как это будет сделано.
 Мы довольны результатами отладки, давайте запустим установку.
 
 Как и ожидалось - происходит развертывание и его Pod. Через несколько секунд Pod запускается.
