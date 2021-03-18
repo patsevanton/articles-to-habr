@@ -81,28 +81,90 @@ image:
   pullPolicy: IfNotPresent
 ```
 
-Далее идет файл deployment.yaml.
+Далее идет файл `deployment.yaml`.
 
-Это развертывание, как и любое другое, которое вы используете в Kubernetes. Основное отличие состоит в том, что большинство значений полей он получает из только что отредактированного файла значений.
-Отредактируйте файл deployment.yaml около строки 27 ... добавьте команду. Мы используем образ busybox. Если мы создадим наши поды, они сразу же выйдут, так как ни одна команда или программа не запущены. Команда позволила нашему поду busybox спать 60 секунд.
-(Вы можете увидеть в отрывке из шаблона ниже, как будут извлечены значения из values.yaml. Мы перейдем к синтаксису позже - пока мы сосредотачиваемся на общей картине.)
+Это развертывание (deployment), как и любое другое, которое вы используете в Kubernetes. Основное отличие состоит в том, что большинство значений полей он получает из только что отредактированного файла значений.
+
+Отредактируйте файл `deployment.yaml` около строки 27 - добавьте команду. Мы используем образ busybox. Если мы создадим наши поды, они сразу же выйдут, так как ни одна команда или программа не запущены. Команда позволила нашему поду `busybox` спать 60 секунд.
+
+(Вы можете увидеть в отрывке из шаблона ниже, как будут извлечены значения из `values.yaml`. Мы перейдем к синтаксису позже - пока мы сосредотачиваемся на общей картине.)
+
+```
+nano ./myhelm1/templates/deployment.yaml
+
+    spec:
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          
+          command: ['sh', '-c', 'sleep 60']
+```
 
 Теперь мы готовы позволить Helm установить наш отредактированный чарт.
-Запустите helm install ./myhelm1/ и исследуйте вывод.
 
-Helm автоматически генерирует название выпуска для вашего: NAME: loopy-otter
+Запустите `helm install ./myhelm1/` и исследуйте вывод.
+
+```
+helm install ./myhelm1/
+
+NAME:   loopy-otter
+LAST DEPLOYED: Thu Feb 14 08:48:42 2019
+NAMESPACE: default
+STATUS: DEPLOYED
+
+RESOURCES:
+==> v1/Service
+NAME                 TYPE       CLUSTER-IP     EXTERNAL-IP  PORT(S)  AGE
+loopy-otter-myhelm1  ClusterIP  10.109.163.87  <none>       80/TCP   0s
+
+==> v1/Deployment
+NAME                 DESIRED  CURRENT  UP-TO-DATE  AVAILABLE  AGE
+loopy-otter-myhelm1  1        0        0           0          0s
+
+==> v1/Pod(related)
+NAME                                  READY  STATUS   RESTARTS  AGE
+loopy-otter-myhelm1-67b67bf4c8-tsdcq  0/1    Pending  0         0s
+
+
+NOTES:
+1. Get the application URL by running these commands:
+  export POD_NAME=$(kubectl get pods --namespace default -l "app.kubernetes.io/name=myhelm1,app.kubernetes.io/instance=loopy-otter" -o jsonpath="{.items[0].metadata.name}")
+  echo "Visit http://127.0.0.1:8080 to use your application"
+  kubectl port-forward $POD_NAME 8080:80
+```
+
+Helm автоматически генерирует название выпуска для вашего: `NAME: loopy-otter`
+
 Ваш будет другим. Ненавижу эти глупые имена. Позже мы будем использовать наши собственные имена.
+
 Мы видим сервис, развертывание и создание пода.
-Грубо говоря, Helm прочитал все шаблоны .yaml в каталоге шаблонов, а затем интерпретировал эти шаблоны, извлекая значения из файла values.yaml.
-Примечания относятся к исходному приложению nginx. Это совершенно неправильно для нашего приложения busybox.
+
+Грубо говоря, Helm прочитал все шаблоны `.yaml` в каталоге шаблонов, а затем интерпретировал эти шаблоны, извлекая значения из файла `values.yaml`.
+
+Примечания относятся к исходному приложению nginx. Это совершенно неправильно для нашего приложения `busybox`.
+
 Эти примечания взяты из NOTES.txt, другого файла шаблона.
+
 Через несколько секунд мы увидим, что наш Pod работает.
 
-Демонстрация общего обзора готова. Используйте helm delete, чтобы удалить наш первый выпуск.
-https://docs.helm.sh/using_helm/
-Релиз - это экземпляр чарта, работающей в кластере Kubernetes.
+```
+kubectl get pods
+NAME                                   READY   STATUS    RESTARTS   AGE
+loopy-otter-myhelm1-67b67bf4c8-tsdcq   0/1     Running   0          13s
+```
 
-helmignore NOTES.txt
+Демонстрация общего обзора демо готова. Используйте `helm delete`, чтобы удалить наш первый выпуск.
+
+[Релиз](https://docs.helm.sh/using_helm/) - это экземпляр чарта, работающей в кластере Kubernetes.
+
+```
+helm delete loopy-otter
+release "loopy-otter" deleted
+```
+
+### helmignore NOTES.txt
+
 Теперь отредактируйте файл .helmignore и добавьте NOTES.txt внизу.
 .helmignore содержит список имен файлов и шаблонов имен файлов, которые Helm должен игнорировать.
 
