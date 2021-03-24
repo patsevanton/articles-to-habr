@@ -1,4 +1,4 @@
-https://www.alibabacloud.com/blog/595490
+https://habr.com/ru/post/548720/
 
 Основы работы с Helm чартами и темплейтами — Часть 2
 
