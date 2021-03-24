@@ -1,4 +1,7 @@
+https://www.alibabacloud.com/blog/595490
+
 Helm Charts and Template Basics - Part 2
+
 В этом руководстве мы кратко обсудим, как Helm может помочь упростить управление приложениями Kubernetes, и узнаем, как использовать Helm для создания базового чарта.
 
 В этом руководстве объясняется, как шаблон Helm deployment.yaml преобразуется из шаблона в манифест YAML.
