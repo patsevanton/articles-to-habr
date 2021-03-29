@@ -1,6 +1,6 @@
-https://www.astronomer.io/blog/7-common-errors-to-check-when-debugging-airflow-dag
+https://habr.com/ru/post/549458/
 
-7 Common Errors to Check when Debugging Airflow DAGs
+7 распространенных ошибок, которые нужно проверить при отладке DAG-файлов Airflow
 
 Задачи не выполняются? DAG не работает? Журналы не находятся? У нас были те же самые проблемы. Вот список распространенных ошибок и некоторые соответствующие исправления, которые следует учитывать при отладке развертывания Airflow.
 
