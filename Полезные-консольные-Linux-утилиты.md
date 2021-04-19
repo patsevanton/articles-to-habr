@@ -144,6 +144,10 @@
 
 [datanymizer](https://github.com/datanymizer/datanymizer) - Мощный анонимайзер базы данных с гибкими правилами. [Подробнее на русском](https://evrone.ru/datanymizer).
 
+[termshark](https://github.com/gcla/termshark) - консольный интерфейс терминала для tshark, вдохновленный Wireshark
+
+![](https://habrastorage.org/webt/y0/aw/vp/y0awvpo97t_ifaxyawh6aeyou9g.gif)
+
 Ниже утилиты и краткое описание со статьи [Sysadmin-util: полезные инструменты для системных администраторов Linux](https://xakinfo.ru/network_administration/sysadmin-tools/). Подробнее об этих утилитах вы найдете в этой статье.
 
 **Ago** - Данный инструмент выводит в удобочитаемом формате информацию, как давно файл или каталог были изменены.
