@@ -148,6 +148,8 @@
 
 ![](https://habrastorage.org/webt/y0/aw/vp/y0awvpo97t_ifaxyawh6aeyou9g.gif)
 
+[sysinfo](https://github.com/peterbay/sysinfo) - Скрипт на основе Python для получения системной информации из Linux.
+
 Ниже утилиты и краткое описание со статьи [Sysadmin-util: полезные инструменты для системных администраторов Linux](https://xakinfo.ru/network_administration/sysadmin-tools/). Подробнее об этих утилитах вы найдете в этой статье.
 
 **Ago** - Данный инструмент выводит в удобочитаемом формате информацию, как давно файл или каталог были изменены.
