@@ -142,6 +142,8 @@
 
 ![](https://habrastorage.org/webt/z1/jz/sr/z1jzsrmbxqgtokwglyzz4fhwwrw.gif)
 
+[datanymizer](https://github.com/datanymizer/datanymizer) - Мощный анонимайзер базы данных с гибкими правилами. [Подробнее на русском](https://evrone.ru/datanymizer).
+
 Ниже утилиты и краткое описание со статьи [Sysadmin-util: полезные инструменты для системных администраторов Linux](https://xakinfo.ru/network_administration/sysadmin-tools/). Подробнее об этих утилитах вы найдете в этой статье.
 
 **Ago** - Данный инструмент выводит в удобочитаемом формате информацию, как давно файл или каталог были изменены.
