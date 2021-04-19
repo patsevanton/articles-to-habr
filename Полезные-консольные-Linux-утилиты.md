@@ -134,6 +134,10 @@
 
 ![](https://habrastorage.org/webt/bq/ek/im/bqekim3ksvvid772ndoibrozui8.gif)
 
+[dnspeep](https://github.com/jvns/dnspeep) - простая утилита, которая позволяет просмотреть DNS запросы.
+
+![](https://habrastorage.org/webt/jc/gi/pc/jcgipctvzyzz_lp6ptflpavuogc.jpeg)
+
 Ниже утилиты и краткое описание со статьи [Sysadmin-util: полезные инструменты для системных администраторов Linux](https://xakinfo.ru/network_administration/sysadmin-tools/). Подробнее об этих утилитах вы найдете в этой статье.
 
 **Ago** - Данный инструмент выводит в удобочитаемом формате информацию, как давно файл или каталог были изменены.
