@@ -138,6 +138,10 @@
 
 ![](https://habrastorage.org/webt/jc/gi/pc/jcgipctvzyzz_lp6ptflpavuogc.jpeg)
 
+[Dive](https://github.com/wagoodman/dive) - инструмент для изучения образа Docker, содержимого слоев и поиска способов уменьшить размер вашего образа Docker/OCI.
+
+![](https://habrastorage.org/webt/z1/jz/sr/z1jzsrmbxqgtokwglyzz4fhwwrw.gif)
+
 Ниже утилиты и краткое описание со статьи [Sysadmin-util: полезные инструменты для системных администраторов Linux](https://xakinfo.ru/network_administration/sysadmin-tools/). Подробнее об этих утилитах вы найдете в этой статье.
 
 **Ago** - Данный инструмент выводит в удобочитаемом формате информацию, как давно файл или каталог были изменены.
