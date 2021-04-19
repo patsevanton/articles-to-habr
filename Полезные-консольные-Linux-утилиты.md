@@ -108,4 +108,10 @@
 
 ![](https://habrastorage.org/webt/jb/qf/df/jbqfdfuz3dgit1biqqni2mrak_y.gif)
 
+[Delta](https://github.com/dandavison/delta) - Средство просмотра для вывода git и diff. [Подробнее на английском.](https://dev.to/cloudx/delta-a-new-git-diff-tool-to-rock-your-productivity-2773)
+
+![](https://habrastorage.org/webt/5o/ym/9a/5oym9aolhdg1ysuwg-eflw9s0uw.png)
+
+![](https://habrastorage.org/webt/lv/dg/cl/lvdgcllzqjqxczn6wwggfcf3oko.png)
+
 P.S. Пишите утилиты, которые стоит добавить в список.
