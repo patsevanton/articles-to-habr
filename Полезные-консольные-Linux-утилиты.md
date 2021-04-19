@@ -116,6 +116,10 @@
 
 ![](https://habrastorage.org/webt/lv/dg/cl/lvdgcllzqjqxczn6wwggfcf3oko.png)
 
+[mtr](https://github.com/traviscross/mtr) — MyTraceRoute Великолепная замена traceroute и аналогам
+
+[gdu](https://github.com/dundee/gdu) — Более шустрый и фичастый аналог ncdu (ncurses du), на Go. Удобнее штатного du, при разборах «куда же делось свободное место».
+
 Ниже утилиты и краткое описание со статьи [Sysadmin-util: полезные инструменты для системных администраторов Linux](https://xakinfo.ru/network_administration/sysadmin-tools/). Подробнее об этих утилитах вы найдете в этой статье.
 
 **Ago** - Данный инструмент выводит в удобочитаемом формате информацию, как давно файл или каталог были изменены.
