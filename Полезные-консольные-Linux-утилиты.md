@@ -150,6 +150,10 @@
 
 [sysinfo](https://github.com/peterbay/sysinfo) - Скрипт на основе Python для получения системной информации из Linux.
 
+[SSH-Attack-Stats](https://github.com/Sodium-Hydrogen/SSH-Attack-Stats) - Простой скрипт, который будет запущен в MOTD на сервере Linux и сообщит вам статистику атак.
+
+![](https://habrastorage.org/webt/kb/lh/by/kblhbym1hikagrw0bzmtsbjozwu.png)
+
 Ниже утилиты и краткое описание со статьи [Sysadmin-util: полезные инструменты для системных администраторов Linux](https://xakinfo.ru/network_administration/sysadmin-tools/). Подробнее об этих утилитах вы найдете в этой статье.
 
 **Ago** - Данный инструмент выводит в удобочитаемом формате информацию, как давно файл или каталог были изменены.
