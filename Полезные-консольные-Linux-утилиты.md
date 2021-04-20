@@ -272,13 +272,59 @@ asciicast2gif - утилита для конвертации ascii кастов,
 
 [Nginx-builder](https://github.com/TinkoffCreditSystems/Nginx-builder) - инструмент, который автоматизирует сборку Nginx с нужными модулями. Описываем всё в yaml, запускаем сборку и получаем готовый rpm или deb пакет
 
+[linux-exploit-suggester](https://github.com/mzet-/linux-exploit-suggester) - Быстрый аудит сервера на возможность применения эксплойтов
+
+![](https://habrastorage.org/webt/f4/ok/qh/f4okqhjwfm2vpj09pmwny8plowq.jpeg)
+
 [linux-exploit-suggester-2](https://github.com/jondonas/linux-exploit-suggester-2) - Подсказка эксплойтов ядра Linux нового поколения
+
+![](https://habrastorage.org/webt/3i/-u/qw/3i-uqwfubldia6zeo7h16n7zq_4.jpeg)
 
 [ssl-cert-check](https://github.com/Matty9191/ssl-cert-check) - делаем простой мониторинг SSL с уведомлениями на email о необходимости продления сертификата. [Подробнее на русском](https://sysadmin.pm/ssl-cert-check/)
 
 [jl](https://github.com/koenbollen/jl) - Удобная утилита для парсинга\чтения JSON логов
 
 [Wondershaper](https://github.com/magnific0/wondershaper.git) — утилита для настройки ограничений скорости сетевого интерфейса на сервере. [Подробнее на русском](https://sysadmin.pm/wondershaper/)
+
+[mkcert](https://github.com/FiloSottile/mkcert) - удобная штука, с помощью которой можно у себя на локалхосте для часто употребляемых тестовых имён выписать валидный сертификат.
+
+![](https://habrastorage.org/webt/rq/wd/yx/rqwdyx_zgc9yqzn7nbm_arfx6cm.png)
+
+[https-portal](https://github.com/SteveLTN/https-portal) - Полностью автоматизированный сервер HTTPS на базе Nginx, Let's Encrypt и Docker.
+
+httpsat — утилита, которая позволяет получить статистику доступа к нужному сайту. Скрипт работает с cURL’ом, и поддерживает многие доступные в нём опции при соединении. [Подробнее на русском](https://sysadmin.pm/httpstat/) 
+
+[GeoLogonalyzer](https://github.com/fireeye/GeoLogonalyzer) - И вот ещё занятный анализатор логов, который на основе asn, гео, и некоторых сопутствующих данных выявляет аномалии и сообщает о них. Например, если пользователь много раз заходил с одного IP адреса, но внезапно зашёл с другого (причём из другой подсети вовсе, либо из другой географической точки), анализатор сформирует отчёт об этом.
+
+[graphpath](https://github.com/ocochard/graphpath) - Утилита для быстрого построения ASCII схемы сети прямо в терминале.
+
+![](https://habrastorage.org/webt/bc/lg/mb/bclgmbzjcnmudnmag43825hxjq0.jpeg)
+
+Sosreport — утилита для сбора информации о текущем состоянии системы. Удобно использовать самому в рамка первичного осмотра, удобно попросить клиента выполнить команду и прислать отчёт, готовый для изучения. [Подробнее на русском](https://sysadmin.pm/sosreport-xsos/)
+
+![](https://habrastorage.org/webt/sd/pi/-h/sdpi-hcgucarayut4kl8izphhk0.png)
+
+Fatrace (file access trace) — простая и удобная в использовании утилита для мониторинга текущей активности в системе. Отлично подойдёт для тех случаев, когда strace или blktrace оказываются избыточны. [Подробнее на русском](https://sysadmin.pm/fatrace/)
+
+![](https://habrastorage.org/webt/fv/0k/wn/fv0kwn_xa1cleeaxeafmhemdmuk.png)
+
+httping — простая утилита, с помощью которой можно «пинговать» сайт по определённому адресу и получать общую (а при необходимости подробную) статистику по ответу и доступности. [Подробнее на русском](https://sysadmin.pm/httping/)
+
+![](https://habrastorage.org/webt/3o/yy/ie/3oyyie21wikpzpqyv3uigc0auss.png)
+
+Bashdb — утилита-дебаггер для bash скриптов. Дебаг скриптов задача не частая, но если она стоит, то на bashdb имеет смысл обратить внимание. [Подробнее на русском](https://sysadmin.pm/bashdb/)
+
+![](https://habrastorage.org/webt/uy/dm/2r/uydm2r9nzzgdp2u1uf9dnut0gl4.png)
+
+Goaccess — функциональный анализатор логов, который может работать с ними в реальном времени, визуализировать информацию и отдавать её в разных форматах. Доступен для установки на большинстве популярных дистрибутивов прямо из репозиториев. [Подробнее на русском](https://sysadmin.pm/goaccess/)
+
+![](https://habrastorage.org/webt/iq/rn/0h/iqrn0haij0su3fl1lf7cd_jijp8.png)
+
+[testssl.sh](https://github.com/drwetter/testssl.sh) — это скрипт, который позволяет протестировать SSL сервис и вывести подробную статистику по нему. Это как SSLlabs, только имеется возможность проведения проверки разных сервисов. Кроме того, для скрипта доступен простой веб-интерфейс. [Подробнее на русском](https://sysadmin.pm/testssl/)
+
+![](https://habrastorage.org/webt/cn/ex/zf/cnexzfx9n3a9ejxbozyiiif7nkk.png)
+
+[iprange](https://github.com/firehol/iprange/) - Обнаружилась очень удобная утилита для работы с подсетями и IP адресами. Умеет вычислять нужные подсети из разных диапазонов, что порой бывает необходимо, например, при работе с ipset и фаерволом на сервере. 
 
 P.S. Пишите утилиты, которые стоит добавить в список. 
 
