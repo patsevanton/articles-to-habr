@@ -344,6 +344,16 @@ multi-ping - Это многопротокольная оболочка ping. О
 
 ![](https://habrastorage.org/webt/mc/fk/bs/mcfkbsi_a28_lrlnoy52hynnyts.gif)
 
+**[hstr](https://github.com/dvorka/hstr)** - от англ. history, инструмент для просмотра истории команд. 
+
+![](https://habrastorage.org/webt/a9/0h/iq/a90hiqlc0tnmwbpyuztmgy811si.gif)
+
+**pastebinit** - инструмент командной строки в Deb-системах для отправки данных на "pastebin", сайт, который позволяет пользователям размещать отрывки текста для публичного просмотра. [Подробнее на русском](https://habr.com/ru/post/82389/)
+
+**fpaste** - инструмент командной строки в RedHat-системах для отправки данных на http://fpaste.org/, сайт, который позволяет пользователям размещать отрывки текста для публичного просмотра. 
+
+[**ShellCheck**](https://github.com/koalaman/shellcheck) - инструмент статического анализа shell скриптов. [Подробнее на русском](https://habr.com/ru/company/ruvds/blog/342580/)
+
 P.S. Пишите утилиты, которые стоит добавить в список. 
 
 P.S2. На написание этого поста навеял телеграм канал https://t.me/SysadminNotes где публикуются подобные интересные утилиты
