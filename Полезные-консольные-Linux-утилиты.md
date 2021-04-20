@@ -232,6 +232,54 @@ multi-ping - Это многопротокольная оболочка ping. О
 
 [txeh](https://github.com/txn2/txeh) - Библиотека Go и утилита CLI для управления /etc/hosts.
 
+[mkchain](https://github.com/trimstray/mkchain) - Утилита, с помощью которой можно составить цепочку сертификатов, из присланных от центра сертификации файлов.
+
+ [Asn](https://github.com/nitefood/asn) - удобная утилита для отображения информации об IP и домене.
+
+![](https://habrastorage.org/webt/-n/zs/em/-nzsemwztzcflmrnu0qcmdlofog.png)
+
+[tlog](https://github.com/Scribery/tlog) - Инструмент для записи / воспроизведения терминального ввода-вывода и сессий. [Подробнее на английском](https://linoxide.com/tlog-tool-record-play-terminal-io-sessions/)
+
+[frp](https://github.com/fatedier/frp) - Быстрый обратный прокси-сервер, который поможет вам открыть доступ в Интернет к локальному серверу за NAT или брандмауэром.
+
+[tunnelto](https://github.com/agrinman/tunnelto) - Разместите свой локальный веб-сервер в Интернете с помощью общедоступного URL-адреса.
+
+[pd.sh](https://github.com/ketancmaheshwari/pd) - интересная штука для дебага пйплайнов. Подсовываем скрипту наш набор команд, и получаем информацию о том, как пайплайн отрабатывает и в каком месте возникает ошибка, если такое происходит.
+
+[logtop](https://github.com/JulienPalard/logtop) - утилита, которая выводит top IP адресов, анализируя логи веб-сервера. Это для тех, кому не очень хочется однострочник на bash писать c awk, sort и uniq.
+
+[Choose](https://github.com/theryangeary/choose) - аналог cut и awk '{print $N}'. Авторы, к слову, утверждают что работает штука значительно быстрее перечисленных аналогов.
+
+![](https://habrastorage.org/webt/kj/_a/_l/kj_a_lmp6wyxfu7a8_yhklavyqe.png)
+
+[whatfiles](https://github.com/spieglt/whatfiles)  - простая и удобная утилита, которая покажет, с какими файлами работает тот или иной процесс в системе. Этакий упрощённый вариант strace'а.
+
+[topngx](https://github.com/gsquire/topngx) - этакий top для Nginx. Утилита анализирует логи и выдаёт администратору итоговую статистику. По сути, это аналог другой утилиты - ngxtop, правда эта уже давно не поддерживается.
+
+[SSHHeatmap](https://github.com/meesaltena/SSHHeatmap) - Создает тепловую карту IP-адресов, которые сделали неудачные попытки входа в систему по SSH.
+
+[desed](https://github.com/SoptikHa2/desed/) - Отладчик для Sed: отлаживайте сценарии sed, не выходя из вашего терминала.
+
+[3mux](https://github.com/aaronjanse/3mux) - Терминальный мультиплексор, вдохновленный i3
+
+[frontail](https://github.com/mthenw/frontail) — утилита для трансляции логов по http\https. Удобно использовать в случаях, когда нужно быстро, в браузере, показать содержимое какого-либо лога и его изменения в реальном времени. [Подробнее на русском](https://sysadmin.pm/frontail/) 
+
+[critic.sh](https://github.com/Checksum/critic.sh) - Суровое тестирование bash скриптов. Выглядит не менее интересным даже в сравнении с shellcheck
+
+[jql](https://github.com/cube2222/jql) - Вместо jq можно попробовать jql для работы с JSON.
+
+asciicast2gif - утилита для конвертации ascii кастов, в обычную gif анимацию. [Подробнее на русском](https://sysadmin.pm/asciicast2gif/)
+
+[Nginx-builder](https://github.com/TinkoffCreditSystems/Nginx-builder) - инструмент, который автоматизирует сборку Nginx с нужными модулями. Описываем всё в yaml, запускаем сборку и получаем готовый rpm или deb пакет
+
+[linux-exploit-suggester-2](https://github.com/jondonas/linux-exploit-suggester-2) - Подсказка эксплойтов ядра Linux нового поколения
+
+[ssl-cert-check](https://github.com/Matty9191/ssl-cert-check) - делаем простой мониторинг SSL с уведомлениями на email о необходимости продления сертификата. [Подробнее на русском](https://sysadmin.pm/ssl-cert-check/)
+
+[jl](https://github.com/koenbollen/jl) - Удобная утилита для парсинга\чтения JSON логов
+
+[Wondershaper](https://github.com/magnific0/wondershaper.git) — утилита для настройки ограничений скорости сетевого интерфейса на сервере. [Подробнее на русском](https://sysadmin.pm/wondershaper/)
+
 P.S. Пишите утилиты, которые стоит добавить в список. 
 
 P.S2. На написание этого поста навеял телеграм канал https://t.me/SysadminNotes где публикуются подобные интересные утилиты
