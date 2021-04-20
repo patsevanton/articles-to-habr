@@ -326,6 +326,16 @@ multi-ping - Это многопротокольная оболочка ping. О
 
 **[iprange](https://github.com/firehol/iprange/)** - Обнаружилась очень удобная утилита для работы с подсетями и IP адресами. Умеет вычислять нужные подсети из разных диапазонов, что порой бывает необходимо, например, при работе с ipset и фаерволом на сервере. 
 
+[**container-diff**](https://github.com/GoogleContainerTools/container-diff) - утилита для сравнения образов контейнеров. Сontainer-diff умеет анализировать и учитывать при сравнении историю образа, файловую систему, пакеты apt, pip и npm. Выглядит очень удобно для отслеживания изменений в рамках одного контейнера, либо для сравнения двух разных образов.
+
+**https://gist.github.com/agarzon/5554490** - Скрипт для проверки присутствия IP в различных DNSBL
+
+[**Prochunter**](https://gitlab.com/nowayout/prochunter.git) — хорошая утилита для поиска скрытых процессов, запущенных в системе. [Подробнее на русском](https://sysadmin.pm/prochunter/)
+
+[**netutils-linux**](https://github.com/strizhechenko/netutils-linux) - это набор утилит для мониторинга и тюнинга сети. [Подробнее на русском.](https://habr.com/ru/post/331720/)
+
+![](https://habrastorage.org/web/2ae/dda/a7f/2aeddaa7fffb494dbfb0a2ecb40018ba.gif)
+
 P.S. Пишите утилиты, которые стоит добавить в список. 
 
 P.S2. На написание этого поста навеял телеграм канал https://t.me/SysadminNotes где публикуются подобные интересные утилиты
