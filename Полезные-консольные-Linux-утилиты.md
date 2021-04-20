@@ -226,6 +226,12 @@ multi-ping - Это многопротокольная оболочка ping. О
 
 ![](https://habrastorage.org/webt/w5/sg/s0/w5sgs0tufc1qz9vpreevkaa75o4.gif)
 
+[Watchman](https://github.com/facebook/watchman) - Позволяет отслеживать состояние файлов, и по мере их изменения триггерить нужные действия, если потребуется (запускаем что-то, собираем что-то, уведомляем и т. п.).
+
+[localstack](https://github.com/localstack/localstack) - протестировать что-то предназначенное для AWS локально
+
+[txeh](https://github.com/txn2/txeh) - Библиотека Go и утилита CLI для управления /etc/hosts.
+
 P.S. Пишите утилиты, которые стоит добавить в список. 
 
 P.S2. На написание этого поста навеял телеграм канал https://t.me/SysadminNotes где публикуются подобные интересные утилиты
