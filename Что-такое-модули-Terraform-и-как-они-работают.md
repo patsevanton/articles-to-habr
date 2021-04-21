@@ -1,10 +1,6 @@
-https://www.freecodecamp.org/news/terraform-modules-explained/
+Многие новички пропускают настройку модулей Terraform, чтобы облегчить процесс настройки.  По крайней мере, они так думают, что облегчили себе задачу. Рассмотрим что такое модули Terraform и как они работают.
 
-Что такое модули Terraform и как они работают?
-
-![](https://habrastorage.org/webt/oa/8m/7k/oa8m7kod2r7z-m7dr2pa9n3ilf0.jpeg)
-
-Многие новички пропускают настройку модулей Terraform, чтобы облегчить процесс настройки.  По крайней мере, они так думают, что облегчили себе задачу.
+<cut />
 
 Я предполагаю, что вы уже знаете некоторые основы Terraform и даже пытались использовать его раньше. Если нет, ознакомьтесь с [этим обзором Terraform](https://serhii.vasylenko.info/2020/05/02/Terraform-explained-for-managers.html) и этим [видеоуроком](https://www.freecodecamp.org/news/how-to-use-terraform-to-automate-your-aws-cloud-infrastructure-tutorial/), прежде чем продолжить чтение.
 
