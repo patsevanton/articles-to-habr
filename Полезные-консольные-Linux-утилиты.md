@@ -354,6 +354,10 @@ multi-ping - Это многопротокольная оболочка ping. О
 
 [**ShellCheck**](https://github.com/koalaman/shellcheck) - инструмент статического анализа shell скриптов. [Подробнее на русском](https://habr.com/ru/company/ruvds/blog/342580/)
 
+[Eternal Terminal](https://github.com/MisterTea/EternalTerminal) - удаленная оболочка, которая автоматически переподключается. [Подробнее на русском](https://blog.desdelinux.net/ru/eternal-terminal-un-shell-remoto-que-se-vuelve-a-conectar-automaticamente/)
+
+
+
 P.S. Пишите утилиты, которые стоит добавить в список. 
 
 P.S2. На написание этого поста навеял телеграм канал https://t.me/SysadminNotes где публикуются подобные интересные утилиты
