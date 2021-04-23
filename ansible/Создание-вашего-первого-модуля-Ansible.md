@@ -1,4 +1,4 @@
-https://techforce1.nl/creating-your-first-ansible-module
+https://habr.com/ru/post/553908/
 
 ### Создание вашего первого модуля Ansible
 
