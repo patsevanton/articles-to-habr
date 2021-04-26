@@ -356,7 +356,19 @@ multi-ping - Это многопротокольная оболочка ping. О
 
 [Eternal Terminal](https://github.com/MisterTea/EternalTerminal) - удаленная оболочка, которая автоматически переподключается. [Подробнее на русском](https://blog.desdelinux.net/ru/eternal-terminal-un-shell-remoto-que-se-vuelve-a-conectar-automaticamente/)
 
+Не утилита, но очень полезное:
 
+Автоматический запуск tmux, при входе на сервер по SSH:
+https://t.me/SysadminNotes/1661
+автоматический запуск tmux, при входе на сервер по SSH. Добавляем в ~/.bash_profile строки:
+```
+if [ -z "$TMUX" ]; then
+tmux attach -t term || tmux new -s term
+fi
+```
+И при каждом входе на сервер, получаем либо уже существующую, либо новую сессию tmux.
+Для screen можно попробовать такую конструкцию:
+if $(screen -ls | grep -q pts); then screen -x; else screen -R; fi
 
 P.S. Пишите утилиты, которые стоит добавить в список. 
 
