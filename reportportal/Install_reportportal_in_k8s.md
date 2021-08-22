@@ -10,7 +10,7 @@
 
 ### Требования:
 
-- Kubernetes
+- Kubernetes (тестировал на версии 1.18)
 - 3 Worker ноды kubernetes с 10ГБ ОЗУ.
 
 
@@ -21,15 +21,16 @@
 
 Устанавливать будем в Managed by kubernetes в Yandex Cloud.
 
+#### Получаем список нод k8s
+
 После того как у вас будет готов kubernetes, получаем список нод k8s.
 
-**kubectl get nodes**
-
 ```
+kubectl get nodes
 NAME                        STATUS   ROLES    AGE   VERSION
-cl1m6caqfdut6pkfolel-elyj   Ready    <none>   22m   v1.18.18
-cl1m6caqfdut6pkfolel-iwyf   Ready    <none>   22m   v1.18.18
-cl1m6caqfdut6pkfolel-uben   Ready    <none>   22m   v1.18.18
+cl1k2hvvanm3sam6cjc6-apaf   Ready    <none>   75s   v1.18.18
+cl1k2hvvanm3sam6cjc6-otel   Ready    <none>   76s   v1.18.18
+cl1k2hvvanm3sam6cjc6-ubej   Ready    <none>   78s   v1.18.18
 ```
 
 #### Устанавливаем Kubernetes Labels на ноды
@@ -43,9 +44,9 @@ kubectl label nodes <NODE-3> service=db
 Меняем `<NODE-X>` на имя вашей ноды.
 
 ```
-kubectl label nodes cl1m6caqfdut6pkfolel-elyj service=api
-kubectl label nodes cl1m6caqfdut6pkfolel-iwyf service=rabbitmq
-kubectl label nodes cl1m6caqfdut6pkfolel-uben service=db
+kubectl label nodes cl1k2hvvanm3sam6cjc6-apaf service=api
+kubectl label nodes cl1k2hvvanm3sam6cjc6-otel service=rabbitmq
+kubectl label nodes cl1k2hvvanm3sam6cjc6-ubej service=db
 ```
 
 #### Устанавливаем ingress-nginx
@@ -55,19 +56,21 @@ helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx && helm r
 helm install nginx-ingress ingress-nginx/ingress-nginx
 ```
 
+Получаем внешний IP от ingress-ingress
+
+```
+kubectl get svc nginx-ingress-ingress-nginx-controller
+NAME                                     TYPE           CLUSTER-IP      EXTERNAL-IP      PORT(S)                      AGE
+nginx-ingress-ingress-nginx-controller   LoadBalancer   10.96.164.156   130.193.58.154   80:32341/TCP,443:32249/TCP   49s
+```
+
+#### Скачиваем репозиторий reportportal
+
 Скачиваем репозиторий https://github.com/reportportal/kubernetes
 
 ```
 git clone https://github.com/reportportal/kubernetes
 cd kubernetes
-```
-
-Получаем внешний IP от ingress-ingress
-
-```
-kubectl get svc nginx-ingress-ingress-nginx-controller
-NAME                                     TYPE           CLUSTER-IP     EXTERNAL-IP      PORT(S)                      AGE
-nginx-ingress-ingress-nginx-controller   LoadBalancer   10.96.224.63   130.193.35.107   80:30958/TCP,443:31717/TCP   39s
 ```
 
 
