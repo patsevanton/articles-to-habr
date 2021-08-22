@@ -349,3 +349,6 @@ helm install reportportal --set postgresql.SecretName=postgresql,rabbitmq.Secret
 Логины/пароли для доступа в reportportal:
 - Default User: default\1q2w3e
 - Administrator: superadmin\erebus
+
+
+![](https://habrastorage.org/webt/wr/gt/7x/wrgt7xleqrv0p2fnhvw-ym_1jpi.png)
