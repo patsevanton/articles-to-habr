@@ -55,12 +55,32 @@ helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx && helm r
 helm install nginx-ingress ingress-nginx/ingress-nginx
 ```
 
+Скачиваем репозиторий https://github.com/reportportal/kubernetes
+
+```
+git clone https://github.com/reportportal/kubernetes
+cd kubernetes
+```
+
+
+
 ### Установка Elasticsearch
 
-Добавляем helm репозиторий
+Добавляем helm репозиторий Elasticsearch
 
 ```
 helm repo add elastic https://helm.elastic.co && helm repo update
 ```
 
+Скачиваем helm чарты
+
+```
+helm dependency build ./reportportal/
+```
+
+Устанавливаем Elasticsearch
+
+```
+helm install elasticsearch ./reportportal/charts/elasticsearch-7.6.1.tgz
+```
 
