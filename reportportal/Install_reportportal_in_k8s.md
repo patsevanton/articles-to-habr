@@ -344,3 +344,8 @@ helm install <reportportal_chart_name> --set postgresql.SecretName=<db_secret>,r
 ```
 helm install reportportal --set postgresql.SecretName=postgresql,rabbitmq.SecretName=rabbitmq ./reportportal-5.5.0.tgz
 ```
+
+
+Логины/пароли для доступа в reportportal:
+- Default User: default\1q2w3e
+- Administrator: superadmin\erebus
