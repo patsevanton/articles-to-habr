@@ -11,7 +11,7 @@
 ### Требования:
 
 - Kubernetes (тестировал на версии 1.18)
-- 3 Worker ноды kubernetes с 10ГБ ОЗУ.
+- 3 Worker ноды kubernetes с 2 ядрами CPU и 10ГБ ОЗУ.
 
 
 
