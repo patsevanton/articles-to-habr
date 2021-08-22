@@ -302,13 +302,13 @@ ingress:
 
 ```
 kubectl get svc nginx-ingress-ingress-nginx-controller
-NAME                                     TYPE           CLUSTER-IP      EXTERNAL-IP      PORT(S)                      AGE
-nginx-ingress-ingress-nginx-controller   LoadBalancer   10.96.164.156   130.193.58.154   80:32341/TCP,443:32249/TCP   49s
+NAME                                     TYPE           CLUSTER-IP     EXTERNAL-IP      PORT(S)                      AGE
+nginx-ingress-ingress-nginx-controller   LoadBalancer   10.96.165.32   178.154.210.20   80:31767/TCP,443:31456/TCP   4m56s
 ```
 
-Внешний IP адрес - 130.193.58.154.
+Внешний IP адрес - 178.154.210.20.
 
-Получается можно сделать домен reportportal.130.193.58.154.sslip.io.
+Получается можно сделать домен reportportal.178.154.210.20.sslip.io.
 
 Итоговый фрагмент получается вот таким:
 
@@ -318,7 +318,7 @@ ingress:
   # IF YOU HAVE SOME DOMAIN NAME SET INGRESS.USEDOMAINNAME to true
   usedomainname: false
   hosts:
-    - reportportal.130.193.58.154.sslip.io
+    - reportportal.178.154.210.20.sslip.io
 ```
 
 #### Установка helm чарта reportportal
