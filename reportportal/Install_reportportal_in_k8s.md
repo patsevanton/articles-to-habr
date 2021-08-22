@@ -27,10 +27,10 @@
 
 ```
 kubectl get nodes
-NAME                        STATUS   ROLES    AGE   VERSION
-cl1k2hvvanm3sam6cjc6-apaf   Ready    <none>   75s   v1.18.18
-cl1k2hvvanm3sam6cjc6-otel   Ready    <none>   76s   v1.18.18
-cl1k2hvvanm3sam6cjc6-ubej   Ready    <none>   78s   v1.18.18
+NAME                        STATUS   ROLES    AGE     VERSION
+cl1mikj7kfic31snr11h-ivow   Ready    <none>   2m13s   v1.18.18
+cl1mikj7kfic31snr11h-ubus   Ready    <none>   2m12s   v1.18.18
+cl1mikj7kfic31snr11h-ynax   Ready    <none>   95s     v1.18.18
 ```
 
 #### Устанавливаем Kubernetes Labels на ноды
@@ -44,9 +44,9 @@ kubectl label nodes <NODE-3> service=db
 Меняем `<NODE-X>` на имя вашей ноды.
 
 ```
-kubectl label nodes cl1k2hvvanm3sam6cjc6-apaf service=api
-kubectl label nodes cl1k2hvvanm3sam6cjc6-otel service=rabbitmq
-kubectl label nodes cl1k2hvvanm3sam6cjc6-ubej service=db
+kubectl label nodes cl1mikj7kfic31snr11h-ivow service=api
+kubectl label nodes cl1mikj7kfic31snr11h-ubus service=rabbitmq
+kubectl label nodes cl1mikj7kfic31snr11h-ynax service=db
 ```
 
 #### Устанавливаем ingress-nginx
