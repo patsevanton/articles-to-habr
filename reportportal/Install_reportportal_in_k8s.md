@@ -13,13 +13,6 @@
 - Kubernetes (тестировал на версии 1.18)
 - 3 Worker ноды kubernetes с 2 ядрами CPU и 10ГБ ОЗУ.
 
-По официальной инструкции я не смог установить Reportportal. Пример [issue](https://github.com/reportportal/kubernetes/issues/193). Поэтому написал этот пост.
-Также я сделал несколько pull request в официальную документацию, но их медленно рассматривают.
-- https://github.com/reportportal/kubernetes/pull/192
-- https://github.com/reportportal/kubernetes/pull/195
-- https://github.com/reportportal/kubernetes/pull/196
-- https://github.com/reportportal/kubernetes/pull/197
-
 ### Установка Kubernetes
 
 Базовая инструкция установки Reportportal в kubernets - https://github.com/reportportal/kubernetes/tree/master/reportportal#cloud-computing-services-platform-installation
