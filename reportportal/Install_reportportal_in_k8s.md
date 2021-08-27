@@ -51,7 +51,7 @@ kubectl label nodes cl1mikj7kfic31snr11h-ynax service=db
 
 ```
 helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx && helm repo update
-helm install nginx-ingress ingress-nginx/ingress-nginx
+helm install nginx-ingress ingress-nginx/ingress-nginx --version 3.36.0  
 ```
 
 #### Скачиваем репозиторий reportportal
