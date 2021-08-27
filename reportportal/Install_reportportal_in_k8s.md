@@ -82,10 +82,10 @@ helm dependency build ./reportportal/
 Строка установки Elasticsearch
 
 ```
-helm install <es_chart_name> ./reportportal/charts/elasticsearch-7.6.1.tgz
+helm install <elastic-release-name> ./reportportal/charts/elasticsearch-7.6.1.tgz
 ```
 
-Вместо `<es_chart_name>` придумайте название helm чарта. Пусть будет `elasticsearch`.
+Вместо `<elastic-release-name>` придумайте название helm чарта. Пусть будет `elasticsearch`.
 
 Устанавливаем Elasticsearch
 
@@ -100,10 +100,10 @@ helm install elasticsearch ./reportportal/charts/elasticsearch-7.6.1.tgz
 Строка установки RabbitMQ 
 
 ```
-helm install <rabbitmq_chart_name> --set auth.username=rabbitmq,auth.password=<rmq_password>,replicaCount=1 ./reportportal/charts/rabbitmq-7.5.6.tgz
+helm install <rabbitmq-release-name> --set auth.username=rabbitmq,auth.password=<rmq_password>,replicaCount=1 ./reportportal/charts/rabbitmq-7.5.6.tgz
 ```
 
-Вместо `<rabbitmq_chart_name>` придумайте название helm чарта. Пусть будет `rabbitmq`.
+Вместо `<rabbitmq-release-name>` придумайте название helm чарта. Пусть будет `rabbitmq`.
 
 Вместо `<rmq_password>` придумайте пароль от RabbitMQ. Пусть будет `password`.
 
@@ -133,14 +133,14 @@ rabbitmq:
   installdep:
     enable: false
   endpoint:
-    address: <rabbitmq_chart_name>.default.svc.cluster.local
+    address: <rabbitmq-release-name>.default.svc.cluster.local
     port: 5672
     user: rabbitmq
     apiport: 15672
     apiuser: rabbitmq
 ```
 
-Вместо `<rabbitmq_chart_name>` меняем название helm чарта, которое вы придумали. У меня это `rabbitmq`.
+Вместо `<rabbitmq-release-name>` меняем название helm чарта, которое вы придумали. У меня это `rabbitmq`.
 
 Итоговый фрагмент получается вот таким:
 
@@ -164,10 +164,10 @@ rabbitmq:
 Строка установки PostgreSQL
 
 ```
-helm install <postgresql_chart_name> --set postgresqlUsername=rpuser,postgresqlPassword=<rpuser_password>,postgresqlDatabase=reportportal,postgresqlPostgresPassword=<postgres_password> -f ./reportportal/postgresql/values.yaml ./reportportal/charts/postgresql-8.6.2.tgz
+helm install <postgresql-release-name> --set postgresqlUsername=rpuser,postgresqlPassword=<rpuser_password>,postgresqlDatabase=reportportal,postgresqlPostgresPassword=<postgres_password> -f ./reportportal/postgresql/values.yaml ./reportportal/charts/postgresql-8.6.2.tgz
 ```
 
-Вместо `<postgresql_chart_name>` придумайте название helm чарта. Пусть будет `postgresql`.
+Вместо `<postgresql-release-name>` придумайте название helm чарта. Пусть будет `postgresql`.
 
 Вместо `<rpuser_password>` придумайте пароль для rpuser. Пусть будет `password`.
 
@@ -185,14 +185,14 @@ postgresql:
   installdep:
     enable: false
   endpoint:
-    address: <postgresql_chart_name>.default.svc.cluster.local
+    address: <postgresql-release-name>.default.svc.cluster.local
     port: 5432
     user: rpuser
     dbName: reportportal
     password:
 ```
 
-Вместо `<postgresql_chart_name>` меняем название helm чарта, которое вы придумали. У меня это `postgresql`.
+Вместо `<postgresql-release-name>` меняем название helm чарта, которое вы придумали. У меня это `postgresql`.
 
 Итоговый фрагмент получается вот таким:
 
@@ -222,8 +222,10 @@ helm repo add stable https://charts.helm.sh/stable
 Строка установки MinIO 
 
 ```
-helm install minio --set accessKey=<your_minio_accesskey>,secretKey=<your_minio_secretkey>,persistence.size=40Gi stable/minio
+helm install <minio-release-name> --set accessKey=<your_minio_accesskey>,secretKey=<your_minio_secretkey>,persistence.size=40Gi stable/minio
 ```
+
+Вместо `<minio-release-name>` меняем название helm чарта, которое вы придумали. У меня это `minio`.
 
 Вместо `<your_minio_accesskey>` придумайте accesskey. Пусть будет `accesskey`.
 
@@ -330,14 +332,14 @@ helm package ./reportportal/
 Установка reportportal
 
 ```
-helm install <reportportal_chart_name> --set postgresql.SecretName=<db_secret>,rabbitmq.SecretName=<rabbitmq_secret> ./reportportal-5.tgz
+helm install <reportportal-release-name> --set postgresql.SecretName=<postgresql-release-name>,rabbitmq.SecretName=<rabbitmq-release-name> ./reportportal-5.tgz
 ```
 
-Вместо `<reportportal_chart_name>` придумайте название чарта для reportportal. Пусть будет `reportportal`.
+Вместо `<reportportal-release-name>` придумайте название чарта для reportportal. Пусть будет `reportportal`.
 
-Вместо `<db_secret>` используем название helm чарта postgresql. Это `postgresql`.
+Вместо `<postgresql-release-name>` используем название helm чарта postgresql. Это `postgresql`.
 
-Вместо `<rabbitmq_secret>` используем название helm чарта rabbitmq. Это `rabbitmq`.
+Вместо `<rabbitmq-release-name>` используем название helm чарта rabbitmq. Это `rabbitmq`.
 
 ```
 helm install reportportal --set postgresql.SecretName=postgresql,rabbitmq.SecretName=rabbitmq ./reportportal-5.5.0.tgz
