@@ -220,7 +220,7 @@ postgresql:
 Строка установки MinIO 
 
 ```
-helm install --atomic <minio-release-name> --set accessKey.password=<your_minio_accesskey>,secretKey.password=<your_minio_secretkey>,persistence.size=40Gi ./reportportal/charts/minio-7.1.9.tgz
+helm install --atomic <minio-release-name> --set accessKey.password=<your_minio_accesskey>,secretKey.password=<your_minio_secretkey>,persistence.size=5Gi ./reportportal/charts/minio-7.1.9.tgz
 ```
 
 Вместо `<minio-release-name>` меняем название helm чарта, которое вы придумали. У меня это `minio`.
@@ -230,7 +230,7 @@ helm install --atomic <minio-release-name> --set accessKey.password=<your_minio_
 Вместо `<your_minio_secretkey>` придумайте secretkey. Пусть будет `secretkey`.
 
 ```
-helm install --atomic minio --set accessKey.password=accesskey,secretKey.password=secretkey,persistence.size=40Gi ./reportportal/charts/minio-7.1.9.tgz
+helm install --atomic minio --set accessKey.password=accesskey,secretKey.password=secretkey,persistence.size=5Gi ./reportportal/charts/minio-7.1.9.tgz
 ```
 
 Отредактируем `reportportal/values.yaml`
