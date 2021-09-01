@@ -165,7 +165,7 @@ rabbitmq:
 Строка установки PostgreSQL
 
 ```
-helm install <postgresql-release-name> --set postgresqlUsername=rpuser,postgresqlPassword=<rpuser_password>,postgresqlDatabase=reportportal,postgresqlPostgresPassword=<postgres_password> -f ./reportportal/postgresql/values.yaml ./reportportal/charts/postgresql-8.6.2.tgz
+helm install <postgresql-release-name> --set postgresqlUsername=rpuser,postgresqlPassword=<rpuser_password>,postgresqlDatabase=reportportal,postgresqlPostgresPassword=<postgres_password> -f ./reportportal/postgresql/values.yaml ./reportportal/charts/postgresql-10.9.4.tgz
 ```
 
 Вместо `<postgresql-release-name>` придумайте название helm чарта. Пусть будет `postgresql`.
@@ -175,7 +175,7 @@ helm install <postgresql-release-name> --set postgresqlUsername=rpuser,postgresq
 Вместо `<postgres_password>` придумайте пароль для postgres. Пусть будет `password`.
 
 ```
-helm install postgresql --set postgresqlUsername=rpuser,postgresqlPassword=password,postgresqlDatabase=reportportal,postgresqlPostgresPassword=password -f ./reportportal/postgresql/values.yaml ./reportportal/charts/postgresql-8.6.2.tgz
+helm install postgresql --set postgresqlUsername=rpuser,postgresqlPassword=password,postgresqlDatabase=reportportal,postgresqlPostgresPassword=password -f ./reportportal/postgresql/values.yaml ./reportportal/charts/postgresql-10.9.4.tgz
 ```
 
 Отредактируем `reportportal/values.yaml`
@@ -335,7 +335,7 @@ helm package ./reportportal/
 Установка reportportal
 
 ```
-helm install <reportportal-release-name> --set postgresql.SecretName=<postgresql-release-name>,rabbitmq.SecretName=<rabbitmq-release-name> ./reportportal-5.tgz
+helm install <reportportal-release-name> --set postgresql.SecretName=<postgresql-release-name>,rabbitmq.SecretName=<rabbitmq-release-name> ./reportportal-5.5.0.tgz
 ```
 
 Вместо `<reportportal-release-name>` придумайте название чарта для reportportal. Пусть будет `reportportal`.
