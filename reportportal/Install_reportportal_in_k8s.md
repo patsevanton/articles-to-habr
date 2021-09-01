@@ -329,7 +329,8 @@ helm package ./reportportal/
 Установка reportportal
 
 ```
-helm install <reportportal-release-name> --set postgresql.SecretName=<postgresql-release-name>,rabbitmq.SecretName=<rabbitmq-release-name> ./reportportal-5.5.0.tgz
+helm install <reportportal-release-name> --set postgresql.SecretName=<postgresql-release-name>-postgresql,rabbitmq.SecretName=<rabbitmq-release-name>-rabbitmq,minio.secretName=<minio-release-name> ./reportportal-5.5.0.tgz
+
 ```
 
 Вместо `<reportportal-release-name>` придумайте название чарта для reportportal. Пусть будет `reportportal`.
@@ -339,9 +340,8 @@ helm install <reportportal-release-name> --set postgresql.SecretName=<postgresql
 Вместо `<rabbitmq-release-name>` используем название helm чарта rabbitmq. Это `rabbitmq`.
 
 ```
-helm install reportportal --set postgresql.SecretName=postgresql,rabbitmq.SecretName=rabbitmq ./reportportal-5.5.0.tgz
+helm install reportportal --set postgresql.SecretName=postgresql,rabbitmq.SecretName=rabbitmq,minio.secretName=minio ./reportportal-5.5.0.tgz
 ```
-
 
 Логины/пароли для доступа в reportportal:
 - Default User: default\1q2w3e
