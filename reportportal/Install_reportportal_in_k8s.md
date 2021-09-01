@@ -217,16 +217,10 @@ postgresql:
 
 ### Установка MinIO 
 
-Добавим Stable репозиторий helm
-
-```
-helm repo add stable https://charts.helm.sh/stable
-```
-
 Строка установки MinIO 
 
 ```
-helm install <minio-release-name> --set accessKey=<your_minio_accesskey>,secretKey=<your_minio_secretkey>,persistence.size=40Gi stable/minio
+helm install <minio-release-name> --set accessKey.password=<your_minio_accesskey>,secretKey.password=<your_minio_secretkey>,persistence.size=40Gi ./reportportal/charts/minio-7.1.9.tgz
 ```
 
 Вместо `<minio-release-name>` меняем название helm чарта, которое вы придумали. У меня это `minio`.
@@ -236,7 +230,7 @@ helm install <minio-release-name> --set accessKey=<your_minio_accesskey>,secretK
 Вместо `<your_minio_secretkey>` придумайте secretkey. Пусть будет `secretkey`.
 
 ```
-helm install minio --set accessKey=accesskey,secretKey=secretkey,persistence.size=40Gi stable/minio
+helm install minio --set accessKey.password=accesskey,secretKey.password=secretkey,persistence.size=40Gi ./reportportal/charts/minio-7.1.9.tgz
 ```
 
 Отредактируем `reportportal/values.yaml`
