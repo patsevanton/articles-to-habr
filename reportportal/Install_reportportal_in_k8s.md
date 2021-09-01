@@ -64,7 +64,6 @@ cd kubernetes
 ```
 
 
-
 ### Установка Elasticsearch
 
 Добавляем helm репозиторий Elasticsearch
@@ -94,7 +93,6 @@ helm install elasticsearch ./reportportal/charts/elasticsearch-7.6.1.tgz
 ```
 
 
-
 ### Установка RabbitMQ
 
 Строка установки RabbitMQ 
@@ -110,6 +108,10 @@ helm install <rabbitmq-release-name> --set auth.username=rabbitmq,auth.password=
 ```
 helm install rabbitmq --set auth.username=rabbitmq,auth.password=password,replicaCount=1 ./reportportal/charts/rabbitmq-7.5.6.tgz
 ```
+
+Примечание:
+- Если release-name в helm назван "rabbitmq", то адрес будет "rabbitmq.default.svc.cluster.local".
+- Если release-name в helm назван "rabbit", то адрес будет "rabbit-rabbitmq.default.svc.cluster.local".
 
 Дожидаемся что под перейдет в статус running
 
@@ -158,7 +160,6 @@ rabbitmq:
 ```
 
 
-
 ### Установка PostgreSQL
 
 Строка установки PostgreSQL
@@ -192,6 +193,10 @@ postgresql:
     password:
 ```
 
+Примечание:
+- Если release-name в helm назван "postgresql", то address будет "postgresql.default.svc.cluster.local".
+- Если release-name в helm назван "postgres", то address будет "postgres-postgresql.default.svc.cluster.local".
+
 Вместо `<postgresql-release-name>` меняем название helm чарта, которое вы придумали. У меня это `postgresql`.
 
 Итоговый фрагмент получается вот таким:
@@ -208,7 +213,6 @@ postgresql:
     dbName: reportportal
     password:
 ```
-
 
 
 ### Установка MinIO 
@@ -276,7 +280,6 @@ minio:
   defaultBucketName:
   integrationSaltPath:
 ```
-
 
 
 #### Настройка Ingress для доступа к reportportal
