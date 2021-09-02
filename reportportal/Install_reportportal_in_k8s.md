@@ -81,7 +81,7 @@ helm dependency build ./reportportal/
 Строка установки Elasticsearch
 
 ```
-helm install --atomic <elastic-release-name> ./reportportal/charts/elasticsearch-7.6.1.tgz
+helm install <elastic-release-name> ./reportportal/charts/elasticsearch-7.6.1.tgz
 ```
 
 Вместо `<elastic-release-name>` придумайте название helm чарта. Пусть будет `elasticsearch`.
@@ -89,7 +89,7 @@ helm install --atomic <elastic-release-name> ./reportportal/charts/elasticsearch
 Устанавливаем Elasticsearch
 
 ```
-helm install --atomic elasticsearch ./reportportal/charts/elasticsearch-7.6.1.tgz
+helm install  elasticsearch ./reportportal/charts/elasticsearch-7.6.1.tgz
 ```
 
 
@@ -98,7 +98,7 @@ helm install --atomic elasticsearch ./reportportal/charts/elasticsearch-7.6.1.tg
 Строка установки RabbitMQ 
 
 ```
-helm install --atomic <rabbitmq-release-name> --set auth.username=rabbitmq,auth.password=<rmq_password>,replicaCount=1 ./reportportal/charts/rabbitmq-7.5.6.tgz
+helm install <rabbitmq-release-name> --set auth.username=rabbitmq,auth.password=<rmq_password>,replicaCount=1 ./reportportal/charts/rabbitmq-7.5.6.tgz
 ```
 
 Вместо `<rabbitmq-release-name>` придумайте название helm чарта. Пусть будет `rabbitmq`.
@@ -106,7 +106,7 @@ helm install --atomic <rabbitmq-release-name> --set auth.username=rabbitmq,auth.
 Вместо `<rmq_password>` придумайте пароль от RabbitMQ. Пусть будет `password`.
 
 ```
-helm install --atomic rabbitmq --set auth.username=rabbitmq,auth.password=password,replicaCount=1 ./reportportal/charts/rabbitmq-7.5.6.tgz
+helm install rabbitmq --set auth.username=rabbitmq,auth.password=password,replicaCount=1 ./reportportal/charts/rabbitmq-7.5.6.tgz
 ```
 
 Примечание:
@@ -165,7 +165,7 @@ rabbitmq:
 Строка установки PostgreSQL
 
 ```
-helm install --atomic <postgresql-release-name> --set postgresqlUsername=rpuser,postgresqlPassword=<rpuser_password>,postgresqlDatabase=reportportal,postgresqlPostgresPassword=<postgres_password> -f ./reportportal/postgresql/values.yaml ./reportportal/charts/postgresql-10.9.4.tgz
+helm install  <postgresql-release-name> --set postgresqlUsername=rpuser,postgresqlPassword=<rpuser_password>,postgresqlDatabase=reportportal,postgresqlPostgresPassword=<postgres_password> -f ./reportportal/postgresql/values.yaml ./reportportal/charts/postgresql-10.9.4.tgz
 ```
 
 Вместо `<postgresql-release-name>` придумайте название helm чарта. Пусть будет `postgresql`.
@@ -175,7 +175,7 @@ helm install --atomic <postgresql-release-name> --set postgresqlUsername=rpuser,
 Вместо `<postgres_password>` придумайте пароль для postgres. Пусть будет `password`.
 
 ```
-helm install --atomic postgresql --set postgresqlUsername=rpuser,postgresqlPassword=password,postgresqlDatabase=reportportal,postgresqlPostgresPassword=password -f ./reportportal/postgresql/values.yaml ./reportportal/charts/postgresql-10.9.4.tgz
+helm install postgresql --set postgresqlUsername=rpuser,postgresqlPassword=password,postgresqlDatabase=reportportal,postgresqlPostgresPassword=password -f ./reportportal/postgresql/values.yaml ./reportportal/charts/postgresql-10.9.4.tgz
 ```
 
 Отредактируем `reportportal/values.yaml`
@@ -220,7 +220,7 @@ postgresql:
 Строка установки MinIO 
 
 ```
-helm install --atomic <minio-release-name> --set accessKey.password=<your_minio_accesskey>,secretKey.password=<your_minio_secretkey>,persistence.size=5Gi ./reportportal/charts/minio-7.1.9.tgz
+helm install  <minio-release-name> --set accessKey.password=<your_minio_accesskey>,secretKey.password=<your_minio_secretkey>,persistence.size=5Gi ./reportportal/charts/minio-7.1.9.tgz
 ```
 
 Вместо `<minio-release-name>` меняем название helm чарта, которое вы придумали. У меня это `minio`.
@@ -230,7 +230,7 @@ helm install --atomic <minio-release-name> --set accessKey.password=<your_minio_
 Вместо `<your_minio_secretkey>` придумайте secretkey. Пусть будет `secretkey`.
 
 ```
-helm install --atomic minio --set accessKey.password=accesskey,secretKey.password=secretkey,persistence.size=5Gi ./reportportal/charts/minio-7.1.9.tgz
+helm install minio --set accessKey.password=accesskey,secretKey.password=secretkey,persistence.size=5Gi ./reportportal/charts/minio-7.1.9.tgz
 ```
 
 Отредактируем `reportportal/values.yaml`
@@ -329,7 +329,7 @@ helm package ./reportportal/
 Установка reportportal
 
 ```
-helm install --atomic <reportportal-release-name> --set postgresql.SecretName=<postgresql-release-name>-postgresql,rabbitmq.SecretName=<rabbitmq-release-name>-rabbitmq,minio.secretName=<minio-release-name> ./reportportal-5.5.0.tgz
+helm install <reportportal-release-name> --set postgresql.SecretName=<postgresql-release-name>-postgresql,rabbitmq.SecretName=<rabbitmq-release-name>-rabbitmq,minio.secretName=<minio-release-name> ./reportportal-5.5.0.tgz
 
 ```
 
@@ -340,7 +340,7 @@ helm install --atomic <reportportal-release-name> --set postgresql.SecretName=<p
 Вместо `<rabbitmq-release-name>` используем название helm чарта rabbitmq. Это `rabbitmq`.
 
 ```
-helm install --atomic reportportal --set postgresql.SecretName=postgresql,rabbitmq.SecretName=rabbitmq,minio.secretName=minio ./reportportal-5.5.0.tgz
+helm install reportportal --set postgresql.SecretName=postgresql,rabbitmq.SecretName=rabbitmq,minio.secretName=minio ./reportportal-5.5.0.tgz
 ```
 
 Логины/пароли для доступа в reportportal:
