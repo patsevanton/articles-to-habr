@@ -86,10 +86,15 @@ helm install <elastic-release-name> ./reportportal/charts/elasticsearch-7.6.1.tg
 
 Вместо `<elastic-release-name>` придумайте название helm чарта. Пусть будет `elasticsearch`.
 
-Устанавливаем Elasticsearch
+Устанавливаем Elasticsearch. По умолчанию устанавливаются 3 ноды.
 
 ```
-helm install  elasticsearch ./reportportal/charts/elasticsearch-7.6.1.tgz
+helm install elasticsearch ./reportportal/charts/elasticsearch-7.6.1.tgz
+```
+
+Чтобы установить и использовать 1 master ноду elasticsearch необходимо использовать команду
+```
+helm install elasticsearch ./reportportal/charts/elasticsearch-7.6.1.tgz --set replicas=1 -f ./reportportal/single-elasticsearch/value.yaml
 ```
 
 
