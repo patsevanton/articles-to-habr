@@ -92,7 +92,7 @@ helm install <elastic-release-name> ./reportportal/charts/elasticsearch-7.6.1.tg
 helm install elasticsearch ./reportportal/charts/elasticsearch-7.6.1.tgz
 ```
 
-Чтобы установить и использовать 1 master ноду elasticsearch (например, для demо или devel стендов) создайте специальный yaml файл ./reportportal/single-elasticsearch/value.yaml
+Чтобы установить и использовать 1 master ноду elasticsearch (например, для demо или devel стендов) создайте специальный yaml файл `./reportportal/single-elasticsearch/value.yaml`
 ```
 extraEnvs:
   - name: discovery.type
