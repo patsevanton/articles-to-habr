@@ -106,7 +106,7 @@ extraEnvs:
 helm install elasticsearch ./reportportal/charts/elasticsearch-7.6.1.tgz --set replicas=1 -f ./reportportal/single-elasticsearch/value.yaml
 ```
 
-Сделал [pull request](https://github.com/reportportal/kubernetes/pull/205), добавляющий yaml файл для установки single node elasticsearch
+Был сделан [pull request](https://github.com/reportportal/kubernetes/pull/205), добавляющий yaml файл для установки single node elasticsearch
 
 
 ### Установка RabbitMQ
