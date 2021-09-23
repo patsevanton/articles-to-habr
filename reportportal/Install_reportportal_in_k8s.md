@@ -92,10 +92,21 @@ helm install <elastic-release-name> ./reportportal/charts/elasticsearch-7.6.1.tg
 helm install elasticsearch ./reportportal/charts/elasticsearch-7.6.1.tgz
 ```
 
-Чтобы установить и использовать 1 master ноду elasticsearch необходимо использовать команду
+Чтобы установить и использовать 1 master ноду elasticsearch (например, для demо или devel стендов) создайте специальный yaml файл ./reportportal/single-elasticsearch/value.yaml
+```
+extraEnvs:
+  - name: discovery.type
+    value: single-node
+  - name: cluster.initial_master_nodes
+    value: ""
+```
+
+и выполните команду
 ```
 helm install elasticsearch ./reportportal/charts/elasticsearch-7.6.1.tgz --set replicas=1 -f ./reportportal/single-elasticsearch/value.yaml
 ```
+
+Сделал [pull request](https://github.com/reportportal/kubernetes/pull/205), добавляющий yaml файл для установки single node elasticsearch
 
 
 ### Установка RabbitMQ
@@ -356,3 +367,26 @@ helm install reportportal --set postgresql.SecretName=postgresql,rabbitmq.Secret
 ![](https://habrastorage.org/webt/kz/le/x3/kzlex34taozpoigg18rerdugsls.png)
 
 ![](https://habrastorage.org/webt/wr/gt/7x/wrgt7xleqrv0p2fnhvw-ym_1jpi.png)
+
+
+Известные ошибки:
+[Memory cgroup out of memory: Killed process (uwsgi)](https://github.com/reportportal/kubernetes/issues/203)
+```
+[ 7063.247407] Memory cgroup out of memory: Killed process 63214 (uwsgi) total-vm:3149468kB, anon-rss:164992kB, file-rss:52176kB, shmem-rss:92kB, UID:0 pgtables:1372kB oom_score_adj:986
+[ 7063.263325] oom_reaper: reaped process 63214 (uwsgi), now anon-rss:0kB, file-rss:0kB, shmem-rss:92kB
+[ 7093.543707] uwsgi invoked oom-killer: gfp_mask=0xcc0(GFP_KERNEL), order=0, oom_score_adj=986
+[ 7093.543711] CPU: 4 PID: 63635 Comm: uwsgi Not tainted 5.4.0-77-generic #86-Ubuntu
+...
+[ 7093.544021] [  pid  ]   uid  tgid total_vm      rss pgtables_bytes swapents oom_score_adj name
+[ 7093.544025] [  18904]     0 18904      255        1    32768        0          -998 pause
+[ 7093.544028] [  20358]     0 20358    13850     3787    98304        0           986 uwsgi
+[ 7093.544030] [  20425]     0 20425    15899     3877   114688        0           986 uwsgi
+[ 7093.544033] [  62892]     0 62892   787367    54312  1400832        0           986 uwsgi
+[ 7093.544039] [  63384]     0 63384   787367    54314  1400832        0           986 uwsgi
+[ 7093.544041] [  63635]     0 63635   328986    37869  1069056        0           986 uwsgi
+[ 7093.544046] [  63794]     0 63794   202492    24945   753664        0           986 uwsgi
+[ 7093.544048] oom-kill:constraint=CONSTRAINT_MEMCG,nodemask=(null),cpuset=7c29217c3af6fef0b7bcc4150d2502f684ef8f83d2ea377411c9a2265e8d4843,mems_allowed=0,oom_memcg=/kubepods/burstable/pod05347bee-e95c-4857-8435-410a406f1f7a,task_memcg=/kubepods/burstable/pod05347bee-e95c-4857-8435-410a406f1f7a/7c29217c3af6fef0b7bcc4150d2502f684ef8f83d2ea377411c9a2265e8d4843,task=uwsgi,pid=63384,uid=0
+[ 7093.544177] Memory cgroup out of memory: Killed process 63384 (uwsgi) total-vm:3149468kB, anon-rss:164988kB, file-rss:52176kB, shmem-rss:92kB, UID:0 pgtables:1368kB oom_score_adj:986
+```
+
+Этот issue исправляется pull request - https://github.com/reportportal/kubernetes/pull/208
