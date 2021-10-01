@@ -304,6 +304,8 @@ Elastic в этом случае нам, в принципе, уже не нуж
 
 https://github.com/ITECOMMPAY
 
+https://github.com/ITECOMMPAY/kibouse
+
 Код адаптера мы заопенсорсили и выложили на GitHub в name space компании. Можете посмотреть. 
 
 ![](https://habrastorage.org/webt/m_/wt/km/m_wtkmlcglon5e_310iq31rttoc.jpeg)
