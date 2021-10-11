@@ -2,6 +2,17 @@
 
 ![](https://habrastorage.org/webt/kv/vx/bu/kvvxbuthwj9apuqhn75raagtk1q.jpeg)
 
+
+<cut />
+
+
+Видео:
+
+
+<oembed>https://www.youtube.com/watch?v=RDWz8_xuoWE</oembed>
+
+
+
 ![](https://habrastorage.org/webt/au/cn/mw/aucnmwvc7kq30sjtkvpbt7g_il4.jpeg)
 
 Всем добрый вечер! Спасибо, что пришли послушать! Тема очень интересная. Будет тема, которая так или иначе во всех проектах вылезает. В случае изменении схемы базы, как мы знаем, очень часто бывают проблемы с производительностью и не только. И о том, как сделать так, чтобы этих проблем стало меньше, мы сегодня поговорим. 
