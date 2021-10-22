@@ -2,10 +2,9 @@ Kubernetes Nginx Ingress: перенаправление трафика с ис�
 
 ![](https://habrastorage.org/webt/-k/ia/j-/-kiaj-zi-oy4u_ckhqgwautoxuy.jpeg)
 
-
-
-
 Перенаправляйте HTTP-трафик или переписывайте URL-адреса с помощью входных аннотаций Kubernetes и Nginx ingress controller. В этой статье объясняется использование аннотаций и их влияние на результирующий файл конфигурации nginx.conf.
+
+<cut />
 
 Информация взята с [Linux Recruit Blog](https://www.linuxrecruit.co.uk/blog?title=Kubernetes%20Nginx%20Ingress%3A%20Traffic%20Redirect%20Using%20Annotations%20Demystified&id=132).
 
