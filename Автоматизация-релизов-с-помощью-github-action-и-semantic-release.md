@@ -80,3 +80,130 @@ Semantic-release автоматизирует весь рабочий проце
 
 - [Интеграция .pre-commit hook в Django проект](https://habr.com/ru/post/503270/)
 
+Примеры на основе репозитория https://github.com/patsevanton/terraform-yandex-compute
+
+В начале коммита должны быть следующие типы c двоеточием:
+
+            breaking
+            chore
+            ci
+            docs
+            feat
+            fix
+            refactor
+            security
+            style
+            test
+
+Эти типы регулируются здесь в  [releaseRules](https://github.com/patsevanton/terraform-yandex-compute/blob/main/.releaserc.json#L12) в .releaserc.json. В заголовке коммиты должны присутствовать эти типы. Проверяются с помощью github action:
+
+```
+name: 'Validate PR title'
+
+on:
+  pull_request_target:
+    types:
+      - opened
+      - edited
+      - synchronize
+
+jobs:
+  main:
+    name: Validate PR title
+    runs-on: ubuntu-latest
+    steps:
+      - uses: amannn/action-semantic-pull-request@v3.4.6
+        env:
+          GITHUB_TOKEN: ${{ secrets.TERRAFORM_YANDEX_COMPUTE_TOKEN }}
+        with:
+          # Configure which types are allowed.
+          # Default: https://github.com/commitizen/conventional-commit-types
+          types: |
+            breaking
+            chore
+            ci
+            docs
+            feat
+            fix
+            refactor
+            security
+            style
+            test
+          requireScope: false
+          subjectPattern: ^(?![A-Z]).+$
+          subjectPatternError: |
+            The subject "{subject}" found in the pull request title "{title}"
+            didn't match the configured pattern. Please ensure that the subject
+            doesn't start with an uppercase character.
+          wip: true
+          validateSingleCommit: false
+```
+
+
+
+Нужно иметь ввиду что в этом примере релиз создается при изменении следующих файлов: 
+
+```
+      - '**/*.tpl'
+      - '**/*.py'
+      - '**/*.tf'
+      - '.github/workflows/release.yml'
+```
+
+
+
+Это описывается с помощью следующего github action:
+
+```
+name: Release
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+      - master
+    paths:
+      - '**/*.tpl'
+      - '**/*.py'
+      - '**/*.tf'
+      - '.github/workflows/release.yml'
+
+jobs:
+  release:
+    name: Release
+    runs-on: ubuntu-latest
+    # Skip running release workflow on forks
+    if: github.repository_owner == 'patsevanton'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+
+      - name: Release
+        uses: cycjimmy/semantic-release-action@v2
+        with:
+          semantic_version: 18.0.0
+          extra_plugins: |
+            @semantic-release/changelog@6.0.0
+            @semantic-release/git@10.0.0
+            conventional-changelog-conventionalcommits@4.6.3
+            conventional-changelog-eslint@3.0.9
+        env:
+          GITHUB_TOKEN: ${{ secrets.SEMANTIC_RELEASE_TOKEN }}
+```
+
+Разберем таблицу releaseRules, описанную выше.
+
+    breaking создается релиз major версии
+    chore не создается релиз 
+    ci не создается релиз 
+    docs не создается релиз 
+    feat создается релиз minor версии
+    fix создается релиз patch версии
+    refactor создается релиз patch версии
+    security создается релиз patch версии
+    style создается релиз patch версии
+    test не создается релиз 
