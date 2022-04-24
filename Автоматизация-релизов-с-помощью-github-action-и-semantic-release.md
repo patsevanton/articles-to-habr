@@ -207,3 +207,27 @@ jobs:
     security создается релиз patch версии
     style создается релиз patch версии
     test не создается релиз 
+
+Так как в репозитории слишком специфичная проверка для terraform, то можно сказать что проверку кода на оформление, синтаксис, стиль в общем случае можно проверять с помощью такого github action:
+
+```
+# https://pre-commit.com
+# This GitHub Action assumes that the repo contains a valid .pre-commit-config.yaml file.
+name: pre-commit
+on:
+  pull_request:
+  push:
+    branches: [master]
+jobs:
+  pre-commit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+      - run: pip install pre-commit
+      - run: pre-commit --version
+      - run: pre-commit install
+      - run: pre-commit run --all-files
+```
+
+Если в коммите код оформлен не по принятому стилю или есть unit-test падают, то зафейлится github action
