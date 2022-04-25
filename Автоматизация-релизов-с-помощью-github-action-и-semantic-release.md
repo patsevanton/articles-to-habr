@@ -1,8 +1,14 @@
-Автоматизация релизов с помощью github-action и semantic-release. А так же использование Pre-commit в Github action.
+В этом посте будет описано практическое применение semantic-release для terraform модуля [terraform-yandex-compute](https://github.com/patsevanton/terraform-yandex-compute) (Модуль Terraform, который создает вычислительные ресурсы в облаке Яндекса) c Github action.
+
+![](https://habrastorage.org/webt/48/pw/mh/48pwmhz8zympftvx9lkcfcto9b4.png)
+
+А так же будет рассмотрено использование Pre-commit в Github action.
+
+![](https://habrastorage.org/webt/uo/cn/ya/uocnya6a2dr0sscqyy1grfksyig.png)
+
+<cut />
 
 #### Семантически управлением версиями с помощью semantic-release и github-action
-
-В этом посте будет описано практическое применение semantic-release для terraform модуля [terraform-yandex-compute](https://github.com/patsevanton/terraform-yandex-compute) (Модуль Terraform, который создает вычислительные ресурсы в облаке Яндекса) c Github action.
 
 Semantic-release автоматизирует весь рабочий процесс выпуска пакета, включая: определение номера следующей версии, создание release notes (CHANGELOG.md) и публикацию пакета.
 
@@ -234,4 +240,6 @@ jobs:
 
 Если у вас есть локально настроенный pre-commit и он отформатирует код при коммите, то github action не выдаст ошибок.
 
-Если мы говорим про open source проект, в который кто-то хочет добавить правки, но при этом не прочитав Contribution guide и не поставив себе pre-commit локально, то CI такое не пропустит
+Если мы говорим про open source проект, в который кто-то хочет добавить правки, но при этом не прочитав Contribution guide и не поставив себе pre-commit локально, то CI такое не пропустит.
+
+P.S. Заранее прошу прощения за немного скомканный пост. Напишите что еще добавить/поправить.
