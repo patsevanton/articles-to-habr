@@ -34,6 +34,8 @@
 
   - [**Сертифицированный администратор Kubernetes (CKA)**](https://rotoro.cloud/ld-courses/certified-kubernetes-application-developer-ckad-практический-опыт/)
 
+  - [**Сертифицированный специалист по безопасности Kubernetes (CKS)**] - ожидается в ближайшее время
+
 
 
 В направлении **[Инфраструктура в виде кода (IaC) и Облака](https://rotoro.cloud/learning-path-iac/)** находятся 2 уровня. 
