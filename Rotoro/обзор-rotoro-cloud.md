@@ -34,7 +34,7 @@
 
   - [**Сертифицированный администратор Kubernetes (CKA)**](https://rotoro.cloud/ld-courses/certified-kubernetes-application-developer-ckad-практический-опыт/)
 
-  - [**Сертифицированный специалист по безопасности Kubernetes (CKS)**] - ожидается в ближайшее время
+  - **Сертифицированный специалист по безопасности Kubernetes (CKS)** - ожидается в ближайшее время
 
 
 
