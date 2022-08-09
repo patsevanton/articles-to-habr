@@ -2,7 +2,7 @@
 
 [rotoro cloud](https://rotoro.cloud/) - платформа для обучения и практики по направлениям DevOps, Контейнеры и Kubernetes, Инфраструктура в виде кода (IaC) и Облака, Программирование.
 
-2 базовых курса доступны бесплатно при регистрации: [**Docker для начинающих + практический опыт**](https://rotoro.cloud/ld-courses/docker-для-начинающих-практический-опыт/) и [Wiki Practice](https://rotoro.cloud/ld-courses/wiki-practice/)
+2 базовых курса доступны бесплатно при регистрации: [**Docker для начинающих + практический опыт**](https://rotoro.cloud/ld-courses/docker-для-начинающих-практический-опыт/) и [**Wiki Practice**](https://rotoro.cloud/ld-courses/wiki-practice/)
 
 В каждом направлении основные курсы пересекаются.
 
